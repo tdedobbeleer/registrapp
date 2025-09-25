@@ -27,8 +27,9 @@ import { ref, onMounted } from 'vue'
 import { supabase } from './supabase'
 import { useRouter } from 'vue-router'
 import { BApp } from 'bootstrap-vue-next'
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
-const user = ref<any>(null)
+const user = ref<User | null>(null)
 const router = useRouter()
 
 const logout = async () => {
@@ -41,7 +42,7 @@ onMounted(async () => {
   user.value = currentUser
 })
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
   user.value = session?.user || null
 })
 </script>

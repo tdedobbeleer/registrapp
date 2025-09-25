@@ -39,10 +39,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { supabase } from '../supabase'
-import { useRouter } from 'vue-router'
 import { useEmailValidation } from '../composables/useEmailValidation'
 
-const router = useRouter()
 const email = ref('')
 const loading = ref(false)
 const error = ref('')

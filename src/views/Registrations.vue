@@ -128,9 +128,10 @@ const fetchRegistrations = async () => {
   }
 }
 
-const toggleRegistration = async (participantId: string, event) => {
+const toggleRegistration = async (participantId: string, event : Event) => {
   const existing = registrations.value.find(r => r.participant_id === participantId)
-  const checked = event.srcElement.checked
+  const el = event.target as HTMLInputElement
+  const checked = el.checked
   if (existing) {
     const { error } = await supabase
       .from('registrations')

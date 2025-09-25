@@ -68,7 +68,7 @@ const handleLogin = async () => {
   loading.value = true
   error.value = ''
   try {
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
+    const { error: authError } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     })
