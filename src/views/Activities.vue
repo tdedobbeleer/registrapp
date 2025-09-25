@@ -5,36 +5,42 @@
       <BBreadcrumbItem active>Activities</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>Activities</h1>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="d-flex gap-3 align-items-center">
+    <div class="row d-flex justify-content-between align-items-center mb-3">
+      <div class="col d-flex p-1 align-items-center">
         <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" placeholder="Filter by Activity Type" class="w-auto" />
+      </div>
+      <div class="col d-flex p-1 align-items-center">
         <BFormInput type="date" v-model="filterDate" placeholder="Filter by Date" class="w-auto" />
       </div>
+    <div class="col">
       <BButton variant="primary" @click="showAddModal = true">
-        Add Activity
+        <i class="bi bi-calendar-plus"></i>
       </BButton>
+    </div>
     </div>
     <div class="list-group">
       <div
         v-for="activity in filteredActivities"
         :key="activity.id"
-        class="list-group-item d-flex justify-content-between align-items-center"
+        class="p-2 list-group-item d-flex justify-content-between align-items-center"
       >
-        <div>
+        <div class="p-2">
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
           <br />
           <small class="text-muted">{{ formatDate(activity.date) }}</small>
         </div>
-        <div>
-          <BButton size="sm" variant="outline-info" class="me-2" @click="$router.push(`/registrations/${activity.id}`)">
-            Registrations
-          </BButton>
-          <BButton size="sm" variant="outline-secondary" class="me-2" @click="openEditModal(activity)">
-            Edit
-          </BButton>
-          <BButton size="sm" variant="outline-danger" @click="openDeleteModal(activity.id)">
-            Delete
-          </BButton>
+        <div class="p-2">
+          <BButtonGroup>
+            <BButton size="sm" title="registrations" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
+              <i class="bi bi-list-check"></i>
+            </BButton>
+            <BButton title="Edit" size="sm" variant="outline-secondary" @click="openEditModal(activity)">
+              <i class="bi bi-pen"></i>
+            </BButton>
+            <BButton title="Delete" size="sm" variant="outline-danger" @click="openDeleteModal(activity.id)">
+              <i class="bi bi-trash"></i>
+            </BButton>
+          </BButtonGroup>
         </div>
       </div>
     </div>

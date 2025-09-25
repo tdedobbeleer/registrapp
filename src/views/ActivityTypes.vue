@@ -5,21 +5,18 @@
       <BBreadcrumbItem active>Activity Types</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>Activity Types</h1>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="d-flex gap-3 align-items-center">
-        <input
-          type="text"
-          class="form-control w-50"
-          placeholder="Search activity types..."
-          v-model="searchTerm"
-        />
+    <div class="row d-flex justify-content-between align-items-center mb-3">
+      <div class="col d-flex p-1 align-items-center">
+        <BFormInput type="text" v-model="searchTerm" placeholder="Search activity types..." class="w-auto" />
       </div>
-      <BButton
-        variant="primary"
-        @click="showAddModal = true"
-      >
-        Add Activity Type
-      </BButton>
+      <div class="col d-flex p-1">
+        <BButton
+          variant="primary"
+          @click="showAddModal = true"
+        >
+          <i class="bi bi-patch-plus"></i>
+        </BButton>
+      </div>
     </div>
     <div class="list-group">
       <div
@@ -27,30 +24,33 @@
         :key="activityType.id"
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        <div>
+        <div class="p-2">
           <strong>{{ activityType.name }}</strong>
           <br />
           <small class="text-muted">{{ formatDate(activityType.created_at) }}</small>
         </div>
-        <div>
+        <div class="p-2">
           <p>{{ activityType.description }}</p>
         </div>
-        <div>
+        <div class="p-2">
+          <BButtonGroup>
           <BButton
             size="sm"
             variant="outline-secondary"
-            class="me-2"
+            title="Edit"
             @click="openEditModal(activityType)"
           >
-            Edit
+            <i class="bi bi-pen"></i>
           </BButton>
           <BButton
             size="sm"
             variant="outline-danger"
+            title="Remove"
             @click="openDeleteModal(activityType.id)"
           >
-            Delete
+            <i class="bi bi-trash"></i>
           </BButton>
+          </BButtonGroup>
         </div>
       </div>
     </div>

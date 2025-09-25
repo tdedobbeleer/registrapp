@@ -6,20 +6,17 @@
     </BBreadcrumb>
     <h1>Participants</h1>
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="d-flex gap-3 align-items-center">
-        <input
-          type="text"
-          class="form-control w-50"
-          placeholder="Search participants..."
-          v-model="searchTerm"
-        />
+      <div class="col d-flex p-1 align-items-center">
+        <BFormInput type="text" v-model="searchTerm" placeholder="Search participants..." class="w-auto" />
       </div>
-      <BButton
-        variant="primary"
-        @click="showAddModal = true"
-      >
-        Add Participant
-      </BButton>
+      <div class="col">
+        <BButton
+          variant="primary"
+          @click="showAddModal = true"
+        >
+          <i class="bi bi-person-fill-add"></i>
+        </BButton>
+      </div>
     </div>
     <div class="list-group">
       <div
@@ -27,27 +24,30 @@
         :key="participant.id"
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        <div>
+        <div class="p-1">
           <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
           <br />
           <small class="text-muted">{{ formatDate(participant.created_at) }}</small>
         </div>
         <div>
-          <BButton
-            size="sm"
-            variant="outline-secondary"
-            class="me-2"
-            @click="openEditModal(participant)"
-          >
-            Edit
-          </BButton>
-          <BButton
-            size="sm"
-            variant="outline-danger"
-            @click="openDeleteModal(participant.id)"
-          >
-            Delete
-          </BButton>
+          <BButtonGroup>
+            <BButton
+              size="sm"
+              title="Edit"
+              variant="outline-secondary"
+              @click="openEditModal(participant)"
+            >
+              <i class="bi bi-pen"></i>
+            </BButton>
+            <BButton
+              title="Delete"
+              size="sm"
+              variant="outline-danger"
+              @click="openDeleteModal(participant.id)"
+            >
+              <i class="bi bi-trash"></i>
+            </BButton>
+          </BButtonGroup>
         </div>
       </div>
     </div>
