@@ -5,22 +5,21 @@
       <BBreadcrumbItem active>{{ $t('participants.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('participants.title') }}</h1>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="col d-flex p-1 align-items-center">
-        <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
-      </div>
-      <div class="col">
-        <BButton
+    <div class="mb-3">
+      <BInputGroup class="mt-3">
+      <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
+      <BButton
           variant="primary"
           @click="openAddModal"
         >
           <i class="bi bi-person-fill-add"></i>
         </BButton>
-      </div>
+      </BInputGroup>
+      
     </div>
     <div class="list-group">
       <div
-        v-for="participant in filteredParticipants"
+        v-for="participant in paginatedParticipants"
         :key="participant.id"
         class="list-group-item d-flex justify-content-between align-items-center"
       >
@@ -52,6 +51,14 @@
       </div>
     </div>
 
+    <BPagination
+      v-if="totalPages > 1"
+      v-model="currentPage"
+      :total-rows="filteredParticipants.length"
+      :per-page="perPage"
+      class="mt-3"
+    />
+
     <ParticipantModal
       v-model="showModal"
       :mode="modalMode"
@@ -68,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { supabase } from '../supabase'
 import type { Participant } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
@@ -82,12 +89,22 @@ const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
 const showDeleteModal = ref(false)
 const deleteId = ref('')
+const currentPage = ref(1)
+const perPage = 10
 
 const filteredParticipants = computed(() =>
   participants.value.filter(participant =>
     `${participant.first_name} ${participant.last_name}`.toLowerCase().includes(searchTerm.value.toLowerCase())
   )
 )
+
+const paginatedParticipants = computed(() => {
+  const start = (currentPage.value - 1) * perPage
+  const end = start + perPage
+  return filteredParticipants.value.slice(start, end)
+})
+
+const totalPages = computed(() => Math.ceil(filteredParticipants.value.length / perPage))
 
 const openAddModal = () => {
   modalMode.value = 'add'
@@ -118,7 +135,7 @@ const fetchParticipants = async () => {
   const { data, error } = await supabase
     .from('participants')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('first_name', { ascending: true })
   if (error) {
     console.error('Error fetching participants:', error)
   } else {
@@ -175,6 +192,10 @@ const deleteParticipant = async () => {
 
 onMounted(() => {
   fetchParticipants()
+})
+
+watch(searchTerm, () => {
+  currentPage.value = 1
 })
 </script>
 

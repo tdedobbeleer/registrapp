@@ -5,18 +5,14 @@
       <BBreadcrumbItem active>{{ $t('activities.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('activities.title') }}</h1>
-    <div class="row d-flex justify-content-between align-items-center mb-3">
-      <div class="col d-flex p-1 align-items-center">
-        <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" placeholder="Filter by Activity Type" class="w-auto" />
-      </div>
-      <div class="col d-flex p-1 align-items-center">
+    <div class="mb-3">
+      <BInputGroup class="mt-3">
+        <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" :placeholder="$t('activities.filterByActivityType')" class="w-auto" />
         <BFormInput type="date" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
-      </div>
-    <div class="col">
-      <BButton variant="primary" @click="showAddModal = true">
-        <i class="bi bi-calendar-plus"></i>
-      </BButton>
-    </div>
+        <BButton variant="primary" @click="showAddModal = true">
+          <i class="bi bi-calendar-plus"></i>
+        </BButton>
+      </BInputGroup>
     </div>
     <div class="list-group">
       <div

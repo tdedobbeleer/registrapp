@@ -5,18 +5,16 @@
       <BBreadcrumbItem active>{{ $t('activityTypes.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('activityTypes.title') }}</h1>
-    <div class="row d-flex justify-content-between align-items-center mb-3">
-      <div class="col d-flex p-1 align-items-center">
-        <BFormInput type="text" v-model="searchTerm" :placeholder="$t('activityTypes.searchPlaceholder')" class="w-auto" />
-      </div>
-      <div class="col d-flex p-1">
-        <BButton
+    <div class="mb-3">
+      <BInputGroup class="mt-3">
+          <BFormInput type="text" v-model="searchTerm" :placeholder="$t('activityTypes.searchPlaceholder')" class="w-auto" />
+          <BButton
           variant="primary"
           @click="showAddModal = true"
         >
           <i class="bi bi-patch-plus"></i>
         </BButton>
-      </div>
+      </BInputGroup>
     </div>
     <div class="list-group">
       <div
