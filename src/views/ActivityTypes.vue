@@ -63,7 +63,7 @@
         </div>
         <div class="mb-3">
           <label for="addDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
-          <BFormInput type="text" id="addDescription" rows="3" v-model="newDescription" :state="newDescription.trim() ? null : false" required />
+          <BFormTextarea id="addDescription" rows="3" v-model="newDescription" :state="newDescription.trim() ? null : false" required />
           <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
@@ -79,7 +79,7 @@
         </div>
         <div class="mb-3">
           <label for="editDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
-          <BFormInput type="text" id="editDescription" v-model="editDescription" :state="editDescription.trim() ? null : false" required />
+          <BFormTextarea type="text" id="editDescription" v-model="editDescription" :state="editDescription.trim() ? null : false" required />
           <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
