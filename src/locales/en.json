@@ -10,6 +10,22 @@
     "brand": "RegistrApp",
     "logout": "Logout"
   },
+  "home": {
+    "welcome": "Welcome to RegistrApp",
+    "description": "Manage your activities, participants, and registrations with ease.",
+    "activitiesAlt": "Calendar showing scheduled activities",
+    "activitiesDescription": "Then, create an activity. You can create multiple activities using the same activity type on different dates. Easy!",
+    "viewActivities": "View Activities",
+    "activityTypesAlt": "Icons representing different activity categories",
+    "activityTypesDescription": "First, define an activity type. This could be an existing type or a new type of activity you just made up. Congratulations!",
+    "viewActivityTypes": "View Activity Types",
+    "participantsAlt": "Group of people representing participants",
+    "participantsDescription": "Manage participant information and details. Add them, remove them, do whatever you want. Well, not entirely. Be a little bit cautious.",
+    "viewParticipants": "View Participants",
+    "registrationsAlt": "Checklist showing completed registrations",
+    "registrationsDescription": "Finaly, go to the activity and manage the registrations for your activity on that date and time. Just search for the participant and mark him or her as present. If only life itself was this convenient!",
+    "viewRegistrations": "View Registrations"
+  },
   "common": {
     "invalidEmail": "Please enter a valid email address.",
     "recoveryEmailSent": "Recovery email sent. Check your inbox."
@@ -88,19 +104,6 @@
     "title": "404 - Page Not Found",
     "message": "The page you are looking for does not exist.",
     "goHome": "Go Home"
-  },
-  "helloWorld": {
-    "welcome": "Welcome to Your Vue.js + TypeScript App",
-    "count": "count is",
-    "edit": "Edit",
-    "components": "components/HelloWorld.vue",
-    "hmr": "to test HMR",
-    "checkOut": "Check out",
-    "createVue": "create-vue",
-    "starter": "the official Vue + Vite starter",
-    "learnMore": "Learn more about IDE Support for Vue in the",
-    "vueDocs": "Vue Docs Scaling up Guide",
-    "clickLogos": "Click on the Vite and Vue logos to learn more"
   },
   "language": {
     "switchToEn": "English",

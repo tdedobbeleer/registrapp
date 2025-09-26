@@ -10,6 +10,22 @@
     "brand": "RegistrApp",
     "logout": "Uitloggen"
   },
+  "home": {
+    "welcome": "Welkom bij RegistrApp",
+    "description": "Beheer uw activiteiten, deelnemers en registraties met gemak.",
+    "activitiesAlt": "Kalender met geplande activiteiten",
+    "activitiesDescription": "Maak nadien een activiteit aan. Je kan meerdere activiteiten maken met hetzelfde activiteitstype op verschillende datums. Gemakkelijk!",
+    "viewActivities": "Activiteiten bekijken",
+    "activityTypesAlt": "Iconen die verschillende activiteitscategorieën vertegenwoordigen",
+    "activityTypesDescription": "Definieer eerst een activiteitstype. Dit kan een bestaand type of een nieuw type activiteit zijn dat je net hebt bedacht. Gefeliciteerd zeg.",
+    "viewActivityTypes": "Activiteitstypen bekijken",
+    "participantsAlt": "Groep mensen die deelnemers vertegenwoordigen",
+    "participantsDescription": "Beheer deelnemer informatie en details. Voeg ze toe, verwijder ze, doe wat je wilt. Nou ja, niet helemaal. Wees een beetje voorzichtig.",
+    "viewParticipants": "Deelnemers bekijken",
+    "registrationsAlt": "Checklist met voltooide registraties",
+    "registrationsDescription": "Ga tenslotte naar de activiteit en beheer de registraties voor jouw activiteit op een specifiek moment. Zoek gewoon naar de deelnemer en markeer hem of haar als aanwezig. Als het leven zelf maar zo gemakkelijk was!",
+    "viewRegistrations": "Registraties bekijken"
+  },
   "common": {
     "invalidEmail": "Voer een geldig e-mailadres in.",
     "recoveryEmailSent": "Herstel e-mail verzonden. Controleer je inbox."
@@ -88,19 +104,6 @@
     "title": "404 - Pagina Niet Gevonden",
     "message": "De pagina die je zoekt bestaat niet.",
     "goHome": "Ga naar Home"
-  },
-  "helloWorld": {
-    "welcome": "Welkom bij Uw Vue.js + TypeScript App",
-    "count": "telling is",
-    "edit": "Bewerk",
-    "components": "components/HelloWorld.vue",
-    "hmr": "om HMR te testen",
-    "checkOut": "Bekijk",
-    "createVue": "create-vue",
-    "starter": "de officiële Vue + Vite starter",
-    "learnMore": "Leer meer over IDE-ondersteuning voor Vue in de",
-    "vueDocs": "Vue Docs Scaling up Guide",
-    "clickLogos": "Klik op de Vite en Vue logo's om meer te leren"
   },
   "language": {
     "switchToEn": "English",

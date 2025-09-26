@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import PasswordRecovery from '../views/PasswordRecovery.vue'
+import Home from '../views/Home.vue'
 import ActivityTypes from '../views/ActivityTypes.vue'
 import Activities from '../views/Activities.vue'
 import Participants from '../views/Participants.vue'
@@ -18,6 +19,12 @@ const routes = [
     path: '/password-recovery',
     name: 'PasswordRecovery',
     component: PasswordRecovery
+  },
+  {
+    path: '/',
+    name: 'Home',
+    component: Home,
+    meta: { requiresAuth: true }
   },
   {
     path: '/activity_types',
@@ -48,10 +55,6 @@ const routes = [
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFound
-  },
-  {
-    path: '/',
-    redirect: '/activities'
   }
 ]
 
