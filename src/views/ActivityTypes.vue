@@ -98,9 +98,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../supabase'
 import type { ActivityType } from '../types'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')
