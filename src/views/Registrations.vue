@@ -23,6 +23,9 @@
         <BDropdownItem @click="sortBy = 'last_name'">{{ $t('registrations.lastName') }}</BDropdownItem>
         <BDropdownItem @click="sortBy = 'registered'">{{ $t('registrations.registered') }}</BDropdownItem>
       </BDropdown>
+      <BButton variant="primary" @click="openAddModal">
+        <i class="bi bi-person-fill-add"></i> {{ $t('participants.addParticipant') }}
+      </BButton>
     </div>
     <div class="list-group">
       <div
@@ -31,7 +34,7 @@
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <div>
-          <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
+          <strong @click="openEditModal(participant)" style="cursor: pointer;">{{ participant.first_name }} {{ participant.last_name }}</strong>
         </div>
         <BFormCheckbox
           switch
@@ -49,6 +52,14 @@
       :per-page="perPage"
       class="mt-3"
     />
+
+    <ParticipantModal
+      v-model="showModal"
+      :mode="modalMode"
+      :participant="editingParticipant"
+      :loading="loading"
+      @submit="handleModalSubmit"
+    />
   </div>
 </template>
 
@@ -56,6 +67,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { supabase } from '../supabase'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
+import ParticipantModal from '../components/ParticipantModal.vue'
 
 interface Props {
   activityId: string
@@ -71,6 +83,10 @@ const currentPage = ref(1)
 const perPage = 10
 const searchTerm = ref('')
 const sortBy = ref('last_name')
+const showModal = ref(false)
+const modalMode = ref<'add' | 'edit'>('add')
+const editingParticipant = ref<Participant | null>(null)
+const loading = ref(false)
 
 const paginatedParticipants = computed(() => {
   const start = (currentPage.value - 1) * perPage
@@ -193,6 +209,55 @@ const toggleRegistration = async (participantId: string, event : Event) => {
       registrations.value.push(data[0])
     }
   }
+}
+
+const openAddModal = () => {
+  modalMode.value = 'add'
+  editingParticipant.value = null
+  showModal.value = true
+}
+
+const openEditModal = (participant: Participant) => {
+  modalMode.value = 'edit'
+  editingParticipant.value = participant
+  showModal.value = true
+}
+
+const handleModalSubmit = async (data: { firstName: string; lastName: string }) => {
+  if (modalMode.value === 'add') {
+    await addParticipant(data.firstName, data.lastName)
+  } else if (editingParticipant.value) {
+    await updateParticipant(editingParticipant.value.id, data.firstName, data.lastName)
+  }
+}
+
+const addParticipant = async (firstName: string, lastName: string) => {
+  loading.value = true
+  const { error } = await supabase
+    .from('participants')
+    .insert([{ first_name: firstName, last_name: lastName }])
+  if (error) {
+    console.error('Error adding participant:', error)
+  } else {
+    fetchParticipants()
+    showModal.value = false
+  }
+  loading.value = false
+}
+
+const updateParticipant = async (id: string, firstName: string, lastName: string) => {
+  loading.value = true
+  const { error } = await supabase
+    .from('participants')
+    .update({ first_name: firstName, last_name: lastName })
+    .eq('id', id)
+  if (error) {
+    console.error('Error updating participant:', error)
+  } else {
+    fetchParticipants()
+    showModal.value = false
+  }
+  loading.value = false
 }
 
 onMounted(() => {

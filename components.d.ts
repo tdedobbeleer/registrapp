@@ -32,6 +32,7 @@ declare module 'vue' {
     BNavItem: typeof import('bootstrap-vue-next/components/BNav')['BNavItem']
     BPagination: typeof import('bootstrap-vue-next/components/BPagination')['BPagination']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    ParticipantModal: typeof import('./src/components/ParticipantModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
