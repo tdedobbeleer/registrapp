@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
-const { t } = useI18n()
+
 </script>
 
 <template>

@@ -95,9 +95,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../supabase'
 import type { Participant } from '../types'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const participants = ref<Participant[]>([])
 const searchTerm = ref('')
