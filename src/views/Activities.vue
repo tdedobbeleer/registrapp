@@ -23,7 +23,7 @@
         <div class="p-2">
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
           <br />
-          <small class="text-muted">{{ formatDate(activity.date) }}</small>
+          <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
         </div>
         <div class="p-2">
           <BButtonGroup>

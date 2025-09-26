@@ -28,7 +28,8 @@
   },
   "common": {
     "invalidEmail": "Voer een geldig e-mailadres in.",
-    "recoveryEmailSent": "Herstel e-mail verzonden. Controleer je inbox."
+    "recoveryEmailSent": "Herstel e-mail verzonden. Controleer je inbox.",
+    "changed": "Gewijzigd op"
   },
   "login": {
     "title": "Inloggen",

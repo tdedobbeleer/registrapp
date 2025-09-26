@@ -26,7 +26,7 @@
         <div class="p-1">
           <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
           <br />
-          <small class="text-muted">{{ formatDate(participant.created_at) }}</small>
+          <small class="text-muted">{{ $t('common.changed') }}: {{ formatDate(participant.created_at) }}</small>
         </div>
         <div>
           <BButtonGroup>

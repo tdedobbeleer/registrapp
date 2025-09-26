@@ -28,7 +28,8 @@
   },
   "common": {
     "invalidEmail": "Please enter a valid email address.",
-    "recoveryEmailSent": "Recovery email sent. Check your inbox."
+    "recoveryEmailSent": "Recovery email sent. Check your inbox.",
+    "changed": "Changed on"
   },
   "login": {
     "title": "Login",

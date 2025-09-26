@@ -25,7 +25,7 @@
         <div class="p-2">
           <strong>{{ activityType.name }}</strong>
           <br />
-          <small class="text-muted">{{ formatDate(activityType.created_at) }}</small>
+          <small class="text-muted">{{ $t('common.changed') }}: {{ formatDate(activityType.created_at) }}</small>
         </div>
         <div class="p-2">
           <p>{{ activityType.description }}</p>
