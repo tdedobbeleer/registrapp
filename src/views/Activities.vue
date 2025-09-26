@@ -20,20 +20,20 @@
         :key="activity.id"
         class="p-2 list-group-item d-flex justify-content-between align-items-center"
       >
-        <div class="p-2">
+        <div class="p-2" style="cursor: pointer;" @click="$router.push(`/registrations/${activity.id}`)" :title="$t('activities.registrations')">
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
           <br />
           <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
         </div>
         <div class="p-2">
           <BButtonGroup>
-            <BButton size="sm" :title="$t('activities.registrations')" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
+            <BButton size="md" :title="$t('activities.registrations')" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
               <i class="bi bi-list-check"></i>
             </BButton>
-            <BButton :title="$t('activities.edit')" size="sm" variant="outline-secondary" @click="openEditModal(activity)">
+            <BButton :title="$t('activities.edit')" size="md" variant="outline-secondary" @click="openEditModal(activity)">
               <i class="bi bi-pen"></i>
             </BButton>
-            <BButton :title="$t('activities.delete')" size="sm" variant="outline-danger" @click="openDeleteModal(activity.id)">
+            <BButton :title="$t('activities.delete')" size="md" variant="outline-danger" @click="openDeleteModal(activity.id)">
               <i class="bi bi-trash"></i>
             </BButton>
           </BButtonGroup>

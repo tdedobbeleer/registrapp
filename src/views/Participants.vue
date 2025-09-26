@@ -31,7 +31,7 @@
         <div>
           <BButtonGroup>
             <BButton
-              size="sm"
+              size="md"
               :title="$t('participants.edit')"
               variant="outline-secondary"
               @click="openEditModal(participant)"
@@ -40,7 +40,7 @@
             </BButton>
             <BButton
               :title="$t('participants.delete')"
-              size="sm"
+              size="md"
               variant="outline-danger"
               @click="openDeleteModal(participant.id)"
             >

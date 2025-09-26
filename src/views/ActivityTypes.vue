@@ -33,7 +33,7 @@
         <div class="p-2">
           <BButtonGroup>
           <BButton
-            size="sm"
+            size="md"
             variant="outline-secondary"
             :title="$t('activityTypes.edit')"
             @click="openEditModal(activityType)"
@@ -41,7 +41,7 @@
             <i class="bi bi-pen"></i>
           </BButton>
           <BButton
-            size="sm"
+            size="md"
             variant="outline-danger"
             :title="$t('activityTypes.remove')"
             @click="openDeleteModal(activityType.id)"
