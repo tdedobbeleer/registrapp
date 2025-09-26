@@ -4,12 +4,12 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <h3>Password Recovery</h3>
+            <h3>{{ $t('passwordRecovery.title') }}</h3>
           </div>
           <div class="card-body">
             <form @submit.prevent="handlePasswordRecovery">
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{{ $t('passwordRecovery.email') }}</label>
                 <input
                   type="email"
                   class="form-control"
@@ -21,11 +21,11 @@
                 <div v-if="emailError" class="text-danger">{{ emailError }}</div>
               </div>
               <button type="submit" class="btn btn-primary w-100" :disabled="loading || !emailValid">
-                {{ loading ? 'Sending...' : 'Send Recovery Email' }}
+                {{ loading ? $t('passwordRecovery.sending') : $t('passwordRecovery.sendRecoveryEmail') }}
               </button>
             </form>
             <div class="mt-3 text-center">
-              <router-link to="/login" class="text-decoration-none">Back to Login</router-link>
+              <router-link to="/login" class="text-decoration-none">{{ $t('passwordRecovery.backToLogin') }}</router-link>
             </div>
           </div>
         </div>
@@ -40,6 +40,9 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
 import { useEmailValidation } from '../composables/useEmailValidation'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const email = ref('')
 const loading = ref(false)
@@ -51,7 +54,7 @@ const { emailValid, emailError } = useEmailValidation(email)
 const handlePasswordRecovery = async () => {
   email.value = email.value.trim()
   if (!emailValid.value) {
-    error.value = 'Please enter a valid email address.'
+    error.value = t('common.invalidEmail')
     return
   }
   loading.value = true
@@ -62,7 +65,7 @@ const handlePasswordRecovery = async () => {
       redirectTo: `${window.location.origin}/reset-password`, // Adjust as needed
     })
     if (resetError) throw resetError
-    message.value = 'Recovery email sent. Check your inbox.'
+    message.value = t('common.recoveryEmailSent')
   } catch (err: any) {
     error.value = err.message
   } finally {

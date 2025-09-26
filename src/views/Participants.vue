@@ -1,13 +1,13 @@
 <template>
   <div class="container mt-5">
     <BBreadcrumb>
-      <BBreadcrumbItem to="/">Home</BBreadcrumbItem>
-      <BBreadcrumbItem active>Participants</BBreadcrumbItem>
+      <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
+      <BBreadcrumbItem active>{{ $t('participants.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>Participants</h1>
+    <h1>{{ $t('participants.title') }}</h1>
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="col d-flex p-1 align-items-center">
-        <BFormInput type="text" v-model="searchTerm" placeholder="Search participants..." class="w-auto" />
+        <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
       </div>
       <div class="col">
         <BButton
@@ -33,14 +33,14 @@
           <BButtonGroup>
             <BButton
               size="sm"
-              title="Edit"
+              :title="$t('participants.edit')"
               variant="outline-secondary"
               @click="openEditModal(participant)"
             >
               <i class="bi bi-pen"></i>
             </BButton>
             <BButton
-              title="Delete"
+              :title="$t('participants.delete')"
               size="sm"
               variant="outline-danger"
               @click="openDeleteModal(participant.id)"
@@ -53,40 +53,40 @@
     </div>
 
     <!-- Add Modal -->
-    <BModal v-model="showAddModal" title="Add Participant" @ok="addParticipant" ok-title="Add" cancel-title="Cancel" :ok-disabled="loading || !isAddFormValid">
+    <BModal v-model="showAddModal" :title="$t('participants.addParticipant')" @ok="addParticipant" :ok-title="$t('participants.addParticipant')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isAddFormValid">
       <BForm @submit.prevent="addParticipant">
         <div class="mb-3">
-          <label for="addFirstName" class="form-label">First Name</label>
+          <label for="addFirstName" class="form-label">{{ $t('participants.firstName') }}</label>
           <BFormInput type="text" id="addFirstName" v-model="newFirstName" :state="newFirstName.trim() ? null : false" required />
-          <BFormInvalidFeedback>First name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('participants.firstNameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="addLastName" class="form-label">Last Name</label>
+          <label for="addLastName" class="form-label">{{ $t('participants.lastName') }}</label>
           <BFormInput type="text" id="addLastName" v-model="newLastName" :state="newLastName.trim() ? null : false" required />
-          <BFormInvalidFeedback>Last name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('participants.lastNameRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Edit Modal -->
-    <BModal v-model="showEditModal" title="Edit Participant" @ok.prevent="updateParticipant" ok-title="Update" cancel-title="Cancel" :ok-disabled="loading || !isEditFormValid">
+    <BModal v-model="showEditModal" :title="$t('participants.editParticipant')" @ok.prevent="updateParticipant" :ok-title="$t('participants.edit')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isEditFormValid">
       <BForm @submit.prevent="updateParticipant">
         <div class="mb-3">
-          <label for="editFirstName" class="form-label">First Name</label>
+          <label for="editFirstName" class="form-label">{{ $t('participants.firstName') }}</label>
           <BFormInput type="text" id="editFirstName" v-model="editFirstName" :state="editFirstName.trim() ? null : false" required />
-          <BFormInvalidFeedback>First name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('participants.firstNameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="editLastName" class="form-label">Last Name</label>
+          <label for="editLastName" class="form-label">{{ $t('participants.lastName') }}</label>
           <BFormInput type="text" id="editLastName" v-model="editLastName" :state="editLastName.trim() ? null : false" required />
-          <BFormInvalidFeedback>Last name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('participants.lastNameRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" title="Confirm Delete" @ok="deleteParticipant" ok-title="Delete" cancel-title="Cancel" ok-variant="danger">
-      <p>Do you want to remove the participant?</p>
+    <BModal v-model="showDeleteModal" :title="$t('participants.confirmDelete')" @ok="deleteParticipant" :ok-title="$t('participants.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
+      <p>{{ $t('participants.deleteMessage') }}</p>
     </BModal>
   </div>
 </template>
@@ -95,6 +95,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../supabase'
 import type { Participant } from '../types'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const participants = ref<Participant[]>([])
 const searchTerm = ref('')

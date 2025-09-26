@@ -4,12 +4,12 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <h3>Login</h3>
+            <h3>{{ $t('login.title') }}</h3>
           </div>
           <div class="card-body">
             <form @submit.prevent="handleLogin">
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{{ $t('login.email') }}</label>
                 <input
                   type="email"
                   class="form-control"
@@ -21,7 +21,7 @@
                 <div v-if="emailError" class="text-danger">{{ emailError }}</div>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">{{ $t('login.password') }}</label>
                 <input
                   type="password"
                   class="form-control"
@@ -31,11 +31,11 @@
                 />
               </div>
               <button type="submit" class="btn btn-primary w-100" :disabled="loading || !emailValid">
-                {{ loading ? 'Logging in...' : 'Login' }}
+                {{ loading ? $t('login.loggingIn') : $t('login.login') }}
               </button>
             </form>
             <div class="mt-3 text-center">
-              <router-link to="/password-recovery" class="text-decoration-none">Forgot Password?</router-link>
+              <router-link to="/password-recovery" class="text-decoration-none">{{ $t('login.forgotPassword') }}</router-link>
             </div>
           </div>
         </div>
@@ -50,6 +50,9 @@ import { ref } from 'vue'
 import { supabase } from '../supabase'
 import { useRouter } from 'vue-router'
 import { useEmailValidation } from '../composables/useEmailValidation'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const email = ref('')
@@ -62,7 +65,7 @@ const { emailValid, emailError } = useEmailValidation(email)
 const handleLogin = async () => {
   email.value = email.value.trim()
   if (!emailValid.value) {
-    error.value = 'Please enter a valid email address.'
+    error.value = t('common.invalidEmail')
     return
   }
   loading.value = true

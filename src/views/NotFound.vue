@@ -1,17 +1,19 @@
 <template>
   <div class="container mt-5 text-center">
     <BBreadcrumb>
-      <BBreadcrumbItem to="/">Home</BBreadcrumbItem>
+      <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
       <BBreadcrumbItem active>404</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>404 - Page Not Found</h1>
-    <p>The page you are looking for does not exist.</p>
-    <BButton variant="primary" to="/">Go Home</BButton>
+    <h1>{{ $t('notFound.title') }}</h1>
+    <p>{{ $t('notFound.message') }}</p>
+    <BButton variant="primary" to="/">{{ $t('notFound.goHome') }}</BButton>
   </div>
 </template>
 
 <script setup lang="ts">
-// No script needed
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>
 
 <style scoped>

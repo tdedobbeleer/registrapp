@@ -1,20 +1,25 @@
 <template>
   <BApp>
     <BNavbar v-if="user" toggleable="lg" type="light" variant="primary" class="mb-3">
-      <BNavbarBrand to="/">RegistrApp</BNavbarBrand>
+      <BNavbarBrand to="/">{{ $t('app.brand') }}</BNavbarBrand>
       <BNavbarToggle target="nav-collapse" />
       <BCollapse id="nav-collapse" is-nav>
         <BNavbarNav>
-          <BNavItem to="/activities">Activities</BNavItem>
-          <BNavItem to="/activity_types">Activity Types</BNavItem>
-          <BNavItem to="/participants">Participants</BNavItem>
+          <BNavItem to="/activities">{{ $t('nav.activities') }}</BNavItem>
+          <BNavItem to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
+          <BNavItem to="/participants">{{ $t('nav.participants') }}</BNavItem>
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
-          <BDropdown>
-            <template #button-content> <i class="bi bi-person-fill-check"></i><span class="visually-hidden">User</span> </template>
-            <BDropdownItemButton>{{ user.email }}</BDropdownItemButton>
-            <BDropdownItemButton @click="logout">Logout</BDropdownItemButton>
-          </BDropdown>
+          <BButtonGroup>
+            <BDropdown>
+              <template #button-content> <i class="bi bi-person-fill-check"></i><span class="visually-hidden">User</span> </template>
+              <BDropdownItemButton>{{ user.email }}</BDropdownItemButton>
+              <BDropdownItemButton @click="logout">{{ $t('app.logout') }}</BDropdownItemButton>
+            </BDropdown>
+              <BButton variant="secondary" @click="locale = locale === 'nl' ? 'en' : 'nl'">
+                {{ locale === 'nl' ? $t('language.switchToEn') : $t('language.switchToNl') }}
+            </BButton>
+          </BButtonGroup>
         </BNavbarNav>
       </BCollapse>
     </BNavbar>
@@ -28,9 +33,11 @@ import { supabase } from './supabase'
 import { useRouter } from 'vue-router'
 import { BApp } from 'bootstrap-vue-next'
 import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
+import { useI18n } from 'vue-i18n'
 
 const user = ref<User | null>(null)
 const router = useRouter()
+const { locale } = useI18n()
 
 const logout = async () => {
   await supabase.auth.signOut()

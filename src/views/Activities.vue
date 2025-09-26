@@ -1,16 +1,16 @@
 <template>
   <div class="container mt-5">
     <BBreadcrumb>
-      <BBreadcrumbItem to="/">Home</BBreadcrumbItem>
-      <BBreadcrumbItem active>Activities</BBreadcrumbItem>
+      <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
+      <BBreadcrumbItem active>{{ $t('activities.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>Activities</h1>
+    <h1>{{ $t('activities.title') }}</h1>
     <div class="row d-flex justify-content-between align-items-center mb-3">
       <div class="col d-flex p-1 align-items-center">
         <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" placeholder="Filter by Activity Type" class="w-auto" />
       </div>
       <div class="col d-flex p-1 align-items-center">
-        <BFormInput type="date" v-model="filterDate" placeholder="Filter by Date" class="w-auto" />
+        <BFormInput type="date" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
       </div>
     <div class="col">
       <BButton variant="primary" @click="showAddModal = true">
@@ -31,13 +31,13 @@
         </div>
         <div class="p-2">
           <BButtonGroup>
-            <BButton size="sm" title="registrations" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
+            <BButton size="sm" :title="$t('activities.registrations')" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
               <i class="bi bi-list-check"></i>
             </BButton>
-            <BButton title="Edit" size="sm" variant="outline-secondary" @click="openEditModal(activity)">
+            <BButton :title="$t('activities.edit')" size="sm" variant="outline-secondary" @click="openEditModal(activity)">
               <i class="bi bi-pen"></i>
             </BButton>
-            <BButton title="Delete" size="sm" variant="outline-danger" @click="openDeleteModal(activity.id)">
+            <BButton :title="$t('activities.delete')" size="sm" variant="outline-danger" @click="openDeleteModal(activity.id)">
               <i class="bi bi-trash"></i>
             </BButton>
           </BButtonGroup>
@@ -46,40 +46,40 @@
     </div>
 
     <!-- Add Modal -->
-    <BModal v-model="showAddModal" title="Add Activity" @ok="addActivity" ok-title="Add" cancel-title="Cancel" :ok-disabled="loading || !isAddFormValid">
+    <BModal v-model="showAddModal" :title="$t('activities.addActivity')" @ok="addActivity" :ok-title="$t('activities.addActivity')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isAddFormValid">
       <BForm @submit.prevent="addActivity">
         <div class="mb-3">
-          <label for="addActivityType" class="form-label">Activity Type</label>
+          <label for="addActivityType" class="form-label">{{ $t('activities.activityType') }}</label>
           <BFormSelect id="addActivityType" v-model="newActivityTypeId" :options="activityTypeOptions" :state="newActivityTypeId ? null : false" required />
-          <BFormInvalidFeedback>Activity type is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activities.activityTypeRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="addDate" class="form-label">Date</label>
+          <label for="addDate" class="form-label">{{ $t('activities.date') }}</label>
           <BFormInput type="datetime-local" id="addDate" v-model="newDate" :state="newDate ? null : false" required />
-          <BFormInvalidFeedback>Date is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activities.dateRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Edit Modal -->
-    <BModal v-model="showEditModal" title="Edit Activity" @ok.prevent="updateActivity" ok-title="Update" cancel-title="Cancel" :ok-disabled="loading || !isEditFormValid">
+    <BModal v-model="showEditModal" :title="$t('activities.editActivity')" @ok.prevent="updateActivity" :ok-title="$t('activities.edit')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isEditFormValid">
       <BForm @submit.prevent="updateActivity">
         <div class="mb-3">
-          <label for="editActivityType" class="form-label">Activity Type</label>
+          <label for="editActivityType" class="form-label">{{ $t('activities.activityType') }}</label>
           <BFormSelect id="editActivityType" v-model="editActivityTypeId" :options="activityTypeOptions" :state="editActivityTypeId ? null : false" required />
-          <BFormInvalidFeedback>Activity type is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activities.activityTypeRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="editDate" class="form-label">Date</label>
+          <label for="editDate" class="form-label">{{ $t('activities.date') }}</label>
           <BFormInput type="datetime-local" id="editDate" v-model="editDate" :state="editDate ? null : false" required />
-          <BFormInvalidFeedback>Date is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activities.dateRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" title="Confirm Delete" @ok="deleteActivity" ok-title="Delete" cancel-title="Cancel" ok-variant="danger">
-      <p>Do you want to remove the activity?</p>
+    <BModal v-model="showDeleteModal" :title="$t('activities.confirmDelete')" @ok="deleteActivity" :ok-title="$t('activities.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
+      <p>{{ $t('activities.deleteMessage') }}</p>
     </BModal>
   </div>
 </template>
@@ -88,6 +88,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../supabase'
 import type { Activity, ActivityType } from '../types'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const activities = ref<Activity[]>([])
 const activityTypes = ref<ActivityType[]>([])
@@ -105,7 +108,7 @@ const showDeleteModal = ref(false)
 const deleteId = ref('')
 
 const activityTypeOptions = computed(() => [
-  { value: '', text: 'All Activity Types' },
+  { value: '', text: t('activities.filterByActivityType') },
   ...activityTypes.value.map(at => ({ value: at.id, text: at.name }))
 ])
 

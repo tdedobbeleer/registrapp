@@ -1,13 +1,13 @@
 <template>
   <div class="container mt-5">
     <BBreadcrumb>
-      <BBreadcrumbItem to="/">Home</BBreadcrumbItem>
-      <BBreadcrumbItem active>Activity Types</BBreadcrumbItem>
+      <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
+      <BBreadcrumbItem active>{{ $t('activityTypes.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>Activity Types</h1>
+    <h1>{{ $t('activityTypes.title') }}</h1>
     <div class="row d-flex justify-content-between align-items-center mb-3">
       <div class="col d-flex p-1 align-items-center">
-        <BFormInput type="text" v-model="searchTerm" placeholder="Search activity types..." class="w-auto" />
+        <BFormInput type="text" v-model="searchTerm" :placeholder="$t('activityTypes.searchPlaceholder')" class="w-auto" />
       </div>
       <div class="col d-flex p-1">
         <BButton
@@ -37,7 +37,7 @@
           <BButton
             size="sm"
             variant="outline-secondary"
-            title="Edit"
+            :title="$t('activityTypes.edit')"
             @click="openEditModal(activityType)"
           >
             <i class="bi bi-pen"></i>
@@ -45,7 +45,7 @@
           <BButton
             size="sm"
             variant="outline-danger"
-            title="Remove"
+            :title="$t('activityTypes.remove')"
             @click="openDeleteModal(activityType.id)"
           >
             <i class="bi bi-trash"></i>
@@ -56,40 +56,40 @@
     </div>
 
     <!-- Add Modal -->
-    <BModal v-model="showAddModal" title="Add Activity Type" @ok="addActivity" ok-title="Add" cancel-title="Cancel" :ok-disabled="loading || !isAddFormValid">
+    <BModal v-model="showAddModal" :title="$t('activityTypes.addActivityType')" @ok="addActivity" :ok-title="$t('activityTypes.addActivityType')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isAddFormValid">
       <BForm @submit.prevent="addActivity">
         <div class="mb-3">
-          <label for="addName" class="form-label">Name</label>
+          <label for="addName" class="form-label">{{ $t('activityTypes.name') }}</label>
           <BFormInput type="text" id="addName" v-model="newName" :state="newName.trim() ? null : false" required />
-          <BFormInvalidFeedback>Name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="addDescription" class="form-label">Description</label>
+          <label for="addDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
           <BFormInput type="text" id="addDescription" rows="3" v-model="newDescription" :state="newDescription.trim() ? null : false" required />
-          <BFormInvalidFeedback>Description is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Edit Modal -->
-    <BModal v-model="showEditModal" title="Edit Activity Type" @ok.prevent="updateActivity" ok-title="Update" cancel-title="Cancel" :ok-disabled="loading || !isEditFormValid">
+    <BModal v-model="showEditModal" :title="$t('activityTypes.editActivityType')" @ok.prevent="updateActivity" :ok-title="$t('activityTypes.edit')" :cancel-title="$t('activities.cancel')" :ok-disabled="loading || !isEditFormValid">
       <BForm @submit.prevent="updateActivity">
         <div class="mb-3">
-          <label for="editName" class="form-label">Name</label>
+          <label for="editName" class="form-label">{{ $t('activityTypes.name') }}</label>
           <BFormInput type="text" id="editName" v-model="editName" :state="editName.trim() ? null : false" required />
-          <BFormInvalidFeedback>Name is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
-          <label for="editDescription" class="form-label">Description</label>
+          <label for="editDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
           <BFormInput type="text" id="editDescription" v-model="editDescription" :state="editDescription.trim() ? null : false" required />
-          <BFormInvalidFeedback>Description is required</BFormInvalidFeedback>
+          <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" title="Confirm Delete" @ok="deleteActivity" ok-title="Delete" cancel-title="Cancel" ok-variant="danger">
-      <p>Do you want to remove the activity type?</p>
+    <BModal v-model="showDeleteModal" :title="$t('activityTypes.confirmDelete')" @ok="deleteActivity" :ok-title="$t('activityTypes.remove')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
+      <p>{{ $t('activityTypes.deleteMessage') }}</p>
     </BModal>
   </div>
 </template>
@@ -98,6 +98,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { supabase } from '../supabase'
 import type { ActivityType } from '../types'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')

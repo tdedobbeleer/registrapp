@@ -1,27 +1,27 @@
 <template>
   <div class="container mt-5">
     <BBreadcrumb>
-      <BBreadcrumbItem to="/">Home</BBreadcrumbItem>
-      <BBreadcrumbItem to="/activities">Activities</BBreadcrumbItem>
-      <BBreadcrumbItem active>Registrations</BBreadcrumbItem>
+      <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
+      <BBreadcrumbItem to="/activities">{{ $t('nav.activities') }}</BBreadcrumbItem>
+      <BBreadcrumbItem active>{{ $t('nav.registrations') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>Registrations</h1>
+    <h1>{{ $t('registrations.title') }}</h1>
     <div v-if="activity" class="mb-3">
-      <h4>Activity: {{ getActivityTypeName(activity.activity_type_id) }} - {{ formatDate(activity.date) }}&nbsp;<BBadge variant="success">{{registrationCount}}</BBadge></h4>
+      <h4>{{ $t('registrations.activity') }}: {{ getActivityTypeName(activity.activity_type_id) }} - {{ formatDate(activity.date) }}&nbsp;<BBadge variant="success">{{registrationCount}}</BBadge></h4>
     </div>
     <div class="mb-3">
       <BInputGroup class="mt-3">
         <template #prepend>
           <BInputGroupText><i class="bi bi-search-heart"></i></BInputGroupText>
         </template>
-        <BFormInput v-model="searchTerm" placeholder="Filter participants by first or last name" ></BFormInput>
+        <BFormInput v-model="searchTerm" :placeholder="$t('registrations.filterPlaceholder')" ></BFormInput>
       </BInputGroup>
     </div>
-    <div class="mb-3">
-      <BDropdown text="Sort by">
-        <BDropdownItem @click="sortBy = 'first_name'">First Name</BDropdownItem>
-        <BDropdownItem @click="sortBy = 'last_name'">Last Name</BDropdownItem>
-        <BDropdownItem @click="sortBy = 'registered'">Registered</BDropdownItem>
+    <div class="mb-3 d-flex gap-2">
+      <BDropdown :text="$t('registrations.sortBy')">
+        <BDropdownItem @click="sortBy = 'first_name'">{{ $t('registrations.firstName') }}</BDropdownItem>
+        <BDropdownItem @click="sortBy = 'last_name'">{{ $t('registrations.lastName') }}</BDropdownItem>
+        <BDropdownItem @click="sortBy = 'registered'">{{ $t('registrations.registered') }}</BDropdownItem>
       </BDropdown>
     </div>
     <div class="list-group">

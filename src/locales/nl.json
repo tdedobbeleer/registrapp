@@ -1,0 +1,109 @@
+{
+  "nav": {
+    "home": "Home",
+    "activities": "Activiteiten",
+    "activityTypes": "Activiteitstypen",
+    "participants": "Deelnemers",
+    "registrations": "Registraties"
+  },
+  "app": {
+    "brand": "RegistrApp",
+    "logout": "Uitloggen"
+  },
+  "common": {
+    "invalidEmail": "Voer een geldig e-mailadres in.",
+    "recoveryEmailSent": "Herstel e-mail verzonden. Controleer je inbox."
+  },
+  "login": {
+    "title": "Inloggen",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "loggingIn": "Inloggen...",
+    "login": "Inloggen",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "backToLogin": "Terug naar Inloggen"
+  },
+  "passwordRecovery": {
+    "title": "Wachtwoord Herstel",
+    "email": "E-mail",
+    "sending": "Verzenden...",
+    "sendRecoveryEmail": "Verzend Herstel E-mail",
+    "backToLogin": "Terug naar Inloggen"
+  },
+  "registrations": {
+    "title": "Registraties",
+    "activity": "Activiteit",
+    "filterPlaceholder": "Filter deelnemers op voor- of achternaam",
+    "sortBy": "Sorteren op",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "registered": "Geregistreerd"
+  },
+  "activities": {
+    "title": "Activiteiten",
+    "filterByActivityType": "Filter op Activiteitstype",
+    "filterByDate": "Filter op Datum",
+    "addActivity": "Activiteit Toevoegen",
+    "activityType": "Activiteitstype",
+    "date": "Datum",
+    "editActivity": "Activiteit Bewerken",
+    "confirmDelete": "Verwijdering Bevestigen",
+    "deleteMessage": "Wil je de activiteit verwijderen?",
+    "activityTypeRequired": "Activiteitstype is verplicht",
+    "dateRequired": "Datum is verplicht",
+    "registrations": "registraties",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "cancel": "Annuleren"
+  },
+  "activityTypes": {
+    "title": "Activiteitstypen",
+    "searchPlaceholder": "Zoek activiteitstypen...",
+    "addActivityType": "Activiteitstype Toevoegen",
+    "name": "Naam",
+    "description": "Beschrijving",
+    "editActivityType": "Activiteitstype Bewerken",
+    "confirmDelete": "Verwijdering Bevestigen",
+    "deleteMessage": "Wil je het activiteitstype verwijderen?",
+    "nameRequired": "Naam is verplicht",
+    "descriptionRequired": "Beschrijving is verplicht",
+    "edit": "Bewerken",
+    "remove": "Verwijderen"
+  },
+  "participants": {
+    "title": "Deelnemers",
+    "searchPlaceholder": "Zoek deelnemers...",
+    "addParticipant": "Deelnemer Toevoegen",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "editParticipant": "Deelnemer Bewerken",
+    "confirmDelete": "Verwijdering Bevestigen",
+    "deleteMessage": "Wil je de deelnemer verwijderen?",
+    "firstNameRequired": "Voornaam is verplicht",
+    "lastNameRequired": "Achternaam is verplicht",
+    "edit": "Bewerken",
+    "delete": "Verwijderen"
+  },
+  "notFound": {
+    "title": "404 - Pagina Niet Gevonden",
+    "message": "De pagina die je zoekt bestaat niet.",
+    "goHome": "Ga naar Home"
+  },
+  "helloWorld": {
+    "welcome": "Welkom bij Uw Vue.js + TypeScript App",
+    "count": "telling is",
+    "edit": "Bewerk",
+    "components": "components/HelloWorld.vue",
+    "hmr": "om HMR te testen",
+    "checkOut": "Bekijk",
+    "createVue": "create-vue",
+    "starter": "de officiële Vue + Vite starter",
+    "learnMore": "Leer meer over IDE-ondersteuning voor Vue in de",
+    "vueDocs": "Vue Docs Scaling up Guide",
+    "clickLogos": "Klik op de Vite en Vue logo's om meer te leren"
+  },
+  "language": {
+    "switchToEn": "English",
+    "switchToNl": "Nederlands"
+  }
+}

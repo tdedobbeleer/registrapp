@@ -1,0 +1,109 @@
+{
+  "nav": {
+    "home": "Home",
+    "activities": "Activities",
+    "activityTypes": "Activity Types",
+    "participants": "Participants",
+    "registrations": "Registrations"
+  },
+  "app": {
+    "brand": "RegistrApp",
+    "logout": "Logout"
+  },
+  "common": {
+    "invalidEmail": "Please enter a valid email address.",
+    "recoveryEmailSent": "Recovery email sent. Check your inbox."
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "login": "Login",
+    "forgotPassword": "Forgot Password?",
+    "backToLogin": "Back to Login"
+  },
+  "passwordRecovery": {
+    "title": "Password Recovery",
+    "email": "Email",
+    "sending": "Sending...",
+    "sendRecoveryEmail": "Send Recovery Email",
+    "backToLogin": "Back to Login"
+  },
+  "registrations": {
+    "title": "Registrations",
+    "activity": "Activity",
+    "filterPlaceholder": "Filter participants by first or last name",
+    "sortBy": "Sort by",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "registered": "Registered"
+  },
+  "activities": {
+    "title": "Activities",
+    "filterByActivityType": "Filter by Activity Type",
+    "filterByDate": "Filter by Date",
+    "addActivity": "Add Activity",
+    "activityType": "Activity Type",
+    "date": "Date",
+    "editActivity": "Edit Activity",
+    "confirmDelete": "Confirm Delete",
+    "deleteMessage": "Do you want to remove the activity?",
+    "activityTypeRequired": "Activity type is required",
+    "dateRequired": "Date is required",
+    "registrations": "registrations",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "activityTypes": {
+    "title": "Activity Types",
+    "searchPlaceholder": "Search activity types...",
+    "addActivityType": "Add Activity Type",
+    "name": "Name",
+    "description": "Description",
+    "editActivityType": "Edit Activity Type",
+    "confirmDelete": "Confirm Delete",
+    "deleteMessage": "Do you want to remove the activity type?",
+    "nameRequired": "Name is required",
+    "descriptionRequired": "Description is required",
+    "edit": "Edit",
+    "remove": "Remove"
+  },
+  "participants": {
+    "title": "Participants",
+    "searchPlaceholder": "Search participants...",
+    "addParticipant": "Add Participant",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "editParticipant": "Edit Participant",
+    "confirmDelete": "Confirm Delete",
+    "deleteMessage": "Do you want to remove the participant?",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "The page you are looking for does not exist.",
+    "goHome": "Go Home"
+  },
+  "helloWorld": {
+    "welcome": "Welcome to Your Vue.js + TypeScript App",
+    "count": "count is",
+    "edit": "Edit",
+    "components": "components/HelloWorld.vue",
+    "hmr": "to test HMR",
+    "checkOut": "Check out",
+    "createVue": "create-vue",
+    "starter": "the official Vue + Vite starter",
+    "learnMore": "Learn more about IDE Support for Vue in the",
+    "vueDocs": "Vue Docs Scaling up Guide",
+    "clickLogos": "Click on the Vite and Vue logos to learn more"
+  },
+  "language": {
+    "switchToEn": "English",
+    "switchToNl": "Nederlands"
+  }
+}
