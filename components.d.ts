@@ -35,6 +35,7 @@ declare module 'vue' {
     BNavbarToggle: typeof import('bootstrap-vue-next/components/BNavbar')['BNavbarToggle']
     BNavItem: typeof import('bootstrap-vue-next/components/BNav')['BNavItem']
     BPagination: typeof import('bootstrap-vue-next/components/BPagination')['BPagination']
+    BTable: typeof import('bootstrap-vue-next/components/BTable')['BTable']
     ParticipantModal: typeof import('./src/components/ParticipantModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

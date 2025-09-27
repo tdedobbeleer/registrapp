@@ -6,6 +6,7 @@ import ActivityTypes from '../views/ActivityTypes.vue'
 import Activities from '../views/Activities.vue'
 import Participants from '../views/Participants.vue'
 import Registrations from '../views/Registrations.vue'
+import Data from '../views/Data.vue'
 import NotFound from '../views/NotFound.vue'
 import { supabase } from '../supabase'
 
@@ -50,6 +51,12 @@ const routes = [
     component: Registrations,
     meta: { requiresAuth: true },
     props: true
+  },
+  {
+    path: '/data',
+    name: 'Data',
+    component: Data,
+    meta: { requiresAuth: true }
   },
   {
     path: '/:pathMatch(.*)*',

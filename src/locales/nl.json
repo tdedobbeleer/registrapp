@@ -4,7 +4,8 @@
     "activities": "Activiteiten",
     "activityTypes": "Activiteitstypen",
     "participants": "Deelnemers",
-    "registrations": "Registraties"
+    "registrations": "Registraties",
+    "data": "Gegevens"
   },
   "app": {
     "brand": "RegistrApp",
@@ -105,6 +106,21 @@
     "title": "404 - Pagina Niet Gevonden",
     "message": "De pagina die je zoekt bestaat niet.",
     "goHome": "Ga naar Home"
+  },
+  "data": {
+    "title": "Gegevens",
+    "filterByActivityType": "Filter op Activiteitstype",
+    "filterByDateRange": "Filter op Datumbereik",
+    "startDate": "Startdatum",
+    "endDate": "Einddatum",
+    "exportCsv": "Exporteren naar CSV",
+    "activityType": "Activiteitstype",
+    "date": "Datum",
+    "participant": "Deelnemer",
+    "registered": "Geregistreerd",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "registrations": "Registraties"
   },
   "language": {
     "switchToEn": "English",
