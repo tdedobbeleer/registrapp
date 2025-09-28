@@ -13,6 +13,12 @@
                 </button>
               </div>
             </div>
+              <div class="text-center">
+                <button @click="handleLogin" class="btn btn-primary w-100" :disabled="loading">
+                  {{ loading ? $t('login.loggingIn') : $t('login.login') }}
+                </button>
+              </div>
+            </div>
         </div>
         <div v-if="error" class="alert alert-danger mt-3">{{ error }}</div>
       </div>
@@ -25,8 +31,6 @@ import { login } from '../auth0'
 
 const loading = ref(false)
 const error = ref('')
-const { validateRequired } = useValidation()
-const passwordError = validateRequired(password, 'Password', true)
 
 const handleLogin = async () => {
   loading.value = true
