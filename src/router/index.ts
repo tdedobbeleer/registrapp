@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
-import PasswordRecovery from '../views/PasswordRecovery.vue'
 import Home from '../views/Home.vue'
 import ActivityTypes from '../views/ActivityTypes.vue'
 import Activities from '../views/Activities.vue'
@@ -8,18 +7,13 @@ import Participants from '../views/Participants.vue'
 import Registrations from '../views/Registrations.vue'
 import Data from '../views/Data.vue'
 import NotFound from '../views/NotFound.vue'
-import { supabase } from '../supabase'
+import { isAuthenticated } from '../auth0'
 
 const routes = [
   {
     path: '/login',
     name: 'Login',
     component: Login
-  },
-  {
-    path: '/password-recovery',
-    name: 'PasswordRecovery',
-    component: PasswordRecovery
   },
   {
     path: '/',
@@ -71,8 +65,8 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (to.meta.requiresAuth && !user) {
+  const authenticated = await isAuthenticated()
+  if (to.meta.requiresAuth && !authenticated) {
     next({ path: '/login', query: { redirect: to.path } })
   } else {
     next()
