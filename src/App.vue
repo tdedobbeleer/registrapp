@@ -43,28 +43,27 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { supabase } from './supabase'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { BApp } from 'bootstrap-vue-next'
-import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { useI18n } from 'vue-i18n'
+import { getUser, logout as auth0Logout } from './auth0'
 
-const user = ref<User | null>(null)
+const user = ref<any>(null)
 const router = useRouter()
+const route = useRoute()
 const { locale } = useI18n()
 
 const logout = async () => {
-  await supabase.auth.signOut()
+  await auth0Logout()
+  user.value = null
   router.push('/login')
 }
 
 onMounted(async () => {
-  const { data: { user: currentUser } } = await supabase.auth.getUser()
-  user.value = currentUser
-})
-
-supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-  user.value = session?.user || null
+  user.value = await getUser()
+  if (user.value && route.query.redirect) {
+    router.push(route.query.redirect as string)
+  }
 })
 </script>
 
