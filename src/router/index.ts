@@ -73,7 +73,7 @@ const router = createRouter({
 router.beforeEach(async (to, _from, next) => {
   const { data: { user } } = await supabase.auth.getUser()
   if (to.meta.requiresAuth && !user) {
-    next('/login')
+    next({ path: '/login', query: { redirect: to.path } })
   } else {
     next()
   }

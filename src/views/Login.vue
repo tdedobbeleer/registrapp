@@ -48,13 +48,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { supabase } from '../supabase'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useEmailValidation } from '../composables/useEmailValidation'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const router = useRouter()
+const route = useRoute()
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -76,8 +77,9 @@ const handleLogin = async () => {
       password: password.value,
     })
     if (authError) throw authError
-    // On success, redirect to activities
-    router.push('/activities')
+    // On success, redirect to intended location or activities
+    const redirect = route.query.redirect as string || '/activities'
+    router.push(redirect)
   } catch (err: any) {
     error.value = err.message
   } finally {

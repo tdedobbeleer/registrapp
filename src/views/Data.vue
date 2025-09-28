@@ -18,14 +18,14 @@
       </BButton>
     </div>
     <div class="table-responsive">
-      <table class="table table-striped table-hover">
+      <table id="data-table" class="table table-striped table-hover">
         <thead>
           <tr>
             <th v-for="field in fields" :key="field.key">{{ field.label }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in filteredData" :key="item.first_name + item.last_name">
+          <tr v-for="item in paginatedData" :key="item.first_name + item.last_name">
             <td v-for="field in fields" :key="field.key">
               <span v-if="field.key === 'first_name' || field.key === 'last_name'">{{ item[field.key] }}</span>
               <input v-else type="checkbox" :checked="item[field.key]" disabled />
@@ -34,6 +34,12 @@
         </tbody>
       </table>
     </div>
+    <BPagination
+      v-model="currentPage"
+      :total-rows="filteredData.length"
+      :per-page="perPage"
+      aria-controls="data-table"
+    ></BPagination>
   </div>
 </template>
 
@@ -58,6 +64,8 @@ const rawData = ref<any[]>([])
 const selectedActivityType = ref('')
 const startDate = ref('')
 const endDate = ref('')
+const currentPage = ref(1)
+const perPage = ref(10)
 
 const activityTypeOptions = computed(() => [
   { value: '', text: t('data.filterByActivityType') },
@@ -107,6 +115,12 @@ const filteredData = computed(() => {
     });
     return item;
   });
+})
+
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value
+  const end = start + perPage.value
+  return filteredData.value.slice(start, end)
 })
 
 const fetchActivityTypes = async () => {
