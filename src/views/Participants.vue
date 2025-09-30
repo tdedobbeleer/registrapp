@@ -78,7 +78,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { supabase } from '../supabase'
 import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
