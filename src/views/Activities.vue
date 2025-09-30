@@ -82,11 +82,13 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../supabase'
 import type { Activity, ActivityType } from '../types'
 import { useI18n } from 'vue-i18n'
+import { useApi } from '../composables/api'
 
 const { t } = useI18n()
+
+const { activities: apiActivities, activityTypes: apiActivityTypes } = useApi()
 
 const activities = ref<Activity[]>([])
 const activityTypes = ref<ActivityType[]>([])
@@ -132,41 +134,32 @@ const getActivityTypeName = (id: string) => {
 }
 
 const fetchActivities = async () => {
-  const { data, error } = await supabase
-    .from('activities')
-    .select('*')
-    .order('date', { ascending: false })
-  if (error) {
+  try {
+    activities.value = await apiActivities.fetch()
+  } catch (error) {
     console.error('Error fetching activities:', error)
-  } else {
-    activities.value = data || []
   }
 }
 
 const fetchActivityTypes = async () => {
-  const { data, error } = await supabase
-    .from('activity_types')
-    .select('*')
-  if (error) {
+  try {
+    activityTypes.value = await apiActivityTypes.fetch()
+  } catch (error) {
     console.error('Error fetching activity types:', error)
-  } else {
-    activityTypes.value = data || []
   }
 }
 
 const addActivity = async () => {
   if (!newActivityTypeId.value || !newDate.value) return
   loading.value = true
-  const { error } = await supabase
-    .from('activities')
-    .insert([{ activity_type_id: newActivityTypeId.value, date: newDate.value }])
-  if (error) {
-    console.error('Error adding activity:', error)
-  } else {
+  try {
+    await apiActivities.add(newActivityTypeId.value, newDate.value)
     newActivityTypeId.value = ''
     newDate.value = ''
-    fetchActivities()
+    await fetchActivities()
     showAddModal.value = false
+  } catch (error) {
+    console.error('Error adding activity:', error)
   }
   loading.value = false
 }
@@ -186,29 +179,23 @@ const openDeleteModal = (id: string) => {
 const updateActivity = async () => {
   if (!editActivityTypeId.value || !editDate.value) return
   loading.value = true
-  const { error } = await supabase
-    .from('activities')
-    .update({ activity_type_id: editActivityTypeId.value, date: editDate.value })
-    .eq('id', editingId.value)
-  if (error) {
-    console.error('Error updating activity:', error)
-  } else {
-    fetchActivities()
+  try {
+    await apiActivities.update(editingId.value, editActivityTypeId.value, editDate.value)
+    await fetchActivities()
     showEditModal.value = false
+  } catch (error) {
+    console.error('Error updating activity:', error)
   }
   loading.value = false
 }
 
 const deleteActivity = async () => {
-  const { error } = await supabase
-    .from('activities')
-    .delete()
-    .eq('id', deleteId.value)
-  if (error) {
-    console.error('Error deleting activity:', error)
-  } else {
-    fetchActivities()
+  try {
+    await apiActivities.delete(deleteId.value)
+    await fetchActivities()
     showDeleteModal.value = false
+  } catch (error) {
+    console.error('Error deleting activity:', error)
   }
 }
 

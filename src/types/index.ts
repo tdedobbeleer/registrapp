@@ -16,6 +16,14 @@ export interface Participant {
   id: string
   first_name: string
   last_name: string
+  activity_types: string[]
+  created_at: string
+}
+
+export interface ParticipantActivityType {
+  id: string
+  participant_id: string
+  activity_type_id: string
   created_at: string
 }
 

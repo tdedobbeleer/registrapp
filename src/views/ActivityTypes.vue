@@ -94,8 +94,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../supabase'
 import type { ActivityType } from '../types'
+import { useApi } from '../composables/api'
+
+const { activityTypes: apiActivityTypes } = useApi()
 
 const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')
@@ -124,31 +126,25 @@ const formatDate = (date: string) => {
   return new Date(date).toLocaleString()
 }
 
-const fetchActivities = async () => {
-  const { data, error } = await supabase
-    .from('activity_types')
-    .select('*')
-    .order('created_at', { ascending: false })
-  if (error) {
+const fetchActivityTypes = async () => {
+  try {
+    activityTypes.value = await apiActivityTypes.fetch()
+  } catch (error) {
     console.error('Error fetching activity types:', error)
-  } else {
-    activityTypes.value = data || []
   }
 }
 
 const addActivity = async () => {
   if (!newName.value.trim() || !newDescription.value.trim()) return
   loading.value = true
-  const { error } = await supabase
-    .from('activity_types')
-    .insert([{ name: newName.value, description: newDescription.value }])
-  if (error) {
-    console.error('Error adding activity:', error)
-  } else {
+  try {
+    await apiActivityTypes.add(newName.value, newDescription.value)
     newName.value = ''
     newDescription.value = ''
-    fetchActivities()
+    await fetchActivityTypes()
     showAddModal.value = false
+  } catch (error) {
+    console.error('Error adding activity type:', error)
   }
   loading.value = false
 }
@@ -168,34 +164,28 @@ const openDeleteModal = (id: string) => {
 const updateActivity = async () => {
   if (!editName.value.trim() || !editDescription.value.trim()) return
   loading.value = true
-  const { error } = await supabase
-    .from('activity_types')
-    .update({ name: editName.value, description: editDescription.value })
-    .eq('id', editingId.value)
-  if (error) {
-    console.error('Error updating activity:', error)
-  } else {
-    fetchActivities()
+  try {
+    await apiActivityTypes.update(editingId.value, editName.value, editDescription.value)
+    await fetchActivityTypes()
     showEditModal.value = false
+  } catch (error) {
+    console.error('Error updating activity type:', error)
   }
   loading.value = false
 }
 
 const deleteActivity = async () => {
-  const { error } = await supabase
-    .from('activity_types')
-    .delete()
-    .eq('id', deleteId.value)
-  if (error) {
-    console.error('Error deleting activity:', error)
-  } else {
-    fetchActivities()
+  try {
+    await apiActivityTypes.delete(deleteId.value)
+    await fetchActivityTypes()
     showDeleteModal.value = false
+  } catch (error) {
+    console.error('Error deleting activity type:', error)
   }
 }
 
 onMounted(() => {
-  fetchActivities()
+  fetchActivityTypes()
 })
 </script>
 

@@ -43,15 +43,6 @@
           </template>
         </BCard>
       </div>
-      <div class="col-md-6 col-lg-3 mb-4">
-        <BCard img-src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop" :img-alt="$t('nav.data')" img-top class="h-100">
-          <BCardTitle>{{ $t('nav.data') }}</BCardTitle>
-          <BCardText>View and export registration data with filters.</BCardText>
-          <template #footer>
-            <BButton variant="primary" :to="'/data'">View Data</BButton>
-          </template>
-        </BCard>
-      </div>
     </div>
   </div>
 </template>

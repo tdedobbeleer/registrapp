@@ -24,7 +24,7 @@
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <div class="p-1">
-          <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
+          <strong>{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
           <br />
           <small class="text-muted">{{ $t('common.changed') }}: {{ formatDate(participant.created_at) }}</small>
         </div>
@@ -63,6 +63,7 @@
       v-model="showModal"
       :mode="modalMode"
       :participant="editingParticipant"
+      :activityTypes="activityTypes"
       :loading="loading"
       @submit="handleModalSubmit"
     />
@@ -70,6 +71,7 @@
     <!-- Delete Modal -->
     <BModal v-model="showDeleteModal" :title="$t('participants.confirmDelete')" @ok="deleteParticipant" :ok-title="$t('participants.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
       <p>{{ $t('participants.deleteMessage') }}</p>
+      <p v-if="hasRegistrations" class="text-warning fw-bold">{{ $t('participants.deleteWarning') }}</p>
     </BModal>
   </div>
 </template>
@@ -77,10 +79,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { supabase } from '../supabase'
-import type { Participant } from '../types'
+import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
+import { useApi } from '../composables/api'
+
+const { participants: apiParticipants, activityTypes: apiActivityTypes, registrations: apiRegistrations } = useApi()
 
 const participants = ref<Participant[]>([])
+const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')
 const editingId = ref('')
 const loading = ref(false)
@@ -89,6 +95,7 @@ const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
 const showDeleteModal = ref(false)
 const deleteId = ref('')
+const hasRegistrations = ref(false)
 const currentPage = ref(1)
 const perPage = 10
 
@@ -119,11 +126,11 @@ const openEditModal = (participant: Participant) => {
   showModal.value = true
 }
 
-const handleModalSubmit = async (data: { firstName: string; lastName: string }) => {
+const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[] }) => {
   if (modalMode.value === 'add') {
-    await addParticipant(data.firstName, data.lastName)
+    await addParticipant(data.firstName, data.lastName, data.activityTypes || [])
   } else {
-    await updateParticipant(data.firstName, data.lastName)
+    await updateParticipant(data.firstName, data.lastName, data.activityTypes || [])
   }
 }
 
@@ -132,66 +139,71 @@ const formatDate = (date: string) => {
 }
 
 const fetchParticipants = async () => {
-  const { data, error } = await supabase
-    .from('participants')
-    .select('*')
-    .order('first_name', { ascending: true })
-  if (error) {
+  try {
+    participants.value = await apiParticipants.fetch()
+  } catch (error) {
     console.error('Error fetching participants:', error)
-  } else {
-    participants.value = data || []
   }
 }
 
-const addParticipant = async (firstName: string, lastName: string) => {
+const fetchActivityTypes = async () => {
+  try {
+    activityTypes.value = await apiActivityTypes.fetch()
+  } catch (error) {
+    console.error('Error fetching activity types:', error)
+  }
+}
+
+const addParticipant = async (firstName: string, lastName: string, activityTypes: string[]) => {
   loading.value = true
-  const { error } = await supabase
-    .from('participants')
-    .insert([{ first_name: firstName, last_name: lastName }])
-  if (error) {
-    console.error('Error adding participant:', error)
-  } else {
-    fetchParticipants()
+  try {
+    await apiParticipants.add(firstName, lastName, activityTypes)
+    await fetchParticipants()
     showModal.value = false
+  } catch (error) {
+    console.error('Error adding participant:', error)
   }
   loading.value = false
 }
 
-const openDeleteModal = (id: string) => {
+const openDeleteModal = async (id: string) => {
   deleteId.value = id
+  // Check if participant has registrations
+  try {
+    const registrations = await apiRegistrations.fetchByParticipant(id)
+    hasRegistrations.value = registrations.length > 0
+  } catch (error) {
+    console.error('Error checking registrations:', error)
+    hasRegistrations.value = false
+  }
   showDeleteModal.value = true
 }
 
-const updateParticipant = async (firstName: string, lastName: string) => {
+const updateParticipant = async (firstName: string, lastName: string, activityTypes: string[]) => {
   loading.value = true
-  const { error } = await supabase
-    .from('participants')
-    .update({ first_name: firstName, last_name: lastName })
-    .eq('id', editingId.value)
-  if (error) {
-    console.error('Error updating participant:', error)
-  } else {
-    fetchParticipants()
+  try {
+    await apiParticipants.update(editingId.value, firstName, lastName, activityTypes)
+    await fetchParticipants()
     showModal.value = false
+  } catch (error) {
+    console.error('Error updating participant:', error)
   }
   loading.value = false
 }
 
 const deleteParticipant = async () => {
-  const { error } = await supabase
-    .from('participants')
-    .delete()
-    .eq('id', deleteId.value)
-  if (error) {
-    console.error('Error deleting participant:', error)
-  } else {
-    fetchParticipants()
+  try {
+    await apiParticipants.delete(deleteId.value)
+    await fetchParticipants()
     showDeleteModal.value = false
+  } catch (error) {
+    console.error('Error deleting participant:', error)
   }
 }
 
 onMounted(() => {
   fetchParticipants()
+  fetchActivityTypes()
 })
 
 watch(searchTerm, () => {

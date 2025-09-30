@@ -34,7 +34,7 @@
         class="list-group-item d-flex justify-content-between align-items-center"
       >
         <div>
-          <strong @click="openEditModal(participant)" style="cursor: pointer;">{{ participant.first_name }} {{ participant.last_name }}</strong>
+          <strong @click="openEditModal(participant)" style="cursor: pointer;">{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
         </div>
         <BFormCheckbox
           switch
@@ -65,15 +65,17 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { supabase } from '../supabase'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
+import { useApi } from '../composables/api'
 
 interface Props {
   activityId: string
 }
 
 const props = defineProps<Props>()
+
+const { participants: apiParticipants, activities: apiActivities, activityTypes: apiActivityTypes, registrations: apiRegistrations } = useApi()
 
 const activity = ref<Activity | null>(null)
 const activityTypes = ref<ActivityType[]>([])
@@ -137,50 +139,34 @@ const formatDate = (date: string) => {
 }
 
 const fetchActivity = async () => {
-  const { data, error } = await supabase
-    .from('activities')
-    .select('*')
-    .eq('id', props.activityId)
-    .single()
-  if (error) {
+  try {
+    activity.value = await apiActivities.fetchOne(props.activityId)
+  } catch (error) {
     console.error('Error fetching activity:', error)
-  } else {
-    activity.value = data
   }
 }
 
 const fetchActivityTypes = async () => {
-  const { data, error } = await supabase
-    .from('activity_types')
-    .select('*')
-  if (error) {
+  try {
+    activityTypes.value = await apiActivityTypes.fetch()
+  } catch (error) {
     console.error('Error fetching activity types:', error)
-  } else {
-    activityTypes.value = data || []
   }
 }
 
 const fetchParticipants = async () => {
-  const { data, error } = await supabase
-    .from('participants')
-    .select('*')
-    .order('last_name')
-  if (error) {
+  try {
+    participants.value = await apiParticipants.fetchSimple()
+  } catch (error) {
     console.error('Error fetching participants:', error)
-  } else {
-    participants.value = data || []
   }
 }
 
 const fetchRegistrations = async () => {
-  const { data, error } = await supabase
-    .from('registrations')
-    .select('*')
-    .eq('activity_id', props.activityId)
-  if (error) {
+  try {
+    registrations.value = await apiRegistrations.fetch(props.activityId)
+  } catch (error) {
     console.error('Error fetching registrations:', error)
-  } else {
-    registrations.value = data || []
   }
 }
 
@@ -188,26 +174,18 @@ const toggleRegistration = async (participantId: string, event : Event) => {
   const existing = registrations.value.find(r => r.participant_id === participantId)
   const el = event.target as HTMLInputElement
   const checked = el.checked
-  if (existing) {
-    const { error } = await supabase
-      .from('registrations')
-      .update({ registration: checked })
-      .eq('id', existing.id)
-    if (error) {
-      console.error('Error updating registration:', error)
-    } else {
+  try {
+    if (existing) {
+      await apiRegistrations.update(existing.id, checked)
       existing.registration = checked
+    } else {
+      const newReg = await apiRegistrations.add(participantId, props.activityId, checked)
+      if (newReg) {
+        registrations.value.push(newReg)
+      }
     }
-  } else {
-    const { data, error } = await supabase
-      .from('registrations')
-      .insert([{ participant_id: participantId, activity_id: props.activityId, registration: checked }])
-      .select()
-    if (error) {
-      console.error('Error inserting registration:', error)
-    } else if (data) {
-      registrations.value.push(data[0])
-    }
+  } catch (error) {
+    console.error('Error toggling registration:', error)
   }
 }
 
@@ -223,7 +201,7 @@ const openEditModal = (participant: Participant) => {
   showModal.value = true
 }
 
-const handleModalSubmit = async (data: { firstName: string; lastName: string }) => {
+const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[] }) => {
   if (modalMode.value === 'add') {
     await addParticipant(data.firstName, data.lastName)
   } else if (editingParticipant.value) {
@@ -233,29 +211,24 @@ const handleModalSubmit = async (data: { firstName: string; lastName: string }) 
 
 const addParticipant = async (firstName: string, lastName: string) => {
   loading.value = true
-  const { error } = await supabase
-    .from('participants')
-    .insert([{ first_name: firstName, last_name: lastName }])
-  if (error) {
-    console.error('Error adding participant:', error)
-  } else {
-    fetchParticipants()
+  try {
+    await apiParticipants.add(firstName, lastName)
+    await fetchParticipants()
     showModal.value = false
+  } catch (error) {
+    console.error('Error adding participant:', error)
   }
   loading.value = false
 }
 
 const updateParticipant = async (id: string, firstName: string, lastName: string) => {
   loading.value = true
-  const { error } = await supabase
-    .from('participants')
-    .update({ first_name: firstName, last_name: lastName })
-    .eq('id', id)
-  if (error) {
-    console.error('Error updating participant:', error)
-  } else {
-    fetchParticipants()
+  try {
+    await apiParticipants.update(id, firstName, lastName)
+    await fetchParticipants()
     showModal.value = false
+  } catch (error) {
+    console.error('Error updating participant:', error)
   }
   loading.value = false
 }
