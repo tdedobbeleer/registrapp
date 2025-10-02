@@ -2,8 +2,7 @@ import {
     addParticipant,
     updateParticipant,
     deleteParticipant,
-    fetchParticipants,
-    fetchParticipantsSimple
+    fetchParticipants
 } from '../api/participants'
 
 import {
@@ -34,8 +33,7 @@ export const useApi = () => {
             add: addParticipant,
             update: updateParticipant,
             delete: deleteParticipant,
-            fetch: fetchParticipants,
-            fetchSimple: fetchParticipantsSimple
+            fetch: fetchParticipants
         },
         activities: {
             fetch: fetchActivities,

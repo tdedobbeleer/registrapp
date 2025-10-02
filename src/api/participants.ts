@@ -132,16 +132,3 @@ export const fetchParticipants = async (activityTypeId?: string): Promise<Partic
     }
   }
 }
-
-export const fetchParticipantsSimple = async (): Promise<Participant[]> => {
-  const { data, error } = await supabase
-    .from('participants')
-    .select('*')
-    .order('last_name', { ascending: true })
-  if (error) {
-    console.error('Error fetching participants:', error)
-    throw error
-  } else {
-    return data || []
-  }
-}
