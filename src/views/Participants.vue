@@ -81,6 +81,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
+import { formatDate } from '../composables/useDate'
 
 const { participants: apiParticipants, activityTypes: apiActivityTypes, registrations: apiRegistrations } = useApi()
 
@@ -133,9 +134,6 @@ const handleModalSubmit = async (data: { firstName: string; lastName: string; ac
   }
 }
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString()
-}
 
 const fetchParticipants = async () => {
   try {

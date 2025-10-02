@@ -68,6 +68,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
+import { formatDate } from '../composables/useDate'
 
 interface Props {
   activityId: string
@@ -134,9 +135,6 @@ const getActivityTypeName = (id: string) => {
   return at ? at.name : 'Unknown'
 }
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString()
-}
 
 const fetchActivity = async () => {
   try {
@@ -156,7 +154,7 @@ const fetchActivityTypes = async () => {
 
 const fetchParticipants = async () => {
   try {
-    participants.value = await apiParticipants.fetchSimple()
+    participants.value = await apiParticipants.fetch(activity.value?.activity_type_id)
   } catch (error) {
     console.error('Error fetching participants:', error)
   }
@@ -233,11 +231,11 @@ const updateParticipant = async (id: string, firstName: string, lastName: string
   loading.value = false
 }
 
-onMounted(() => {
-  fetchActivity()
-  fetchActivityTypes()
-  fetchParticipants()
-  fetchRegistrations()
+onMounted(async () => {
+  await fetchActivity()
+  await fetchActivityTypes()
+  await fetchParticipants()
+  await fetchRegistrations()
 })
 
 watch(searchTerm, () => {

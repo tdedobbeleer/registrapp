@@ -75,24 +75,61 @@ export const deleteParticipant = async (id: string) => {
     }
 }
 
-export const fetchParticipants = async (): Promise<Participant[]> => {
-  const { data, error } = await supabase
-    .from('participants')
-    .select(`
-      *,
-      participant_activity_types (
-        activity_type_id
-      )
-    `)
-    .order('first_name', { ascending: true })
-  if (error) {
-    console.error('Error fetching participants:', error)
-    throw error
+export const fetchParticipants = async (activityTypeId?: string): Promise<Participant[]> => {
+  if (activityTypeId) {
+    // First, get participant_ids that have the activity_type
+    const { data: patData, error: patError } = await supabase
+      .from('participant_activity_types')
+      .select('participant_id')
+      .eq('activity_type_id', activityTypeId)
+    if (patError) {
+      console.error('Error fetching participant activity types:', patError)
+      throw patError
+    }
+    const participantIds = (patData || []).map(pat => pat.participant_id)
+    if (participantIds.length === 0) {
+      return []
+    }
+    // Then fetch participants with their activity_types
+    const { data, error } = await supabase
+      .from('participants')
+      .select(`
+        *,
+        participant_activity_types (
+          activity_type_id
+        )
+      `)
+      .in('id', participantIds)
+      .order('first_name', { ascending: true })
+    if (error) {
+      console.error('Error fetching participants:', error)
+      throw error
+    } else {
+      return (data || []).map(p => ({
+        ...p,
+        activity_types: (p.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id)
+      }))
+    }
   } else {
-    return (data || []).map(p => ({
-      ...p,
-      activity_types: (p.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id)
-    }))
+    // Fetch all participants
+    const { data, error } = await supabase
+      .from('participants')
+      .select(`
+        *,
+        participant_activity_types (
+          activity_type_id
+        )
+      `)
+      .order('first_name', { ascending: true })
+    if (error) {
+      console.error('Error fetching participants:', error)
+      throw error
+    } else {
+      return (data || []).map(p => ({
+        ...p,
+        activity_types: (p.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id)
+      }))
+    }
   }
 }
 

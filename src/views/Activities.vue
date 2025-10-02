@@ -8,7 +8,7 @@
     <div class="mb-3">
       <BInputGroup class="mt-3">
         <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" :placeholder="$t('activities.filterByActivityType')" class="w-auto" />
-        <BFormInput type="date" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
+        <BFormInput type="datetime-local" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
         <BButton variant="primary" @click="showAddModal = true">
           <i class="bi bi-calendar-plus"></i>
         </BButton>
@@ -18,14 +18,15 @@
       <div
         v-for="activity in filteredActivities"
         :key="activity.id"
-        class="p-2 list-group-item d-flex justify-content-between align-items-center"
+        class="m-1 p-2 list-group-item d-flex justify-content-between align-items-center"
+        :class="getActivityClass(activity)"
       >
-        <div class="p-2" style="cursor: pointer;" @click="$router.push(`/registrations/${activity.id}`)" :title="$t('activities.registrations')">
+        <div style="cursor: pointer;" @click="$router.push(`/registrations/${activity.id}`)" :title="$t('activities.registrations')">
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
           <br />
           <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
         </div>
-        <div class="p-2">
+        <div>
           <BButtonGroup>
             <BButton size="md" :title="$t('activities.registrations')" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
               <i class="bi bi-list-check"></i>
@@ -85,6 +86,7 @@ import { ref, computed, onMounted } from 'vue'
 import type { Activity, ActivityType } from '../types'
 import { useI18n } from 'vue-i18n'
 import { useApi } from '../composables/api'
+import { formatDate } from '../composables/useDate'
 
 const { t } = useI18n()
 
@@ -124,13 +126,23 @@ const filteredActivities = computed(() => {
 const isAddFormValid = computed(() => newActivityTypeId.value && newDate.value)
 const isEditFormValid = computed(() => editActivityTypeId.value && editDate.value)
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString()
-}
 
 const getActivityTypeName = (id: string) => {
   const at = activityTypes.value.find(at => at.id === id)
   return at ? at.name : 'Unknown'
+}
+
+const getActivityClass = (activity: Activity): string => {
+  const now = new Date()
+  const activityDate = new Date(activity.date)
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+  if (activityDate.toDateString() === now.toDateString()) {
+    return 'border border-primary'
+  } else if (activityDate < twentyFourHoursAgo) {
+    return 'border border-success'
+  } else {
+    return ''
+  }
 }
 
 const fetchActivities = async () => {

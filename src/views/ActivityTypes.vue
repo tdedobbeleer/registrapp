@@ -96,6 +96,7 @@
 import { ref, computed, onMounted } from 'vue'
 import type { ActivityType } from '../types'
 import { useApi } from '../composables/api'
+import { formatDate } from '../composables/useDate'
 
 const { activityTypes: apiActivityTypes } = useApi()
 
@@ -122,9 +123,6 @@ const filteredActivityTypes = computed(() =>
 const isAddFormValid = computed(() => newName.value.trim() && newDescription.value.trim())
 const isEditFormValid = computed(() => editName.value.trim() && editDescription.value.trim())
 
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString()
-}
 
 const fetchActivityTypes = async () => {
   try {
