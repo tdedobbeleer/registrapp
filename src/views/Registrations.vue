@@ -57,6 +57,7 @@
       v-model="showModal"
       :mode="modalMode"
       :participant="editingParticipant"
+      :activity-types="activityTypes"
       :loading="loading"
       @submit="handleModalSubmit"
     />
@@ -201,16 +202,16 @@ const openEditModal = (participant: Participant) => {
 
 const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[] }) => {
   if (modalMode.value === 'add') {
-    await addParticipant(data.firstName, data.lastName)
+    await addParticipant(data.firstName, data.lastName, data.activityTypes)
   } else if (editingParticipant.value) {
-    await updateParticipant(editingParticipant.value.id, data.firstName, data.lastName)
+    await updateParticipant(editingParticipant.value.id, data.firstName, data.lastName, data.activityTypes)
   }
 }
 
-const addParticipant = async (firstName: string, lastName: string) => {
+const addParticipant = async (firstName: string, lastName: string, activityTypes?: string[]) => {
   loading.value = true
   try {
-    await apiParticipants.add(firstName, lastName)
+    await apiParticipants.add(firstName, lastName, activityTypes)
     await fetchParticipants()
     showModal.value = false
   } catch (error) {
@@ -219,10 +220,10 @@ const addParticipant = async (firstName: string, lastName: string) => {
   loading.value = false
 }
 
-const updateParticipant = async (id: string, firstName: string, lastName: string) => {
+const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes?: string[]) => {
   loading.value = true
   try {
-    await apiParticipants.update(id, firstName, lastName)
+    await apiParticipants.update(id, firstName, lastName, activityTypes)
     await fetchParticipants()
     showModal.value = false
   } catch (error) {
