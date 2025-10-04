@@ -23,7 +23,7 @@ import {
 import {
     fetchRegistrations,
     addRegistration,
-    updateRegistration,
+    deleteRegistration,
     fetchRegistrationsByParticipant
 } from '../api/registrations'
 
@@ -51,7 +51,7 @@ export const useApi = () => {
         registrations: {
             fetch: fetchRegistrations,
             add: addRegistration,
-            update: updateRegistration,
+            delete: deleteRegistration,
             fetchByParticipant: fetchRegistrationsByParticipant
         }
     }

@@ -14,10 +14,10 @@ export const fetchRegistrations = async (activityId: string): Promise<Registrati
     }
 }
 
-export const addRegistration = async (participantId: string, activityId: string, registration: boolean) => {
+export const addRegistration = async (participantId: string, activityId: string) => {
     const { data, error } = await supabase
         .from('registrations')
-        .insert([{ participant_id: participantId, activity_id: activityId, registration }])
+        .insert([{ participant_id: participantId, activity_id: activityId }])
         .select()
     if (error) {
         console.error('Error adding registration:', error)
@@ -27,13 +27,13 @@ export const addRegistration = async (participantId: string, activityId: string,
     }
 }
 
-export const updateRegistration = async (id: string, registration: boolean) => {
+export const deleteRegistration = async (id: string) => {
     const { error } = await supabase
         .from('registrations')
-        .update({ registration })
+        .delete()
         .eq('id', id)
     if (error) {
-        console.error('Error updating registration:', error)
+        console.error('Error deleting registration:', error)
         throw error
     }
 }

@@ -31,7 +31,6 @@ export interface Registration {
   id: string
   participant_id: string
   activity_id: string
-  registration: boolean
   created_at: string
   participant: Participant
 }

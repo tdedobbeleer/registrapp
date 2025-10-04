@@ -40,7 +40,7 @@
           switch
           size="lg"
           :checked="isRegistered(participant.id)"
-          @change="toggleRegistration(participant.id, $event)"
+          @change="toggleRegistration(participant.id)"
         >
         </BFormCheckbox>
       </div>
@@ -124,11 +124,11 @@ const filteredParticipants = computed(() => {
 })
 
 const registrationCount = computed(() => {
-  return registrations.value.filter(r => r.registration).length
+  return registrations.value.length
 })
 
 const isRegistered = (participantId: string) => {
-  return registrations.value.some(r => r.participant_id === participantId && r.registration)
+  return registrations.value.some(r => r.participant_id === participantId)
 }
 
 const getActivityTypeName = (id: string) => {
@@ -169,16 +169,14 @@ const fetchRegistrations = async () => {
   }
 }
 
-const toggleRegistration = async (participantId: string, event : Event) => {
+const toggleRegistration = async (participantId: string) => {
   const existing = registrations.value.find(r => r.participant_id === participantId)
-  const el = event.target as HTMLInputElement
-  const checked = el.checked
   try {
     if (existing) {
-      await apiRegistrations.update(existing.id, checked)
-      existing.registration = checked
+      await apiRegistrations.delete(existing.id)
+      registrations.value = registrations.value.filter(r => r.id !== existing.id)
     } else {
-      const newReg = await apiRegistrations.add(participantId, props.activityId, checked)
+      const newReg = await apiRegistrations.add(participantId, props.activityId)
       if (newReg) {
         registrations.value.push(newReg)
       }
