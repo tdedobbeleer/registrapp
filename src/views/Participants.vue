@@ -8,6 +8,7 @@
     <div class="mb-3">
       <BInputGroup class="mt-3">
       <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
+      <BInputGroupText v-if="searchTerm" @click="searchTerm = ''" style="cursor: pointer;"><i class="bi bi-x"></i></BInputGroupText>
       <BButton
           variant="primary"
           @click="openAddModal"
@@ -15,7 +16,7 @@
           <i class="bi bi-person-fill-add"></i>
         </BButton>
       </BInputGroup>
-      
+
     </div>
     <div class="list-group">
       <div

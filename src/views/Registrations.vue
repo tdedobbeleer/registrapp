@@ -15,6 +15,9 @@
           <BInputGroupText><i class="bi bi-search-heart"></i></BInputGroupText>
         </template>
         <BFormInput v-model="searchTerm" :placeholder="$t('registrations.filterPlaceholder')" ></BFormInput>
+        <template #append>
+          <BInputGroupText v-if="searchTerm" @click="searchTerm = ''" style="cursor: pointer;"><i class="bi bi-x"></i></BInputGroupText>
+        </template>
       </BInputGroup>
     </div>
     <div class="mb-3 d-flex gap-2">

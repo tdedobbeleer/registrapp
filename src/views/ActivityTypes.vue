@@ -8,6 +8,7 @@
     <div class="mb-3">
       <BInputGroup class="mt-3">
           <BFormInput type="text" v-model="searchTerm" :placeholder="$t('activityTypes.searchPlaceholder')" class="w-auto" />
+          <BInputGroupText v-if="searchTerm" @click="searchTerm = ''" style="cursor: pointer;"><i class="bi bi-x"></i></BInputGroupText>
           <BButton
           variant="primary"
           @click="showAddModal = true"
