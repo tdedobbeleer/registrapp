@@ -59,13 +59,13 @@
       <BForm @submit.prevent="addActivity">
         <div class="mb-3">
           <label for="addName" class="form-label">{{ $t('activityTypes.name') }}</label>
-          <BFormInput type="text" id="addName" v-model="newName" :state="newName.trim() ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
+          <BFormInput type="text" id="addName" v-model="newName" :state="!newNameError ? null : false" required />
+          <BFormInvalidFeedback>{{ newNameError || $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
           <label for="addDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
-          <BFormTextarea id="addDescription" rows="3" v-model="newDescription" :state="newDescription.trim() ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
+          <BFormTextarea id="addDescription" rows="3" v-model="newDescription" :state="!newDescriptionError ? null : false" required />
+          <BFormInvalidFeedback>{{ newDescriptionError || $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
@@ -75,13 +75,13 @@
       <BForm @submit.prevent="updateActivity">
         <div class="mb-3">
           <label for="editName" class="form-label">{{ $t('activityTypes.name') }}</label>
-          <BFormInput type="text" id="editName" v-model="editName" :state="editName.trim() ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
+          <BFormInput type="text" id="editName" v-model="editName" :state="!editNameError ? null : false" required />
+          <BFormInvalidFeedback>{{ editNameError || $t('activityTypes.nameRequired') }}</BFormInvalidFeedback>
         </div>
         <div class="mb-3">
           <label for="editDescription" class="form-label">{{ $t('activityTypes.description') }}</label>
-          <BFormTextarea type="text" id="editDescription" v-model="editDescription" :state="editDescription.trim() ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
+          <BFormTextarea type="text" id="editDescription" v-model="editDescription" :state="!editDescriptionError ? null : false" required />
+          <BFormInvalidFeedback>{{ editDescriptionError || $t('activityTypes.descriptionRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
@@ -98,6 +98,9 @@ import { ref, computed, onMounted } from 'vue'
 import type { ActivityType } from '../types'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
+import { useValidation } from '../composables/useValidation'
+
+const { validateRequired, validateDescription } = useValidation()
 
 const { activityTypes: apiActivityTypes } = useApi()
 
@@ -121,8 +124,13 @@ const filteredActivityTypes = computed(() =>
   )
 )
 
-const isAddFormValid = computed(() => newName.value.trim() && newDescription.value.trim())
-const isEditFormValid = computed(() => editName.value.trim() && editDescription.value.trim())
+const newNameError = validateRequired(newName, 'Name')
+const newDescriptionError = validateDescription(newDescription)
+const editNameError = validateRequired(editName, 'Name')
+const editDescriptionError = validateDescription(editDescription)
+
+const isAddFormValid = computed(() => !newNameError.value && !newDescriptionError.value)
+const isEditFormValid = computed(() => !editNameError.value && !editDescriptionError.value)
 
 
 const fetchActivityTypes = async () => {

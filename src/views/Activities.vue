@@ -52,8 +52,8 @@
         </div>
         <div class="mb-3">
           <label for="addDate" class="form-label">{{ $t('activities.date') }}</label>
-          <BFormInput type="datetime-local" id="addDate" v-model="newDate" :state="newDate ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activities.dateRequired') }}</BFormInvalidFeedback>
+          <BFormInput type="datetime-local" id="addDate" v-model="newDate" :state="!newDateError ? null : false" required />
+          <BFormInvalidFeedback>{{ newDateError || $t('activities.dateRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
@@ -68,8 +68,8 @@
         </div>
         <div class="mb-3">
           <label for="editDate" class="form-label">{{ $t('activities.date') }}</label>
-          <BFormInput type="datetime-local" id="editDate" v-model="editDate" :state="editDate ? null : false" required />
-          <BFormInvalidFeedback>{{ $t('activities.dateRequired') }}</BFormInvalidFeedback>
+          <BFormInput type="datetime-local" id="editDate" v-model="editDate" :state="!editDateError ? null : false" required />
+          <BFormInvalidFeedback>{{ editDateError || $t('activities.dateRequired') }}</BFormInvalidFeedback>
         </div>
       </BForm>
     </BModal>
@@ -87,8 +87,10 @@ import type { Activity, ActivityType } from '../types'
 import { useI18n } from 'vue-i18n'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
+import { useValidation } from '../composables/useValidation'
 
 const { t } = useI18n()
+const { validateDateTime } = useValidation()
 
 const { activities: apiActivities, activityTypes: apiActivityTypes } = useApi()
 
@@ -123,8 +125,11 @@ const filteredActivities = computed(() => {
   return filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 })
 
-const isAddFormValid = computed(() => newActivityTypeId.value && newDate.value)
-const isEditFormValid = computed(() => editActivityTypeId.value && editDate.value)
+const newDateError = validateDateTime(newDate)
+const editDateError = validateDateTime(editDate)
+
+const isAddFormValid = computed(() => newActivityTypeId.value && newDate.value && !newDateError.value)
+const isEditFormValid = computed(() => editActivityTypeId.value && editDate.value && !editDateError.value)
 
 
 const getActivityTypeName = (id: string) => {

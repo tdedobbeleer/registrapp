@@ -25,10 +25,12 @@
                 <input
                   type="password"
                   class="form-control"
+                  :class="{ 'is-invalid': passwordError }"
                   id="password"
                   v-model="password"
                   required
                 />
+                <div v-if="passwordError" class="text-danger">{{ passwordError }}</div>
               </div>
               <button type="submit" class="btn btn-primary w-100" :disabled="loading || !emailValid">
                 {{ loading ? $t('login.loggingIn') : $t('login.login') }}
@@ -50,6 +52,7 @@ import { ref } from 'vue'
 import { supabase } from '../supabase'
 import { useRouter, useRoute } from 'vue-router'
 import { useEmailValidation } from '../composables/useEmailValidation'
+import { useValidation } from '../composables/useValidation'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -62,30 +65,33 @@ const loading = ref(false)
 const error = ref('')
 
 const { emailValid, emailError } = useEmailValidation(email)
+const { validateRequired } = useValidation()
+const passwordError = validateRequired(password, 'Password', true)
 
 const handleLogin = async () => {
-  email.value = email.value.trim()
-  if (!emailValid.value) {
-    error.value = t('common.invalidEmail')
-    return
-  }
-  loading.value = true
-  error.value = ''
-  try {
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    })
-    if (authError) throw authError
-    // On success, redirect to intended location or activities
-    const redirect = route.query.redirect as string || '/activities'
-    router.push(redirect)
-  } catch (err: any) {
-    error.value = err.message
-  } finally {
-    loading.value = false
-  }
-}
+   email.value = email.value.trim()
+   password.value = password.value.trim()
+   if (!emailValid.value || passwordError.value) {
+     error.value = emailError.value || passwordError.value || t('common.invalidEmail')
+     return
+   }
+   loading.value = true
+   error.value = ''
+   try {
+     const { error: authError } = await supabase.auth.signInWithPassword({
+       email: email.value,
+       password: password.value,
+     })
+     if (authError) throw authError
+     // On success, redirect to intended location or activities
+     const redirect = route.query.redirect as string || '/activities'
+     router.push(redirect)
+   } catch (err: any) {
+     error.value = err.message
+   } finally {
+     loading.value = false
+   }
+ }
 </script>
 
 <style scoped>

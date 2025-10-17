@@ -40,9 +40,11 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
 import { useEmailValidation } from '../composables/useEmailValidation'
+import { useValidation } from '../composables/useValidation'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const { validateRequired } = useValidation()
 
 const email = ref('')
 const loading = ref(false)
@@ -50,28 +52,29 @@ const error = ref('')
 const message = ref('')
 
 const { emailValid, emailError } = useEmailValidation(email)
+const emailRequiredError = validateRequired(email, 'Email')
 
 const handlePasswordRecovery = async () => {
-  email.value = email.value.trim()
-  if (!emailValid.value) {
-    error.value = t('common.invalidEmail')
-    return
-  }
-  loading.value = true
-  error.value = ''
-  message.value = ''
-  try {
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.value, {
-      redirectTo: `${window.location.origin}/reset-password`, // Adjust as needed
-    })
-    if (resetError) throw resetError
-    message.value = t('common.recoveryEmailSent')
-  } catch (err: any) {
-    error.value = err.message
-  } finally {
-    loading.value = false
-  }
-}
+   email.value = email.value.trim()
+   if (!emailValid.value || emailRequiredError.value) {
+     error.value = emailError.value || emailRequiredError.value || t('common.invalidEmail')
+     return
+   }
+   loading.value = true
+   error.value = ''
+   message.value = ''
+   try {
+     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.value, {
+       redirectTo: `${window.location.origin}/reset-password`, // Adjust as needed
+     })
+     if (resetError) throw resetError
+     message.value = t('common.recoveryEmailSent')
+   } catch (err: any) {
+     error.value = err.message
+   } finally {
+     loading.value = false
+   }
+ }
 </script>
 
 <style scoped>

@@ -5,7 +5,7 @@
     @ok="handleSubmit"
     :ok-title="mode === 'add' ? $t('participants.addParticipant') : $t('participants.edit')"
     :cancel-title="$t('activities.cancel')"
-    :ok-disabled="loading || !isFormValid"
+    :ok-disabled="loading || !formValid"
     @hide="$emit('update:modelValue', false)"
   >
     <BForm @submit.prevent="handleSubmit">
@@ -15,10 +15,10 @@
           type="text"
           id="firstName"
           v-model="firstName"
-          :state="firstName.trim() ? null : false"
+          :state="!firstNameError ? null : false"
           required
         />
-        <BFormInvalidFeedback>{{ $t('participants.firstNameRequired') }}</BFormInvalidFeedback>
+        <BFormInvalidFeedback>{{ firstNameError || $t('participants.firstNameRequired') }}</BFormInvalidFeedback>
       </div>
       <div class="mb-3">
         <label for="lastName" class="form-label">{{ $t('participants.lastName') }}</label>
@@ -26,10 +26,10 @@
           type="text"
           id="lastName"
           v-model="lastName"
-          :state="lastName.trim() ? null : false"
+          :state="!lastNameError ? null : false"
           required
         />
-        <BFormInvalidFeedback>{{ $t('participants.lastNameRequired') }}</BFormInvalidFeedback>
+        <BFormInvalidFeedback>{{ lastNameError || $t('participants.lastNameRequired') }}</BFormInvalidFeedback>
       </div>
       <div v-if="props.activityTypes" class="mb-3">
         <label class="form-label">{{ $t('participants.activityTypes') }}</label>
@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import type { Participant, ActivityType } from '../types'
+import { useValidation } from '../composables/useValidation'
 
 interface Props {
   modelValue: boolean
@@ -69,11 +70,16 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
+const { validateRequired } = useValidation()
+
 const firstName = ref('')
 const lastName = ref('')
 const selectedActivityTypes = ref<string[]>([])
 
-const isFormValid = computed(() => firstName.value.trim() && lastName.value.trim())
+const firstNameError = validateRequired(firstName, 'First name')
+const lastNameError = validateRequired(lastName, 'Last name')
+
+const formValid = computed(() => !firstNameError.value && !lastNameError.value)
 
 const toggleActivityType = (activityTypeId: string) => {
   const index = selectedActivityTypes.value.indexOf(activityTypeId)
@@ -85,13 +91,13 @@ const toggleActivityType = (activityTypeId: string) => {
 }
 
 const handleSubmit = () => {
-  if (!isFormValid.value) return
-  emit('submit', {
-    firstName: firstName.value.trim(),
-    lastName: lastName.value.trim(),
-    activityTypes: selectedActivityTypes.value
-  })
-}
+   if (!formValid.value) return
+   emit('submit', {
+     firstName: firstName.value.trim(),
+     lastName: lastName.value.trim(),
+     activityTypes: selectedActivityTypes.value
+   })
+ }
 
 watch(() => props.participant, (newParticipant) => {
   if (newParticipant) {

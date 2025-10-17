@@ -32,6 +32,18 @@
     "recoveryEmailSent": "Herstel e-mail verzonden. Controleer je inbox.",
     "changed": "Gewijzigd op"
   },
+  "validation": {
+    "required": "{field} is verplicht",
+    "minLength": "{field} moet minstens {min} karakters lang zijn",
+    "maxLength": "{field} mag niet langer zijn dan {max} karakters",
+    "invalidChars": "{field} bevat ongeldige karakters",
+    "invalidEmail": "Ongeldig e-mailformaat",
+    "emailTooLong": "E-mail is te lang",
+    "futureDateRequired": "Datum en tijd moeten in de toekomst liggen",
+    "invalidDateTime": "Ongeldig datum- en tijdformaat",
+    "descriptionTooShort": "Beschrijving moet minstens {min} karakters lang zijn",
+    "descriptionTooLong": "Beschrijving mag niet langer zijn dan {max} karakters"
+  },
   "login": {
     "title": "Inloggen",
     "email": "E-mail",
