@@ -1,8 +1,5 @@
 import { supabase } from '../supabase'
 import type { Registration } from '../types'
-import { useErrorHandler } from '../composables/useErrorHandler'
-
-const { handleApiError } = useErrorHandler()
 
 export const fetchRegistrations = async (activityId: string): Promise<Registration[]> => {
     const { data, error } = await supabase
@@ -10,7 +7,8 @@ export const fetchRegistrations = async (activityId: string): Promise<Registrati
         .select('*')
         .eq('activity_id', activityId)
     if (error) {
-        throw new Error(handleApiError(error, 'fetching registrations'))
+        console.error('Error fetching registrations:', error)
+        throw error
     } else {
         return data || []
     }
@@ -22,7 +20,8 @@ export const addRegistration = async (participantId: string, activityId: string)
         .insert([{ participant_id: participantId, activity_id: activityId }])
         .select()
     if (error) {
-        throw new Error(handleApiError(error, 'adding registration'))
+        console.error('Error adding registration:', error)
+        throw error
     } else {
         return data?.[0]
     }
@@ -34,7 +33,8 @@ export const deleteRegistration = async (id: string) => {
         .delete()
         .eq('id', id)
     if (error) {
-        throw new Error(handleApiError(error, 'deleting registration'))
+        console.error('Error deleting registration:', error)
+        throw error
     }
 }
 
@@ -44,7 +44,8 @@ export const fetchRegistrationsByParticipant = async (participantId: string): Pr
         .select('*')
         .eq('participant_id', participantId)
     if (error) {
-        throw new Error(handleApiError(error, 'fetching registrations by participant'))
+        console.error('Error fetching registrations by participant:', error)
+        throw error
     } else {
         return data || []
     }

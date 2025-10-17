@@ -1,8 +1,5 @@
 import { supabase } from '../supabase'
 import type { ActivityType } from '../types'
-import { useErrorHandler } from '../composables/useErrorHandler'
-
-const { handleApiError } = useErrorHandler()
 
 export const fetchActivityTypes = async (): Promise<ActivityType[]> => {
     const { data, error } = await supabase
@@ -10,7 +7,8 @@ export const fetchActivityTypes = async (): Promise<ActivityType[]> => {
         .select('*')
         .order('name', { ascending: true })
     if (error) {
-        throw new Error(handleApiError(error, 'fetching activity types'))
+        console.error('Error fetching activity types:', error)
+        throw error
     } else {
         return data || []
     }
@@ -22,7 +20,8 @@ export const addActivityType = async (name: string, description: string) => {
         .insert([{ name, description }])
         .select()
     if (error) {
-        throw new Error(handleApiError(error, 'adding activity type'))
+        console.error('Error adding activity type:', error)
+        throw error
     } else {
         return data?.[0]
     }
@@ -34,7 +33,8 @@ export const updateActivityType = async (id: string, name: string, description: 
         .update({ name, description })
         .eq('id', id)
     if (error) {
-        throw new Error(handleApiError(error, 'updating activity type'))
+        console.error('Error updating activity type:', error)
+        throw error
     }
 }
 
@@ -44,6 +44,7 @@ export const deleteActivityType = async (id: string) => {
         .delete()
         .eq('id', id)
     if (error) {
-        throw new Error(handleApiError(error, 'deleting activity type'))
+        console.error('Error deleting activity type:', error)
+        throw error
     }
 }

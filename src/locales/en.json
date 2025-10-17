@@ -8,7 +8,6 @@
     "data": "Data"
   },
   "app": {
-    "brand": "RegistrApp",
     "logout": "Logout"
   },
   "home": {
@@ -28,8 +27,6 @@
     "viewRegistrations": "View Registrations"
   },
   "common": {
-    "invalidEmail": "Please enter a valid email address.",
-    "recoveryEmailSent": "Recovery email sent. Check your inbox.",
     "changed": "Changed on"
   },
   "validation": {
@@ -39,7 +36,6 @@
     "invalidChars": "{field} contains invalid characters",
     "invalidEmail": "Invalid email format",
     "emailTooLong": "Email is too long",
-    "futureDateRequired": "Date and time must be in the future",
     "invalidDateTime": "Invalid date and time format",
     "descriptionTooShort": "Description must be at least {min} characters long",
     "descriptionTooLong": "Description must be less than {max} characters long"
@@ -139,17 +135,5 @@
   "language": {
     "switchToEn": "English",
     "switchToNl": "Nederlands"
-  },
-  "errors": {
-    "invalidCredentials": "Invalid email or password.",
-    "permissionDenied": "You don't have permission to perform this action.",
-    "duplicateEntry": "This entry already exists.",
-    "constraintViolation": "This action cannot be completed due to existing relationships.",
-    "networkError": "Network connection error. Please try again.",
-    "databaseError": "Database connection error. Please try again later.",
-    "invalidInput": "Invalid input provided.",
-    "operationFailed": "The operation could not be completed. Please try again.",
-    "notFound": "The requested item was not found.",
-    "unknownError": "An unexpected error occurred. Please try again."
   }
 }

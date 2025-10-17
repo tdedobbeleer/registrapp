@@ -1,8 +1,5 @@
 import { supabase } from '../supabase'
 import type { Participant, ParticipantActivityType } from '../types'
-import { useErrorHandler } from '../composables/useErrorHandler'
-
-const { handleApiError } = useErrorHandler()
 
 export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = []) => {
     const { data: participantData, error: participantError } = await supabase
@@ -11,14 +8,16 @@ export const addParticipant = async (firstName: string, lastName: string, activi
         .select()
         .single()
     if (participantError) {
-        throw new Error(handleApiError(participantError, 'adding participant'))
+        console.error('Error adding participant:', participantError)
+        throw participantError
     } else if (participantData) {
         if (activityTypes.length > 0) {
             const { error: patError } = await supabase
                 .from('participant_activity_types')
                 .insert(activityTypes.map(atId => ({ participant_id: participantData.id, activity_type_id: atId })))
             if (patError) {
-                throw new Error(handleApiError(patError, 'adding participant activity types'))
+                console.error('Error adding participant activity types:', patError)
+                throw patError
             }
         }
         return participantData
@@ -31,7 +30,8 @@ export const updateParticipant = async (id: string, firstName: string, lastName:
         .update({ first_name: firstName, last_name: lastName })
         .eq('id', id)
     if (updateError) {
-        throw new Error(handleApiError(updateError, 'updating participant'))
+        console.error('Error updating participant:', updateError)
+        throw updateError
     }
     // Delete old activity types
     const { error: deleteError } = await supabase
@@ -39,7 +39,8 @@ export const updateParticipant = async (id: string, firstName: string, lastName:
         .delete()
         .eq('participant_id', id)
     if (deleteError) {
-        throw new Error(handleApiError(deleteError, 'deleting old participant activity types'))
+        console.error('Error deleting old participant activity types:', deleteError)
+        throw deleteError
     }
     // Insert new activity types
     if (activityTypes.length > 0) {
@@ -47,7 +48,8 @@ export const updateParticipant = async (id: string, firstName: string, lastName:
             .from('participant_activity_types')
             .insert(activityTypes.map(atId => ({ participant_id: id, activity_type_id: atId })))
         if (insertError) {
-            throw new Error(handleApiError(insertError, 'inserting new participant activity types'))
+            console.error('Error inserting new participant activity types:', insertError)
+            throw insertError
         }
     }
 }
@@ -59,7 +61,8 @@ export const deleteParticipant = async (id: string) => {
         .delete()
         .eq('participant_id', id)
     if (patError) {
-        throw new Error(handleApiError(patError, 'deleting participant activity types'))
+        console.error('Error deleting participant activity types:', patError)
+        throw patError
     }
     // Then delete participant
     const { error } = await supabase
@@ -67,7 +70,8 @@ export const deleteParticipant = async (id: string) => {
         .delete()
         .eq('id', id)
     if (error) {
-        throw new Error(handleApiError(error, 'deleting participant'))
+        console.error('Error deleting participant:', error)
+        throw error
     }
 }
 
@@ -79,7 +83,8 @@ export const fetchParticipants = async (activityTypeId?: string): Promise<Partic
       .select('participant_id')
       .eq('activity_type_id', activityTypeId)
     if (patError) {
-      throw new Error(handleApiError(patError, 'fetching participant activity types'))
+      console.error('Error fetching participant activity types:', patError)
+      throw patError
     }
     const participantIds = (patData || []).map(pat => pat.participant_id)
     if (participantIds.length === 0) {
@@ -97,7 +102,8 @@ export const fetchParticipants = async (activityTypeId?: string): Promise<Partic
       .in('id', participantIds)
       .order('first_name', { ascending: true })
     if (error) {
-      throw new Error(handleApiError(error, 'fetching participants'))
+      console.error('Error fetching participants:', error)
+      throw error
     } else {
       return (data || []).map(p => ({
         ...p,
@@ -116,7 +122,8 @@ export const fetchParticipants = async (activityTypeId?: string): Promise<Partic
       `)
       .order('first_name', { ascending: true })
     if (error) {
-      throw new Error(handleApiError(error, 'fetching participants'))
+      console.error('Error fetching participants:', error)
+      throw error
     } else {
       return (data || []).map(p => ({
         ...p,
