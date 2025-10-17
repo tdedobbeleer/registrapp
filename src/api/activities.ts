@@ -1,5 +1,8 @@
 import { supabase } from '../supabase'
 import type { Activity } from '../types'
+import { useErrorHandler } from '../composables/useErrorHandler'
+
+const { handleApiError } = useErrorHandler()
 
 export const fetchActivities = async (): Promise<Activity[]> => {
     const { data, error } = await supabase
@@ -7,8 +10,7 @@ export const fetchActivities = async (): Promise<Activity[]> => {
         .select('*')
         .order('date', { ascending: false })
     if (error) {
-        console.error('Error fetching activities:', error)
-        throw error
+        throw new Error(handleApiError(error, 'fetching activities'))
     } else {
         return data || []
     }
@@ -21,8 +23,7 @@ export const fetchActivity = async (id: string): Promise<Activity> => {
         .eq('id', id)
         .single()
     if (error) {
-        console.error('Error fetching activity:', error)
-        throw error
+        throw new Error(handleApiError(error, 'fetching activity'))
     } else {
         return data
     }
@@ -34,8 +35,7 @@ export const addActivity = async (activityTypeId: string, date: string) => {
         .insert([{ activity_type_id: activityTypeId, date }])
         .select()
     if (error) {
-        console.error('Error adding activity:', error)
-        throw error
+        throw new Error(handleApiError(error, 'adding activity'))
     } else {
         return data?.[0]
     }
@@ -47,8 +47,7 @@ export const updateActivity = async (id: string, activityTypeId: string, date: s
         .update({ activity_type_id: activityTypeId, date })
         .eq('id', id)
     if (error) {
-        console.error('Error updating activity:', error)
-        throw error
+        throw new Error(handleApiError(error, 'updating activity'))
     }
 }
 
@@ -58,7 +57,6 @@ export const deleteActivity = async (id: string) => {
         .delete()
         .eq('id', id)
     if (error) {
-        console.error('Error deleting activity:', error)
-        throw error
+        throw new Error(handleApiError(error, 'deleting activity'))
     }
 }

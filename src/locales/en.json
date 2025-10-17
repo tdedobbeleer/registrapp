@@ -139,5 +139,17 @@
   "language": {
     "switchToEn": "English",
     "switchToNl": "Nederlands"
+  },
+  "errors": {
+    "invalidCredentials": "Invalid email or password.",
+    "permissionDenied": "You don't have permission to perform this action.",
+    "duplicateEntry": "This entry already exists.",
+    "constraintViolation": "This action cannot be completed due to existing relationships.",
+    "networkError": "Network connection error. Please try again.",
+    "databaseError": "Database connection error. Please try again later.",
+    "invalidInput": "Invalid input provided.",
+    "operationFailed": "The operation could not be completed. Please try again.",
+    "notFound": "The requested item was not found.",
+    "unknownError": "An unexpected error occurred. Please try again."
   }
 }

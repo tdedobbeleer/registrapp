@@ -139,5 +139,17 @@
   "language": {
     "switchToEn": "English",
     "switchToNl": "Nederlands"
+  },
+  "errors": {
+    "invalidCredentials": "Ongeldig e-mailadres of wachtwoord.",
+    "permissionDenied": "Je hebt geen toestemming om deze actie uit te voeren.",
+    "duplicateEntry": "Deze invoer bestaat al.",
+    "constraintViolation": "Deze actie kan niet worden voltooid vanwege bestaande relaties.",
+    "networkError": "Netwerkverbindingsfout. Probeer het opnieuw.",
+    "databaseError": "Databaseverbindingsfout. Probeer het later opnieuw.",
+    "invalidInput": "Ongeldige invoer opgegeven.",
+    "operationFailed": "De bewerking kon niet worden voltooid. Probeer het opnieuw.",
+    "notFound": "Het gevraagde item werd niet gevonden.",
+    "unknownError": "Er is een onverwachte fout opgetreden. Probeer het opnieuw."
   }
 }
