@@ -5,6 +5,10 @@
       <BBreadcrumbItem active>{{ $t('activities.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('activities.title') }}</h1>
+    <div v-if="loading" class="text-center">
+      <BSpinner />
+    </div>
+    <div v-else>
     <div class="mb-3">
       <BInputGroup class="mt-3">
         <BFormSelect v-model="filterActivityTypeId" :options="activityTypeOptions" :placeholder="$t('activities.filterByActivityType')" class="w-auto" />
@@ -78,6 +82,7 @@
     <BModal v-model="showDeleteModal" :title="$t('activities.confirmDelete')" @ok="deleteActivity" :ok-title="$t('activities.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
       <p>{{ $t('activities.deleteMessage') }}</p>
     </BModal>
+    </div>
   </div>
 </template>
 
@@ -103,7 +108,7 @@ const newDate = ref('')
 const editActivityTypeId = ref('')
 const editDate = ref('')
 const editingId = ref('')
-const loading = ref(false)
+const loading = ref(true)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
@@ -153,6 +158,7 @@ const getActivityClass = (activity: Activity): string => {
 const fetchActivities = async () => {
   try {
     activities.value = await apiActivities.fetch()
+    loading.value = false
   } catch (error) {
     console.error('Error fetching activities:', error)
   }

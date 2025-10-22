@@ -9,7 +9,6 @@ import { createI18n } from 'vue-i18n'
 import nl from './locales/nl.json'
 import en from './locales/en.json'
 import { handleRedirectCallback } from './auth0'
-import { handleRedirectCallback } from './auth0'
 
 const i18n = createI18n({
   locale: 'nl',
@@ -37,7 +36,8 @@ const i18n = createI18n({
 
   // If redirect callback failed or no returnTo, redirect to public page
   if (!redirectSuccess) {
-    router.push('/autherror')
+    router.push('/public')
   }
 
-createApp(App).use(router).use(i18n).mount('#app')
+  createApp(App).use(router).use(i18n).mount('#app')
+})()

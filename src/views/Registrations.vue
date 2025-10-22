@@ -6,6 +6,10 @@
       <BBreadcrumbItem active>{{ $t('nav.registrations') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('registrations.title') }}</h1>
+    <div v-if="loading" class="text-center">
+      <BSpinner />
+    </div>
+    <div v-else>
     <div v-if="activity" class="mb-3">
       <h4>{{ $t('registrations.activity') }}: {{ getActivityTypeName(activity.activity_type_id) }} - {{ formatDate(activity.date) }}&nbsp;<BBadge variant="success">{{registrationCount}}</BBadge></h4>
     </div>
@@ -64,6 +68,7 @@
       :loading="loading"
       @submit="handleModalSubmit"
     />
+    </div>
   </div>
 </template>
 
@@ -93,7 +98,7 @@ const sortBy = ref('last_name')
 const showModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
-const loading = ref(false)
+const loading = ref(true)
 
 const paginatedParticipants = computed(() => {
   const start = (currentPage.value - 1) * perPage
@@ -167,6 +172,7 @@ const fetchParticipants = async () => {
 const fetchRegistrations = async () => {
   try {
     registrations.value = await apiRegistrations.fetch(props.activityId)
+    loading.value = false
   } catch (error) {
     console.error('Error fetching registrations:', error)
   }
