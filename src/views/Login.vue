@@ -19,37 +19,45 @@
     </BCard>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { supabase } from '../supabase'
+import { useRouter, useRoute } from 'vue-router'
+import { useEmailValidation } from '../composables/useEmailValidation'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { login, isAuthenticated } from '../auth0'
-import { BCard, BCardHeader, BCardBody, BAlert, BSpinner, BCardImg } from 'bootstrap-vue-next'
 
-// Setup i18n and router
 const { t } = useI18n()
+
 const router = useRouter()
+const route = useRoute()
+const email = ref('')
+const password = ref('')
+const loading = ref(false)
+const error = ref('')
 
-// Reactive state
-const errorMessage = ref('')
+const { emailValid, emailError } = useEmailValidation(email)
 
-onMounted(async () => {
+const handleLogin = async () => {
+  email.value = email.value.trim()
+  if (!emailValid.value) {
+    error.value = t('common.invalidEmail')
+    return
+  }
+  loading.value = true
+  error.value = ''
   try {
-    const authenticated = await isAuthenticated()
-    if (authenticated) {
-      // If already authenticated, redirect to home
-      router.push('/')
-    } else {
-      // If not authenticated, redirect to Auth0
-      const redirectPath = router.currentRoute.value.query.redirect as string || '/'
-      await login(redirectPath)
-    }
-  } catch (error: unknown) {
-    console.error('Authentication check error:', error)
-    errorMessage.value = error instanceof Error
-      ? error.message
-      : t('login.error.generic')
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    })
+    if (authError) throw authError
+    // On success, redirect to intended location or activities
+    const redirect = route.query.redirect as string || '/activities'
+    router.push(redirect)
+  } catch (err: any) {
+    error.value = err.message
+  } finally {
+    loading.value = false
   }
 })
 </script>

@@ -18,16 +18,9 @@ const routes = [
     component: Login
   },
   {
-    path: '/logout',
-    name: 'Logout',
-    component: Logout,
-    meta: { requiresAuth: false },
-  },
-  {
-    path: '/autherror',
-    name: 'AuthenticationError',
-    component: AuthenticationError,
-    meta: { requiresAuth: false },
+    path: '/password-recovery',
+    name: 'PasswordRecovery',
+    component: PasswordRecovery
   },
   {
     path: '/',
@@ -79,12 +72,9 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const authenticated = await isAuthenticated()
-  if (to.meta.requiresAuth && !authenticated) {
-    // Redirect directly to Auth0 instead of login page
-    const { login } = await import('../auth0')
-    await login(to.path)
-    // Don't call next() here as login() will redirect away
+  const { data: { user } } = await supabase.auth.getUser()
+  if (to.meta.requiresAuth && !user) {
+    next({ path: '/login', query: { redirect: to.path } })
   } else {
     next()
   }
