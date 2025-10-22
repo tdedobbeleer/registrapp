@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
+import Logout from '../views/Logout.vue'
 import Home from '../views/Home.vue'
+import AuthenticationError from '../views/AuthenticationError.vue'
 import ActivityTypes from '../views/ActivityTypes.vue'
 import Activities from '../views/Activities.vue'
 import Participants from '../views/Participants.vue'
@@ -14,6 +16,18 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: Logout,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/autherror',
+    name: 'AuthenticationError',
+    component: AuthenticationError,
+    meta: { requiresAuth: false },
   },
   {
     path: '/',
@@ -67,7 +81,10 @@ const router = createRouter({
 router.beforeEach(async (to, _from, next) => {
   const authenticated = await isAuthenticated()
   if (to.meta.requiresAuth && !authenticated) {
-    next({ path: '/login', query: { redirect: to.path } })
+    // Redirect directly to Auth0 instead of login page
+    const { login } = await import('../auth0')
+    await login(to.path)
+    // Don't call next() here as login() will redirect away
   } else {
     next()
   }

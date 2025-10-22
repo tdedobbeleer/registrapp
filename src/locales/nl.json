@@ -47,7 +47,11 @@
     "loggingIn": "Inloggen...",
     "login": "Inloggen",
     "forgotPassword": "Wachtwoord vergeten?",
-    "backToLogin": "Terug naar Inloggen"
+    "backToLogin": "Terug naar Inloggen",
+    "redirecting": "Doorverwijzen naar Auth0...",
+    "error": {
+      "generic": "Er is een fout opgetreden tijdens het inloggen"
+    }
   },
   "passwordRecovery": {
     "title": "Wachtwoord Herstel",
@@ -55,6 +59,11 @@
     "sending": "Verzenden...",
     "sendRecoveryEmail": "Verzend Herstel E-mail",
     "backToLogin": "Terug naar Inloggen"
+  },
+  "logout": {
+    "title": "Uitgelogd",
+    "message": "Je bent succesvol uitgelogd.",
+    "loginAgain": "Opnieuw Inloggen"
   },
   "registrations": {
     "title": "Registraties",
@@ -135,5 +144,12 @@
   "language": {
     "switchToEn": "English",
     "switchToNl": "Nederlands"
+  },
+  "publicError": {
+    "title": "Authenticatie Fout",
+    "description": "Er was een probleem met het authenticatieproces.",
+    "errorTitle": "Inloggen Mislukt",
+    "errorDescription": "De authenticatie callback is mislukt. Probeer opnieuw in te loggen.",
+    "tryAgainButton": "Probeer Opnieuw"
   }
 }

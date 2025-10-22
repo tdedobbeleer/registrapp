@@ -20,10 +20,24 @@ const i18n = createI18n({
 })
 
 ;(async () => {
+  let redirectSuccess = false
   try {
-    await handleRedirectCallback()
+    const result = await handleRedirectCallback()
+    if (result.appState?.returnTo) {
+      router.push(result.appState.returnTo)
+      redirectSuccess = true
+    }
   } catch (e) {
-    console.error('Auth0 redirect callback failed:', e)
+    // Only log if it's not a "Invalid state" error which can happen on page refresh
+    if (!(e instanceof Error) || !e.message.includes('Invalid state')) {
+      console.error('Auth0 redirect callback failed:', e)
+    }
   }
+
+  // If redirect callback failed or no returnTo, redirect to public page
+  if (!redirectSuccess) {
+    router.push('/autherror')
+  }
+
   createApp(App).use(router).use(i18n).mount('#app')
 })()

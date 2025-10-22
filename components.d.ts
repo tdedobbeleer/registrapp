@@ -14,6 +14,7 @@ declare module 'vue' {
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
     BButtonGroup: typeof import('bootstrap-vue-next/components/BButton')['BButtonGroup']
     BCard: typeof import('bootstrap-vue-next/components/BCard')['BCard']
+    BCardImg: typeof import('bootstrap-vue-next/components/BCard')['BCardImg']
     BCardText: typeof import('bootstrap-vue-next/components/BCard')['BCardText']
     BCardTitle: typeof import('bootstrap-vue-next/components/BCard')['BCardTitle']
     BCollapse: typeof import('bootstrap-vue-next/components/BCollapse')['BCollapse']
