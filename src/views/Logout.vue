@@ -19,11 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { login } from '../auth0'
 import { BCard, BCardHeader, BCardBody, BButton } from 'bootstrap-vue-next'
-
-const router = useRouter()
 
 const handleLogin = async () => {
   await login('/')
