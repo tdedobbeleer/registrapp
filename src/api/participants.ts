@@ -1,6 +1,61 @@
 import { supabase } from '../supabase'
 import type { Participant, ParticipantActivityType } from '../types'
 
+// Levenshtein distance function
+function levenshteinDistance(a: string, b: string): number {
+  const matrix: number[][] = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(0))
+
+  for (let i = 0; i <= a.length; i += 1) {
+    matrix[0][i] = i
+  }
+
+  for (let j = 0; j <= b.length; j += 1) {
+    matrix[j][0] = j
+  }
+
+  for (let j = 1; j <= b.length; j += 1) {
+    for (let i = 1; i <= a.length; i += 1) {
+      const indicator = a[i - 1] === b[j - 1] ? 0 : 1
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1]! + 1, // deletion
+        matrix[j - 1]![i]! + 1, // insertion
+        matrix[j - 1]![i - 1]! + indicator // substitution
+      )
+    }
+  }
+
+  return matrix[b.length]![a.length]!
+}
+
+export const findSimilarParticipants = async (firstName: string, lastName: string): Promise<Participant[]> => {
+  const { data, error } = await supabase
+    .from('participants')
+    .select('*')
+    .order('first_name', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching participants:', error)
+    throw error
+  }
+
+  const fullName = `${firstName} ${lastName}`.toLowerCase()
+  const similarParticipants: Participant[] = []
+
+  for (const participant of data || []) {
+    const participantFullName = `${participant.first_name} ${participant.last_name}`.toLowerCase()
+    const distance = levenshteinDistance(fullName, participantFullName)
+    const maxLength = Math.max(fullName.length, participantFullName.length)
+    const similarity = 1 - (distance / maxLength)
+
+    // Consider similar if similarity is above 0.7 (70%) and distance is small
+    if (similarity > 0.7 || distance <= 2) {
+      similarParticipants.push(participant)
+    }
+  }
+
+  return similarParticipants
+}
+
 export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = []) => {
     const { data: participantData, error: participantError } = await supabase
         .from('participants')

@@ -120,7 +120,11 @@
     "firstNameRequired": "Voornaam is verplicht",
     "lastNameRequired": "Achternaam is verplicht",
     "edit": "Bewerken",
-    "delete": "Verwijderen"
+    "delete": "Verwijderen",
+    "duplicateWarningTitle": "Mogelijke Dubbel Gevonden",
+    "duplicateWarningMessage": "We hebben deelnemers gevonden met vergelijkbare namen:",
+    "duplicateWarningConfirm": "Weet je zeker dat je deze deelnemer wilt aanmaken?",
+    "confirmCreate": "Toch Aanmaken"
   },
   "notFound": {
     "title": "404 - Pagina Niet Gevonden",

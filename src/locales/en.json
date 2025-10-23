@@ -120,7 +120,11 @@
     "firstNameRequired": "First name is required",
     "lastNameRequired": "Last name is required",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "duplicateWarningTitle": "Possible Duplicate Found",
+    "duplicateWarningMessage": "We found participants with similar names:",
+    "duplicateWarningConfirm": "Are you sure you want to create this participant?",
+    "confirmCreate": "Create Anyway"
   },
   "notFound": {
     "title": "404 - Page Not Found",

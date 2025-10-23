@@ -46,6 +46,24 @@
         </div>
       </div>
     </BForm>
+
+    <!-- Duplicate Warning Modal -->
+    <BModal
+      v-model="showDuplicateWarning"
+      :title="$t('participants.duplicateWarningTitle')"
+      @ok="confirmSubmit"
+      @cancel="cancelSubmit"
+      :ok-title="$t('participants.confirmCreate')"
+      :cancel-title="$t('activities.cancel')"
+    >
+      <p>{{ $t('participants.duplicateWarningMessage') }}</p>
+      <ul>
+        <li v-for="participant in similarParticipants" :key="participant.id">
+          {{ participant.first_name }} {{ participant.last_name }}
+        </li>
+      </ul>
+      <p>{{ $t('participants.duplicateWarningConfirm') }}</p>
+    </BModal>
   </BModal>
 </template>
 
@@ -53,6 +71,8 @@
 import { ref, computed, watch } from 'vue'
 import type { Participant, ActivityType } from '../types'
 import { useValidation } from '../composables/useValidation'
+import { findSimilarParticipants } from '../api/participants'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
@@ -71,10 +91,14 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { validateRequired } = useValidation()
+const { t } = useI18n()
 
 const firstName = ref('')
 const lastName = ref('')
 const selectedActivityTypes = ref<string[]>([])
+const similarParticipants = ref<Participant[]>([])
+const showDuplicateWarning = ref(false)
+const checkingDuplicates = ref(false)
 
 const firstNameError = validateRequired(firstName, 'First name')
 const lastNameError = validateRequired(lastName, 'Last name')
@@ -90,14 +114,51 @@ const toggleActivityType = (activityTypeId: string) => {
   }
 }
 
-const handleSubmit = () => {
-   if (!formValid.value) return
-   emit('submit', {
-     firstName: firstName.value.trim(),
-     lastName: lastName.value.trim(),
-     activityTypes: selectedActivityTypes.value
-   })
- }
+const checkForDuplicates = async () => {
+  if (props.mode !== 'add') return true
+
+  checkingDuplicates.value = true
+  try {
+    const similar = await findSimilarParticipants(firstName.value.trim(), lastName.value.trim())
+    if (similar.length > 0) {
+      similarParticipants.value = similar
+      showDuplicateWarning.value = true
+      return false
+    }
+    return true
+  } catch (error) {
+    console.error('Error checking for duplicates:', error)
+    return true // Allow submission if check fails
+  } finally {
+    checkingDuplicates.value = false
+  }
+}
+
+const handleSubmit = async () => {
+  if (!formValid.value) return
+
+  const canProceed = await checkForDuplicates()
+  if (!canProceed) return
+
+  emit('submit', {
+    firstName: firstName.value.trim(),
+    lastName: lastName.value.trim(),
+    activityTypes: selectedActivityTypes.value
+  })
+}
+
+const confirmSubmit = () => {
+  showDuplicateWarning.value = false
+  emit('submit', {
+    firstName: firstName.value.trim(),
+    lastName: lastName.value.trim(),
+    activityTypes: selectedActivityTypes.value
+  })
+}
+
+const cancelSubmit = () => {
+  showDuplicateWarning.value = false
+}
 
 watch(() => props.participant, (newParticipant) => {
   if (newParticipant) {
