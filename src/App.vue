@@ -11,7 +11,7 @@
     <div v-if="isLoggingOut" class="logout-overlay">
       <div class="logout-spinner">
         <BSpinner variant="primary" />
-        <p class="mt-2">Logging out...</p>
+        <p class="mt-2">{{ $t('logout.loggingOut') }}</p>
       </div>
     </div>
     <BNavbar v-if="user" toggleable="lg" type="light" variant="primary" class="mb-3">

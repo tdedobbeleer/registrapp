@@ -63,7 +63,8 @@
   "logout": {
     "title": "Logged Out",
     "message": "You have been successfully logged out.",
-    "loginAgain": "Login Again"
+    "loginAgain": "Login Again",
+    "loggingOut": "Logging out..."
   },
   "registrations": {
     "title": "Registrations",

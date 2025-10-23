@@ -28,12 +28,24 @@ const route = useRoute()
 const error = ref('')
 
 onMounted(async () => {
-  try {
+  const loaded = new Promise((resolve, reject) => {
+    const logo = new Image()
+    logo.src = "/logo.png"
+    logo.onload = resolve
+    logo.onerror = reject
+  })
+
+  loaded.then(async () => {
+    try {
     const redirectPath = (route.query.redirect as string) || '/'
     await login(redirectPath)
-  } catch (err: any) {
-    error.value = err.message || 'Login failed'
-  }
+    } catch (err: any) {
+      error.value = err.message || 'Login failed'
+    }
+  }).catch(() => {
+    console.error("Img could not be loaded")
+  })
+  
 })
 
 </script>

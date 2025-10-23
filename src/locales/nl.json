@@ -63,7 +63,8 @@
   "logout": {
     "title": "Uitgelogd",
     "message": "Je bent succesvol uitgelogd.",
-    "loginAgain": "Opnieuw Inloggen"
+    "loginAgain": "Opnieuw Inloggen",
+    "loggingOut": "Uitloggen..."
   },
   "registrations": {
     "title": "Registraties",
