@@ -91,7 +91,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { validateRequired } = useValidation()
-const { t } = useI18n()
+useI18n()
 
 const firstName = ref('')
 const lastName = ref('')
