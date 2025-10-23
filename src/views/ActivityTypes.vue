@@ -5,6 +5,10 @@
       <BBreadcrumbItem active>{{ $t('activityTypes.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('activityTypes.title') }}</h1>
+    <div v-if="loading" class="text-center">
+      <BSpinner />
+    </div>
+    <div v-else>
     <div class="mb-3">
       <BInputGroup class="mt-3">
           <BFormInput type="text" v-model="searchTerm" :placeholder="$t('activityTypes.searchPlaceholder')" class="w-auto" />
@@ -90,6 +94,7 @@
     <BModal v-model="showDeleteModal" :title="$t('activityTypes.confirmDelete')" @ok="deleteActivity" :ok-title="$t('activityTypes.remove')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
       <p>{{ $t('activityTypes.deleteMessage') }}</p>
     </BModal>
+    </div>
   </div>
 </template>
 
@@ -111,7 +116,7 @@ const newDescription = ref('')
 const editName = ref('')
 const editDescription = ref('')
 const editingId = ref('')
-const loading = ref(false)
+const loading = ref(true)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
@@ -136,6 +141,7 @@ const isEditFormValid = computed(() => !editNameError.value && !editDescriptionE
 const fetchActivityTypes = async () => {
   try {
     activityTypes.value = await apiActivityTypes.fetch()
+    loading.value = false
   } catch (error) {
     console.error('Error fetching activity types:', error)
   }

@@ -8,12 +8,16 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BAlert: typeof import('bootstrap-vue-next/components/BAlert')['BAlert']
     BBadge: typeof import('bootstrap-vue-next/components/BBadge')['BBadge']
     BBreadcrumb: typeof import('bootstrap-vue-next/components/BBreadcrumb')['BBreadcrumb']
     BBreadcrumbItem: typeof import('bootstrap-vue-next/components/BBreadcrumb')['BBreadcrumbItem']
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
     BButtonGroup: typeof import('bootstrap-vue-next/components/BButton')['BButtonGroup']
     BCard: typeof import('bootstrap-vue-next/components/BCard')['BCard']
+    BCardBody: typeof import('bootstrap-vue-next/components/BCard')['BCardBody']
+    BCardHeader: typeof import('bootstrap-vue-next/components/BCard')['BCardHeader']
+    BCardImg: typeof import('bootstrap-vue-next/components/BCard')['BCardImg']
     BCardText: typeof import('bootstrap-vue-next/components/BCard')['BCardText']
     BCardTitle: typeof import('bootstrap-vue-next/components/BCard')['BCardTitle']
     BCollapse: typeof import('bootstrap-vue-next/components/BCollapse')['BCollapse']
@@ -35,6 +39,7 @@ declare module 'vue' {
     BNavbarToggle: typeof import('bootstrap-vue-next/components/BNavbar')['BNavbarToggle']
     BNavItem: typeof import('bootstrap-vue-next/components/BNav')['BNavItem']
     BPagination: typeof import('bootstrap-vue-next/components/BPagination')['BPagination']
+    BSpinner: typeof import('bootstrap-vue-next/components/BSpinner')['BSpinner']
     ParticipantModal: typeof import('./src/components/ParticipantModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-spa-js": "^2.4.1",
     "@supabase/supabase-js": "^2.57.4",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

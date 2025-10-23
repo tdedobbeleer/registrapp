@@ -5,6 +5,10 @@
       <BBreadcrumbItem active>{{ $t('nav.data') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('data.title') }}</h1>
+    <div v-if="loading" class="text-center">
+      <BSpinner />
+    </div>
+    <div v-else>
     <div class="mb-3">
       <BButtonGroup>
         <BFormSelect v-model="selectedActivityType" :options="activityTypeOptions" />
@@ -40,6 +44,7 @@
       :per-page="perPage"
       aria-controls="data-table"
     ></BPagination>
+    </div>
   </div>
 </template>
 
@@ -66,6 +71,7 @@ const startDate = ref('')
 const endDate = ref('')
 const currentPage = ref(1)
 const perPage = ref(10)
+const loading = ref(true)
 
 const activityTypeOptions = computed(() => [
   { value: '', text: t('data.filterByActivityType') },
@@ -154,6 +160,7 @@ const fetchData = async () => {
   } else {
     rawData.value = data || []
   }
+  loading.value = false
 }
 
 const exportCsv = () => {
@@ -179,10 +186,10 @@ const exportCsv = () => {
   document.body.removeChild(link)
 }
 
-onMounted(() => {
-  fetchActivityTypes()
-  fetchParticipants()
-  fetchData()
+onMounted(async () => {
+  await fetchActivityTypes()
+  await fetchParticipants()
+  await fetchData()
 })
 </script>
 

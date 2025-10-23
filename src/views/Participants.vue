@@ -5,6 +5,10 @@
       <BBreadcrumbItem active>{{ $t('participants.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
     <h1>{{ $t('participants.title') }}</h1>
+    <div v-if="loading" class="text-center">
+      <BSpinner />
+    </div>
+    <div v-else>
     <div class="mb-3">
       <BInputGroup class="mt-3">
       <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
@@ -74,6 +78,7 @@
       <p>{{ $t('participants.deleteMessage') }}</p>
       <p v-if="hasRegistrations" class="text-warning fw-bold">{{ $t('participants.deleteWarning') }}</p>
     </BModal>
+    </div>
   </div>
 </template>
 
@@ -90,7 +95,7 @@ const participants = ref<Participant[]>([])
 const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')
 const editingId = ref('')
-const loading = ref(false)
+const loading = ref(true)
 const showModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
@@ -139,6 +144,7 @@ const handleModalSubmit = async (data: { firstName: string; lastName: string; ac
 const fetchParticipants = async () => {
   try {
     participants.value = await apiParticipants.fetch()
+    loading.value = false
   } catch (error) {
     console.error('Error fetching participants:', error)
   }

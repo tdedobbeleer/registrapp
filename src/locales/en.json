@@ -47,7 +47,11 @@
     "loggingIn": "Logging in...",
     "login": "Login",
     "forgotPassword": "Forgot Password?",
-    "backToLogin": "Back to Login"
+    "backToLogin": "Back to Login",
+    "redirecting": "Redirecting to Auth0...",
+    "error": {
+      "generic": "An error occurred during login"
+    }
   },
   "passwordRecovery": {
     "title": "Password Recovery",
@@ -55,6 +59,11 @@
     "sending": "Sending...",
     "sendRecoveryEmail": "Send Recovery Email",
     "backToLogin": "Back to Login"
+  },
+  "logout": {
+    "title": "Logged Out",
+    "message": "You have been successfully logged out.",
+    "loginAgain": "Login Again"
   },
   "registrations": {
     "title": "Registrations",
@@ -135,5 +144,12 @@
   "language": {
     "switchToEn": "English",
     "switchToNl": "Nederlands"
+  },
+  "publicError": {
+    "title": "Authentication Error",
+    "description": "There was an issue with the authentication process.",
+    "errorTitle": "Login Failed",
+    "errorDescription": "The authentication callback failed. Please try logging in again.",
+    "tryAgainButton": "Try Again"
   }
 }

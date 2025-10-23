@@ -8,9 +8,15 @@
       <meta name="apple-mobile-web-app-title" content="MyWebSite" />
       <link rel="manifest" href="/site.webmanifest" />
     </head>
+    <div v-if="isLoggingOut" class="logout-overlay">
+      <div class="logout-spinner">
+        <BSpinner variant="primary" />
+        <p class="mt-2">Logging out...</p>
+      </div>
+    </div>
     <BNavbar v-if="user" toggleable="lg" type="light" variant="primary" class="mb-3">
       <BNavbarBrand to="/">
-        <img 
+        <img
           style="max-height: 75px;"
           src="/logo.png"
           alt="Kitten"
@@ -43,31 +49,55 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { supabase } from './supabase'
-import { useRouter } from 'vue-router'
-import { BApp } from 'bootstrap-vue-next'
-import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
+import { useRouter, useRoute } from 'vue-router'
+import { BApp, BSpinner } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
+import { getUser, logout as auth0Logout } from './auth0'
 
-const user = ref<User | null>(null)
+const user = ref<any>(null)
 const router = useRouter()
+const route = useRoute()
 const { locale } = useI18n()
+const isLoggingOut = ref(false)
 
 const logout = async () => {
-  await supabase.auth.signOut()
-  router.push('/login')
+  isLoggingOut.value = true
+  try {
+    await auth0Logout()
+  } finally {
+    setTimeout(function () {
+        isLoggingOut.value = false
+    }, 2000);
+  }
 }
 
 onMounted(async () => {
-  const { data: { user: currentUser } } = await supabase.auth.getUser()
-  user.value = currentUser
-})
-
-supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-  user.value = session?.user || null
+  user.value = await getUser()
+  if (user.value && route.query.redirect) {
+    router.push(route.query.redirect as string)
+  }
 })
 </script>
 
 <style>
 /* Global styles can be added here */
+
+.logout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.logout-spinner {
+  text-align: center;
+  color: white;
+}
 </style>

@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
-import PasswordRecovery from '../views/PasswordRecovery.vue'
+import Logout from '../views/Logout.vue'
 import Home from '../views/Home.vue'
+import AuthenticationError from '../views/AuthenticationError.vue'
 import ActivityTypes from '../views/ActivityTypes.vue'
 import Activities from '../views/Activities.vue'
 import Participants from '../views/Participants.vue'
 import Registrations from '../views/Registrations.vue'
 import Data from '../views/Data.vue'
 import NotFound from '../views/NotFound.vue'
-import { supabase } from '../supabase'
+import { getUser } from '../auth0'
 
 const routes = [
   {
@@ -17,9 +18,16 @@ const routes = [
     component: Login
   },
   {
-    path: '/password-recovery',
-    name: 'PasswordRecovery',
-    component: PasswordRecovery
+    path: '/logout',
+    name: 'Logout',
+    component: Logout,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/public',
+    name: 'AuthenticationError',
+    component: AuthenticationError,
+    meta: { requiresAuth: false },
   },
   {
     path: '/',
@@ -71,7 +79,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getUser()
   if (to.meta.requiresAuth && !user) {
     next({ path: '/login', query: { redirect: to.path } })
   } else {
