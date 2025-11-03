@@ -86,6 +86,5 @@ export const handleRedirectCallback = async (): Promise<{ appState?: { returnTo?
 
 export const isVolunteer = async (): Promise<boolean> => {
     const claims = await getAccessTokenClaims()
-    return claims.permissions?.includes('is:volunteer')
-
+    return claims?.permissions?.includes('is:volunteer') || false
 }
