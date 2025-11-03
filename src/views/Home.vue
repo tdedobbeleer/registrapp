@@ -10,7 +10,7 @@
     <!-- Flow Chart Layout -->
     <div class="flow-chart">
       <!-- Activity Types Card (conditionally shown) -->
-      <div v-if="showActivityTypes" class="flow-step">
+      <div v-if="!showActivityTypes" class="flow-step">
         <BCard img-src="https://images.unsplash.com/photo-1614667288602-9ac6e37318a7?w=300&h=150&fit=crop" :img-alt="$t('home.activityTypesAlt')" img-top class="flow-card">
           <BCardTitle>{{ $t('nav.activityTypes') }}</BCardTitle>
           <BCardText>{{ $t('home.activityTypesDescription') }}</BCardText>
@@ -73,15 +73,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getUser, isVolunteer } from '../auth0'
 
 const user = ref<any>(null)
-
-const showActivityTypes = computed(() => !isVolunteer())
+const showActivityTypes = ref(false)
 
 onMounted(async () => {
   user.value = await getUser()
+  showActivityTypes.value = await isVolunteer()
 })
 </script>
 

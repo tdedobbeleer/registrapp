@@ -26,7 +26,7 @@
       <BCollapse id="nav-collapse" is-nav>
         <BNavbarNav>
           <BNavItem to="/activities">{{ $t('nav.activities') }}</BNavItem>
-          <BNavItem v-if="showActivityTypes" to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
+          <BNavItem v-if="hideActivityTypes" to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
           <BNavItem to="/participants">{{ $t('nav.participants') }}</BNavItem>
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { BApp, BSpinner } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
@@ -59,8 +59,7 @@ const router = useRouter()
 const route = useRoute()
 const { locale } = useI18n()
 const isLoggingOut = ref(false)
-
-const showActivityTypes = computed(() => !isVolunteer())
+const hideActivityTypes = ref(false)
 
 const logout = async () => {
   isLoggingOut.value = true
@@ -75,6 +74,7 @@ const logout = async () => {
 
 onMounted(async () => {
   user.value = await getUser()
+  hideActivityTypes.value = !(await isVolunteer())
   if (user.value && route.query.redirect) {
     router.push(route.query.redirect as string)
   }
