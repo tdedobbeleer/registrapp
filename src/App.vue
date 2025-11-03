@@ -60,7 +60,7 @@ const route = useRoute()
 const { locale } = useI18n()
 const isLoggingOut = ref(false)
 
-const showActivityTypes = computed(() => !user.value?.permissions?.includes('is:volunteer'))
+const showActivityTypes = computed(() => !isVolunteer())
 
 const logout = async () => {
   isLoggingOut.value = true

@@ -51,12 +51,6 @@ export const logout = async (): Promise<void> => {
 export const getUser = async () => {
     const client = await getAuth0Client()
     const user = await client.getUser()
-    const accessTokenClaims = await getAccessTokenClaims()
-
-    if (user && accessTokenClaims?.permissions) {
-        user.permissions = accessTokenClaims.permissions
-    }
-
     return user
 }
 
