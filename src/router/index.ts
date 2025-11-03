@@ -9,7 +9,7 @@ import Participants from '../views/Participants.vue'
 import Registrations from '../views/Registrations.vue'
 import Data from '../views/Data.vue'
 import NotFound from '../views/NotFound.vue'
-import { getUser } from '../auth0'
+import { getUser, isVolunteer } from '../auth0'
 
 const routes = [
   {
@@ -82,6 +82,8 @@ router.beforeEach(async (to, _from, next) => {
   const user = await getUser()
   if (to.meta.requiresAuth && !user) {
     next({ path: '/login', query: { redirect: to.path } })
+  } else if (to.path === '/activity_types' && await isVolunteer()) {
+    next({ path: '/' })
   } else {
     next()
   }

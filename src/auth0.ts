@@ -50,7 +50,22 @@ export const logout = async (): Promise<void> => {
 
 export const getUser = async () => {
     const client = await getAuth0Client()
-    return await client.getUser()
+    const user = await client.getUser()
+    return user
+}
+
+export const getIdTokenClaims = async () => {
+    const client = await getAuth0Client()
+    return await client.getIdTokenClaims()
+}
+
+export const getAccessTokenClaims = async () => {
+    const client = await getAuth0Client()
+    const token = await client.getTokenSilently()
+    if (!token) return null
+    // Decode the JWT token to get claims
+    const payload = JSON.parse(atob(token.split('.')[1]!))
+    return payload
 }
 
 export const isAuthenticated = async (): Promise<boolean> => {
@@ -67,4 +82,10 @@ export const handleRedirectCallback = async (): Promise<{ appState?: { returnTo?
     const client = await getAuth0Client()
     const result = await client.handleRedirectCallback()
     return result
+}
+
+export const isVolunteer = async (): Promise<boolean> => {
+    const claims = await getAccessTokenClaims()
+    return claims.permissions?.includes('is:volunteer')
+
 }

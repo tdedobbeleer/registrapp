@@ -26,7 +26,7 @@
       <BCollapse id="nav-collapse" is-nav>
         <BNavbarNav>
           <BNavItem to="/activities">{{ $t('nav.activities') }}</BNavItem>
-          <BNavItem to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
+          <BNavItem v-if="showActivityTypes" to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
           <BNavItem to="/participants">{{ $t('nav.participants') }}</BNavItem>
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
@@ -48,17 +48,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { BApp, BSpinner } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
-import { getUser, logout as auth0Logout } from './auth0'
+import { getUser, logout as auth0Logout, isVolunteer } from './auth0'
 
 const user = ref<any>(null)
 const router = useRouter()
 const route = useRoute()
 const { locale } = useI18n()
 const isLoggingOut = ref(false)
+
+const showActivityTypes = computed(() => !isVolunteer())
 
 const logout = async () => {
   isLoggingOut.value = true
