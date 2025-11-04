@@ -1,13 +1,13 @@
 <template>
   <div class="container mt-5">
-    <div class="row">
-      <div class="col-12 text-center mb-5">
+    <BRow>
+      <BCol cols="12" class="text-center mb-5">
         <h1>{{ $t('publicError.title') }}</h1>
         <p class="lead">{{ $t('publicError.description') }}</p>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-4 mb-4">
+      </BCol>
+    </BRow>
+    <BRow class="justify-content-center">
+      <BCol md="6" lg="4" class="mb-4">
         <BCard class="text-center h-100">
           <BCardBody>
             <BCardTitle>{{ $t('publicError.errorTitle') }}</BCardTitle>
@@ -15,8 +15,8 @@
             <BButton variant="primary" @click="handleLogin">{{ $t('publicError.tryAgainButton') }}</BButton>
           </BCardBody>
         </BCard>
-      </div>
-    </div>
+      </BCol>
+    </BRow>
   </div>
 </template>
 

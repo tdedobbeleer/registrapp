@@ -156,5 +156,12 @@
     "errorTitle": "Login Failed",
     "errorDescription": "The authentication callback failed. Please try logging in again.",
     "tryAgainButton": "Try Again"
+  },
+  "unauthorized": {
+    "title": "Access Denied",
+    "description": "You do not have permission to access this page.",
+    "accessTitle": "Unauthorized Access",
+    "accessDescription": "You need the appropriate permissions to view this content. Please contact your administrator if you believe this is an error.",
+    "goHomeButton": "Go Home"
   }
 }

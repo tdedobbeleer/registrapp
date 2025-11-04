@@ -1,16 +1,16 @@
 <template>
   <div class="container mt-3">
-    <div class="row">
-      <div class="col-12 text-center mb-2">
+    <BRow>
+      <BCol cols="12" class="text-center mb-2">
         <h1>{{ $t('home.welcome') }}</h1>
         <p class="lead">{{ $t('home.description') }}</p>
-      </div>
-    </div>
+      </BCol>
+    </BRow>
 
     <!-- Flow Chart Layout -->
     <div class="flow-chart">
       <!-- Activity Types Card (conditionally shown) -->
-      <div v-if="!showActivityTypes" class="flow-step">
+      <div v-if="showActivityTypes" class="flow-step">
         <BCard img-src="https://images.unsplash.com/photo-1614667288602-9ac6e37318a7?w=300&h=150&fit=crop" :img-alt="$t('home.activityTypesAlt')" img-top class="flow-card">
           <BCardTitle>{{ $t('nav.activityTypes') }}</BCardTitle>
           <BCardText>{{ $t('home.activityTypesDescription') }}</BCardText>
@@ -74,14 +74,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getUser, isVolunteer } from '../auth0'
+import { getUser, hasPermission, PERMISSIONS } from '../auth0'
 
 const user = ref<any>(null)
 const showActivityTypes = ref(false)
 
 onMounted(async () => {
   user.value = await getUser()
-  showActivityTypes.value = await isVolunteer()
+  showActivityTypes.value = await hasPermission(PERMISSIONS.CRUD_ACTIVITY_TYPES)
 })
 </script>
 
