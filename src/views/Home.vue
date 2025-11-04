@@ -1,11 +1,11 @@
 <template>
   <div class="container mt-3">
-    <div class="row">
-      <div class="col-12 text-center mb-2">
+    <BRow>
+      <BCol cols="12" class="text-center mb-2">
         <h1>{{ $t('home.welcome') }}</h1>
         <p class="lead">{{ $t('home.description') }}</p>
-      </div>
-    </div>
+      </BCol>
+    </BRow>
 
     <!-- Flow Chart Layout -->
     <div class="flow-chart">
