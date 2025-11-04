@@ -54,11 +54,6 @@ export const getUser = async () => {
     return user
 }
 
-export const getIdTokenClaims = async () => {
-    const client = await getAuth0Client()
-    return await client.getIdTokenClaims()
-}
-
 export const getAccessTokenClaims = async () => {
     const client = await getAuth0Client()
     const token = await client.getTokenSilently()
@@ -66,11 +61,6 @@ export const getAccessTokenClaims = async () => {
     // Decode the JWT token to get claims
     const payload = JSON.parse(atob(token.split('.')[1]!))
     return payload
-}
-
-export const isAuthenticated = async (): Promise<boolean> => {
-    const client = await getAuth0Client()
-    return await client.isAuthenticated()
 }
 
 export const getTokenSilently = async (): Promise<string> => {
@@ -84,7 +74,14 @@ export const handleRedirectCallback = async (): Promise<{ appState?: { returnTo?
     return result
 }
 
-export const isVolunteer = async (): Promise<boolean> => {
+// Permission constants
+export const PERMISSIONS = {
+    CRUD_ACTIVITY_TYPES: 'crud:activity_types',
+    READ_DATA: 'read:data'
+} as const
+
+export const hasPermission = async (permission: string): Promise<boolean> => {
     const claims = await getAccessTokenClaims()
-    return claims?.permissions?.includes('is:volunteer') || false
+    return claims?.permissions?.includes(permission) || false
 }
+

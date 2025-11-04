@@ -156,5 +156,12 @@
     "errorTitle": "Inloggen Mislukt",
     "errorDescription": "De authenticatie callback is mislukt. Probeer opnieuw in te loggen.",
     "tryAgainButton": "Probeer Opnieuw"
+  },
+  "unauthorized": {
+    "title": "Toegang Geweigerd",
+    "description": "Je hebt geen toestemming om deze pagina te bekijken.",
+    "accessTitle": "Ongeautoriseerde Toegang",
+    "accessDescription": "Je hebt de juiste machtigingen nodig om deze inhoud te bekijken. Neem contact op met je beheerder als je denkt dat dit een fout is.",
+    "goHomeButton": "Ga naar Home"
   }
 }
