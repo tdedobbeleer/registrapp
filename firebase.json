@@ -6,6 +6,13 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "redirects": [ 
+      {
+        "source": "www.wgcregister.be",
+        "destination": "https://wgcregister.be",
+        "type": 302
+      } 
+    ],
     "rewrites": [
       {
         "source": "**",
