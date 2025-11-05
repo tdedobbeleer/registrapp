@@ -12,13 +12,16 @@
         "destination": "/index.html"
       }
     ],
-    "redirects": [ 
-      {
-        "source": "www.wgcregister.be",
-        "destination": "https://wgcregister.be",
-        "type": 302
-      } ],
     "headers": [
+      {
+        "source": "/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, no-cache"
+          }
+        ]
+      },
       {
         "source": "**/*.@(js|css)",
         "headers": [
