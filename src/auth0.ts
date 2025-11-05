@@ -50,12 +50,17 @@ export const logout = async (): Promise<void> => {
 
 export const getUser = async () => {
     const client = await getAuth0Client()
-    return await client.getUser()
+    const user = await client.getUser()
+    return user
 }
 
-export const isAuthenticated = async (): Promise<boolean> => {
+export const getAccessTokenClaims = async () => {
     const client = await getAuth0Client()
-    return await client.isAuthenticated()
+    const token = await client.getTokenSilently()
+    if (!token) return null
+    // Decode the JWT token to get claims
+    const payload = JSON.parse(atob(token.split('.')[1]!))
+    return payload
 }
 
 export const getTokenSilently = async (): Promise<string> => {
@@ -68,3 +73,15 @@ export const handleRedirectCallback = async (): Promise<{ appState?: { returnTo?
     const result = await client.handleRedirectCallback()
     return result
 }
+
+// Permission constants
+export const PERMISSIONS = {
+    CRUD_ACTIVITY_TYPES: 'crud:activity_types',
+    READ_DATA: 'read:data'
+} as const
+
+export const hasPermission = async (permission: string): Promise<boolean> => {
+    const claims = await getAccessTokenClaims()
+    return claims?.permissions?.includes(permission) || false
+}
+

@@ -26,8 +26,9 @@
       <BCollapse id="nav-collapse" is-nav>
         <BNavbarNav>
           <BNavItem to="/activities">{{ $t('nav.activities') }}</BNavItem>
-          <BNavItem to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
+          <BNavItem v-if="showActivityTypes" to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
           <BNavItem to="/participants">{{ $t('nav.participants') }}</BNavItem>
+          <BNavItem v-if="showData" to="/data">{{ $t('nav.data') }}</BNavItem>
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
           <BButtonGroup>
@@ -52,13 +53,15 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { BApp, BSpinner } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
-import { getUser, logout as auth0Logout } from './auth0'
+import { getUser, logout as auth0Logout, hasPermission, PERMISSIONS } from './auth0'
 
 const user = ref<any>(null)
 const router = useRouter()
 const route = useRoute()
 const { locale } = useI18n()
 const isLoggingOut = ref(false)
+const showActivityTypes = ref(false)
+const showData = ref(false)
 
 const logout = async () => {
   isLoggingOut.value = true
@@ -73,6 +76,8 @@ const logout = async () => {
 
 onMounted(async () => {
   user.value = await getUser()
+  showActivityTypes.value = await hasPermission(PERMISSIONS.CRUD_ACTIVITY_TYPES)
+  showData.value = await hasPermission(PERMISSIONS.READ_DATA)
   if (user.value && route.query.redirect) {
     router.push(route.query.redirect as string)
   }

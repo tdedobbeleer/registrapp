@@ -14,16 +14,16 @@
     "welcome": "Welcome to RegistrApp",
     "description": "Manage your activities, participants, and registrations with ease.",
     "activitiesAlt": "Calendar showing scheduled activities",
-    "activitiesDescription": "Then, create an activity. You can create multiple activities using the same activity type on different dates. Easy!",
+    "activitiesDescription": "Create an activity by clicking on {addIcon}. You can create multiple activities using the same activity type on different dates. Easy! An example of such an activity is RevAqua on 11/11/25.",
     "viewActivities": "View Activities",
     "activityTypesAlt": "Icons representing different activity categories",
-    "activityTypesDescription": "First, define an activity type. This could be an existing type or a new type of activity you just made up. Congratulations!",
+    "activityTypesDescription": "First define an activity type. This can be an existing type or a new type of activity you just thought up. Congratulations.",
     "viewActivityTypes": "View Activity Types",
     "participantsAlt": "Group of people representing participants",
-    "participantsDescription": "Manage participant information and details. Add them, remove them, do whatever you want. Well, not entirely. Be a little bit cautious.",
+    "participantsDescription": "Manage participant information and details and add them to an activity type. Note: if you don't do this, the participant won't appear in the list for your activity! Add them, remove them, do what you want. Well, not entirely. Be a little careful.",
     "viewParticipants": "View Participants",
     "registrationsAlt": "Checklist showing completed registrations",
-    "registrationsDescription": "Finaly, go to the activity and manage the registrations for your activity on that date and time. Just search for the participant and mark him or her as present. If only life itself was this convenient!",
+    "registrationsDescription": "Then, go to the activity and manage the registrations for your activity by clicking on {registrationsIcon}. Just search for the participant and mark him or her as present. Oops, can't find the participant? Then add them. But watch out for duplicates. If necessary, first search for the participant in the participants screen (there you see them all) and check if the participant is assigned to your activity.",
     "viewRegistrations": "View Registrations"
   },
   "common": {
@@ -156,5 +156,12 @@
     "errorTitle": "Login Failed",
     "errorDescription": "The authentication callback failed. Please try logging in again.",
     "tryAgainButton": "Try Again"
+  },
+  "unauthorized": {
+    "title": "Access Denied",
+    "description": "You do not have permission to access this page.",
+    "accessTitle": "Unauthorized Access",
+    "accessDescription": "You need the appropriate permissions to view this content. Please contact your administrator if you believe this is an error.",
+    "goHomeButton": "Go Home"
   }
 }
