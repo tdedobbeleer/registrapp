@@ -47,7 +47,7 @@
           switch
           size="lg"
           :checked="isRegistered(participant.id)"
-          @change="toggleRegistration(participant.id)"
+          @change="toggleRegistration(participant.id, $event)"
         >
         </BFormCheckbox>
       </div>
@@ -73,11 +73,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
+import { supabase } from '../supabase'
 
 interface Props {
   activityId: string
@@ -99,6 +100,8 @@ const showModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
 const loading = ref(true)
+let registrationChannel: any = null
+let participantChannel: any = null
 
 const paginatedParticipants = computed(() => {
   const start = (currentPage.value - 1) * perPage
@@ -144,6 +147,34 @@ const getActivityTypeName = (id: string) => {
   return at ? at.name : 'Unknown'
 }
 
+const fetchParticipantWithActivityTypes = async (participantId: string): Promise<Participant | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('participants')
+      .select(`
+        *,
+        participant_activity_types (
+          activity_type_id
+        )
+      `)
+      .eq('id', participantId)
+      .single()
+
+    if (error) {
+      console.error('Error fetching participant with activity types:', error)
+      return null
+    }
+
+    return {
+      ...data,
+      activity_types: (data.participant_activity_types || []).map((pat: any) => pat.activity_type_id)
+    }
+  } catch (error) {
+    console.error('Error in fetchParticipantWithActivityTypes:', error)
+    return null
+  }
+}
+
 
 const fetchActivity = async () => {
   try {
@@ -178,17 +209,110 @@ const fetchRegistrations = async () => {
   }
 }
 
-const toggleRegistration = async (participantId: string) => {
-  const existing = registrations.value.find(r => r.participant_id === participantId)
-  try {
-    if (existing) {
-      await apiRegistrations.delete(existing.id)
-      registrations.value = registrations.value.filter(r => r.id !== existing.id)
-    } else {
-      const newReg = await apiRegistrations.add(participantId, props.activityId)
-      if (newReg) {
-        registrations.value.push(newReg)
+const setupRealtimeSubscription = () => {
+  registrationChannel = supabase
+    .channel('table-filter-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'registrations',
+        filter: `activity_id=eq.${props.activityId}`
+      },
+      (payload) => {
+        console.log('Realtime registration change:', payload)
+        handleRealtimeChange(payload)
       }
+    )
+    .subscribe()
+
+  participantChannel = supabase
+    .channel('table-db-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'participants'
+      },
+      (payload) => {
+        console.log('Realtime participant change:', payload)
+        handleParticipantRealtimeChange(payload)
+      }
+    )
+    .subscribe()
+}
+
+const handleRealtimeChange = (payload: any) => {
+  const { eventType, new: newRecord, old: oldRecord } = payload
+
+  if (eventType === 'INSERT') {
+    // Add new registration
+    registrations.value.push(newRecord)
+  } else if (eventType === 'DELETE') {
+    // Remove deleted registration
+    registrations.value = registrations.value.filter(r => r.participant_id !== oldRecord.participant_id || r.activity_id !== oldRecord.activity_id)
+  } else if (eventType === 'UPDATE') {
+    // Update existing registration
+    const index = registrations.value.findIndex(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
+    if (index !== -1) {
+      registrations.value[index] = newRecord
+    }
+  }
+}
+
+const handleParticipantRealtimeChange = (payload: any) => {
+  const { eventType, new: newRecord, old: oldRecord } = payload
+
+  if (eventType === 'INSERT') {
+    // For new participants, we need to fetch their activity types since they're not included in the realtime payload
+    fetchParticipantWithActivityTypes(newRecord.id).then(participant => {
+      if (participant && activity.value && participant.activity_types.includes(activity.value.activity_type_id)) {
+        participants.value.push(participant)
+      }
+    }).catch(error => {
+      console.error('Error fetching participant with activity types:', error)
+    })
+  } else if (eventType === 'DELETE') {
+    // Remove deleted participant
+    participants.value = participants.value.filter(p => p.id !== oldRecord.id)
+  } else if (eventType === 'UPDATE') {
+    // For updates, we need to fetch the updated activity types
+    fetchParticipantWithActivityTypes(newRecord.id).then(participant => {
+      if (participant) {
+        const index = participants.value.findIndex(p => p.id === newRecord.id)
+        if (index !== -1) {
+          // Check if participant is still eligible for this activity
+          if (activity.value && participant.activity_types.includes(activity.value.activity_type_id)) {
+            participants.value[index] = participant
+          } else {
+            // Remove if no longer eligible
+            participants.value.splice(index, 1)
+          }
+        } else {
+          // Add if now eligible
+          if (activity.value && participant.activity_types.includes(activity.value.activity_type_id)) {
+            participants.value.push(participant)
+          }
+        }
+      }
+    }).catch(error => {
+      console.error('Error fetching updated participant with activity types:', error)
+    })
+  }
+}
+
+const toggleRegistration = async (participantId: string, event: Event) => {
+  const target = event.target as HTMLInputElement
+  const isChecked = target.checked
+  try {
+    if (isChecked) {
+      await apiRegistrations.add(participantId, props.activityId)
+      // No need to manually update registrations.value as realtime will handle it
+    } else {
+      await apiRegistrations.delete(participantId, props.activityId)
+      // No need to manually update registrations.value as realtime will handle it
     }
   } catch (error) {
     console.error('Error toggling registration:', error)
@@ -219,7 +343,7 @@ const addParticipant = async (firstName: string, lastName: string, activityTypes
   loading.value = true
   try {
     await apiParticipants.add(firstName, lastName, activityTypes)
-    await fetchParticipants()
+    // No need to fetchParticipants as realtime will handle it
     showModal.value = false
   } catch (error) {
     console.error('Error adding participant:', error)
@@ -231,7 +355,7 @@ const updateParticipant = async (id: string, firstName: string, lastName: string
   loading.value = true
   try {
     await apiParticipants.update(id, firstName, lastName, activityTypes)
-    await fetchParticipants()
+    // No need to fetchParticipants as realtime will handle it
     showModal.value = false
   } catch (error) {
     console.error('Error updating participant:', error)
@@ -244,6 +368,16 @@ onMounted(async () => {
   await fetchActivityTypes()
   await fetchParticipants()
   await fetchRegistrations()
+  setupRealtimeSubscription()
+})
+
+onUnmounted(() => {
+  if (registrationChannel) {
+    supabase.removeChannel(registrationChannel)
+  }
+  if (participantChannel) {
+    supabase.removeChannel(participantChannel)
+  }
 })
 
 watch(searchTerm, () => {

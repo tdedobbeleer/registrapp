@@ -28,7 +28,6 @@ export interface ParticipantActivityType {
 }
 
 export interface Registration {
-  id: string
   participant_id: string
   activity_id: string
   created_at: string
