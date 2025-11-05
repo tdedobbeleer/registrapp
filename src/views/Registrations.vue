@@ -211,24 +211,37 @@ const fetchRegistrations = async () => {
 
 const setupRealtimeSubscription = () => {
   registrationChannel = supabase
-    .channel('table-filter-changes')
+    .channel('registrations-changes')
     .on(
       'postgres_changes',
       {
-        event: '*',
+        event: 'INSERT',
         schema: 'public',
         table: 'registrations',
         filter: `activity_id=eq.${props.activityId}`
       },
       (payload) => {
-        console.log('Realtime registration change:', payload)
+        console.log('Realtime registration INSERT:', payload)
+        handleRealtimeChange(payload)
+      }
+    )
+    .on(
+      'postgres_changes',
+      {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'registrations',
+        filter: `activity_id=eq.${props.activityId}`
+      },
+      (payload) => {
+        console.log('Realtime registration DELETE:', payload)
         handleRealtimeChange(payload)
       }
     )
     .subscribe()
 
   participantChannel = supabase
-    .channel('table-db-changes')
+    .channel('participants-changes')
     .on(
       'postgres_changes',
       {
@@ -253,12 +266,6 @@ const handleRealtimeChange = (payload: any) => {
   } else if (eventType === 'DELETE') {
     // Remove deleted registration
     registrations.value = registrations.value.filter(r => r.participant_id !== oldRecord.participant_id || r.activity_id !== oldRecord.activity_id)
-  } else if (eventType === 'UPDATE') {
-    // Update existing registration
-    const index = registrations.value.findIndex(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
-    if (index !== -1) {
-      registrations.value[index] = newRecord
-    }
   }
 }
 

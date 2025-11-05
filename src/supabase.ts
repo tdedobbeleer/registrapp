@@ -10,3 +10,20 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
         return accessToken
     }
 })
+
+// Function to set auth token for realtime
+export const setRealtimeAuth = async () => {
+    try {
+        const token = await getTokenSilently()
+        supabase.realtime.setAuth(token)
+        console.log('Realtime auth token set successfully')
+    } catch (error) {
+        console.error('Failed to set realtime auth token:', error)
+    }
+}
+
+// Initial set
+setRealtimeAuth()
+
+// Export function to refresh realtime auth when token is refreshed
+export const refreshRealtimeAuth = setRealtimeAuth
