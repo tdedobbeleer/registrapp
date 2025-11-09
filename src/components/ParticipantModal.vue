@@ -31,6 +31,14 @@
         />
         <BFormInvalidFeedback>{{ lastNameError || $t('participants.lastNameRequired') }}</BFormInvalidFeedback>
       </div>
+      <div class="mb-3">
+        <label for="role" class="form-label">{{ $t('participants.role') }}</label>
+        <BFormSelect
+          id="role"
+          v-model="selectedRole"
+          :options="roleOptions"
+        />
+      </div>
       <div v-if="props.activityTypes" class="mb-3">
         <label class="form-label">{{ $t('participants.activityTypes') }}</label>
         <div class="activity-types-container">
@@ -84,17 +92,18 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'submit', data: { firstName: string; lastName: string; activityTypes?: string[] }): void
+  (e: 'submit', data: { firstName: string; lastName: string; activityTypes?: string[]; participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null }): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const { validateRequired } = useValidation()
-useI18n()
+const { t } = useI18n()
 
 const firstName = ref('')
 const lastName = ref('')
+const selectedRole = ref<'PHYSIOTHERAPIST' | 'VOLUNTEER' | null>(null)
 const selectedActivityTypes = ref<string[]>([])
 const similarParticipants = ref<Participant[]>([])
 const showDuplicateWarning = ref(false)
@@ -104,6 +113,12 @@ const firstNameError = validateRequired(firstName, 'First name')
 const lastNameError = validateRequired(lastName, 'Last name')
 
 const formValid = computed(() => !firstNameError.value && !lastNameError.value)
+
+const roleOptions = computed(() => [
+  { value: null, text: t('participants.noRole') },
+  { value: 'PHYSIOTHERAPIST', text: t('participants.physiotherapist') },
+  { value: 'VOLUNTEER', text: t('participants.volunteer') }
+])
 
 const toggleActivityType = (activityTypeId: string) => {
   const index = selectedActivityTypes.value.indexOf(activityTypeId)
@@ -143,7 +158,8 @@ const handleSubmit = async () => {
   emit('submit', {
     firstName: firstName.value.trim(),
     lastName: lastName.value.trim(),
-    activityTypes: selectedActivityTypes.value
+    activityTypes: selectedActivityTypes.value,
+    participantRole: selectedRole.value
   })
 }
 
@@ -152,7 +168,8 @@ const confirmSubmit = () => {
   emit('submit', {
     firstName: firstName.value.trim(),
     lastName: lastName.value.trim(),
-    activityTypes: selectedActivityTypes.value
+    activityTypes: selectedActivityTypes.value,
+    participantRole: selectedRole.value
   })
 }
 
@@ -164,10 +181,12 @@ watch(() => props.participant, (newParticipant) => {
   if (newParticipant) {
     firstName.value = newParticipant.first_name
     lastName.value = newParticipant.last_name
+    selectedRole.value = newParticipant.participant_role
     selectedActivityTypes.value = newParticipant.activity_types || []
   } else {
     firstName.value = ''
     lastName.value = ''
+    selectedRole.value = null
     selectedActivityTypes.value = []
   }
 }, { immediate: true })
@@ -176,6 +195,7 @@ watch(() => props.mode, () => {
   if (props.mode === 'add') {
     firstName.value = ''
     lastName.value = ''
+    selectedRole.value = null
     selectedActivityTypes.value = []
   }
 })

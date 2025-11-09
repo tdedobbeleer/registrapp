@@ -56,10 +56,10 @@ export const findSimilarParticipants = async (firstName: string, lastName: strin
   return similarParticipants
 }
 
-export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = []) => {
+export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
     const { data: participantData, error: participantError } = await supabase
         .from('participants')
-        .insert([{ first_name: firstName, last_name: lastName }])
+        .insert([{ first_name: firstName, last_name: lastName, participant_role: participantRole }])
         .select()
         .single()
     if (participantError) {
@@ -79,10 +79,10 @@ export const addParticipant = async (firstName: string, lastName: string, activi
     }
 }
 
-export const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes: string[] = []) => {
+export const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
     const { error: updateError } = await supabase
         .from('participants')
-        .update({ first_name: firstName, last_name: lastName })
+        .update({ first_name: firstName, last_name: lastName, participant_role: participantRole })
         .eq('id', id)
     if (updateError) {
         console.error('Error updating participant:', updateError)

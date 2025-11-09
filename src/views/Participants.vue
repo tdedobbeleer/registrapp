@@ -11,6 +11,14 @@
     <div v-else>
     <div class="mb-3">
       <BInputGroup class="mt-3">
+      <BDropdown variant="outline-secondary" class="me-2">
+        <template #button-content>
+          <i class="bi bi-filter"></i>
+        </template>
+        <BDropdownItem @click="filterRole = ''">{{ $t('participants.allRoles') }}</BDropdownItem>
+        <BDropdownItem @click="filterRole = 'PHYSIOTHERAPIST'">{{ $t('participants.physiotherapist') }}</BDropdownItem>
+        <BDropdownItem @click="filterRole = 'VOLUNTEER'">{{ $t('participants.volunteer') }}</BDropdownItem>
+      </BDropdown>
       <BFormInput type="text" v-model="searchTerm" :placeholder="$t('participants.searchPlaceholder')" class="w-auto" />
       <BInputGroupText v-if="searchTerm" @click="searchTerm = ''" style="cursor: pointer;"><i class="bi bi-x"></i></BInputGroupText>
       <BButton
@@ -20,6 +28,7 @@
           <i class="bi bi-person-fill-add"></i>
         </BButton>
       </BInputGroup>
+      <small class="text-muted">{{ $t('participants.filteringBy') }}: {{ filterRole === '' ? $t('participants.allRoles') : $t(`participants.${filterRole.toLowerCase()}`) }}</small>
 
     </div>
     <div class="list-group">
@@ -32,6 +41,9 @@
           <strong>{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
           <br />
           <small class="text-muted">{{ $t('common.changed') }}: {{ formatDate(participant.created_at) }}</small>
+          <div v-if="participant.participant_role">
+            <small class="text-muted">{{ $t('participants.role') }}: {{$t(`participants.${participant.participant_role.toLowerCase()}`)}}</small>
+          </div>
         </div>
         <div>
           <BButtonGroup>
@@ -84,16 +96,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
 
+useI18n()
 const { participants: apiParticipants, activityTypes: apiActivityTypes, registrations: apiRegistrations } = useApi()
 
 const participants = ref<Participant[]>([])
 const activityTypes = ref<ActivityType[]>([])
 const searchTerm = ref('')
+const filterRole = ref('')
 const editingId = ref('')
 const loading = ref(true)
 const showModal = ref(false)
@@ -105,9 +120,11 @@ const hasRegistrations = ref(false)
 const currentPage = ref(1)
 const perPage = 10
 
+
 const filteredParticipants = computed(() =>
   participants.value.filter(participant =>
-    `${participant.first_name} ${participant.last_name}`.toLowerCase().includes(searchTerm.value.toLowerCase())
+    `${participant.first_name} ${participant.last_name}`.toLowerCase().includes(searchTerm.value.toLowerCase()) &&
+    (filterRole.value === '' || participant.participant_role === filterRole.value)
   )
 )
 
@@ -132,11 +149,11 @@ const openEditModal = (participant: Participant) => {
   showModal.value = true
 }
 
-const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[] }) => {
+const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[]; participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null }) => {
   if (modalMode.value === 'add') {
-    await addParticipant(data.firstName, data.lastName, data.activityTypes || [])
+    await addParticipant(data.firstName, data.lastName, data.activityTypes || [], data.participantRole)
   } else {
-    await updateParticipant(data.firstName, data.lastName, data.activityTypes || [])
+    await updateParticipant(data.firstName, data.lastName, data.activityTypes || [], data.participantRole)
   }
 }
 
@@ -158,10 +175,10 @@ const fetchActivityTypes = async () => {
   }
 }
 
-const addParticipant = async (firstName: string, lastName: string, activityTypes: string[]) => {
+const addParticipant = async (firstName: string, lastName: string, activityTypes: string[], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
   loading.value = true
   try {
-    await apiParticipants.add(firstName, lastName, activityTypes)
+    await apiParticipants.add(firstName, lastName, activityTypes, participantRole)
     await fetchParticipants()
     showModal.value = false
   } catch (error) {
@@ -183,10 +200,10 @@ const openDeleteModal = async (id: string) => {
   showDeleteModal.value = true
 }
 
-const updateParticipant = async (firstName: string, lastName: string, activityTypes: string[]) => {
+const updateParticipant = async (firstName: string, lastName: string, activityTypes: string[], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
   loading.value = true
   try {
-    await apiParticipants.update(editingId.value, firstName, lastName, activityTypes)
+    await apiParticipants.update(editingId.value, firstName, lastName, activityTypes, participantRole)
     await fetchParticipants()
     showModal.value = false
   } catch (error) {
@@ -211,6 +228,10 @@ onMounted(() => {
 })
 
 watch(searchTerm, () => {
+  currentPage.value = 1
+})
+
+watch(filterRole, () => {
   currentPage.value = 1
 })
 </script>

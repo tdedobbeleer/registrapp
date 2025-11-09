@@ -17,6 +17,7 @@ export interface Participant {
   first_name: string
   last_name: string
   activity_types: string[]
+  participant_role: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null
   created_at: string
 }
 
@@ -30,6 +31,14 @@ export interface ParticipantActivityType {
 export interface Registration {
   participant_id: string
   activity_id: string
+  created_at: string
+  participant: Participant
+}
+
+export interface ActivityAssignee {
+  id: string
+  activity_id: string
+  participant_id: string
   created_at: string
   participant: Participant
 }

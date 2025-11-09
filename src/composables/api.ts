@@ -27,6 +27,13 @@ import {
     fetchRegistrationsByParticipant
 } from '../api/registrations'
 
+import {
+    fetchActivityAssignees,
+    addActivityAssignee,
+    deleteActivityAssignee,
+    fetchUsers
+} from '../api/activityAssignees'
+
 export const useApi = () => {
     return {
         participants: {
@@ -53,6 +60,12 @@ export const useApi = () => {
             add: addRegistration,
             delete: deleteRegistration,
             fetchByParticipant: fetchRegistrationsByParticipant
+        },
+        activityAssignees: {
+            fetch: fetchActivityAssignees,
+            add: addActivityAssignee,
+            delete: deleteActivityAssignee,
+            fetchUsers: fetchUsers
         }
     }
 }
