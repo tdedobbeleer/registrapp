@@ -4,7 +4,7 @@ import type { ActivityAssignee } from '../types'
 export const fetchActivityAssignees = async (activityId: string): Promise<ActivityAssignee[]> => {
     const { data, error } = await supabase
         .from('activity_assignees')
-        .select('*, participants(*)')
+        .select('*, participant:participants(*)')
         .eq('activity_id', activityId)
     if (error) {
         console.error('Error fetching activity assignees:', error)

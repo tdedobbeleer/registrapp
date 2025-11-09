@@ -36,6 +36,14 @@
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
           <br />
           <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
+          <div v-if="Object.keys(getAssigneesByType(activity)).length > 0" class="mt-1">
+            <small class="text-muted">
+              <span v-for="(participants, role) in getAssigneesByType(activity)" :key="role" class="me-2">
+                <strong>{{ role === 'PHYSIOTHERAPIST' ? $t('common.physiotherapist') : role === 'VOLUNTEER' ? $t('common.volunteer') : $t('common.unknown') }}</strong>
+                {{ participants.map(p => `${p.first_name} ${p.last_name}`).join(', ') }}
+              </span>
+            </small>
+          </div>
         </div>
         <div>
           <BButtonGroup>
@@ -73,7 +81,7 @@
               <h6>{{ $t('activities.selectedAssignees') }}</h6>
               <div class="d-flex flex-wrap gap-2">
                 <BBadge v-for="assignee in newAssignees" :key="assignee.participant_id" variant="primary" class="d-flex align-items-center">
-                  {{ assignee.participant.first_name }} {{ assignee.participant.last_name }}
+                  {{ assignee.participant ? `${assignee.participant.first_name} ${assignee.participant.last_name}` : 'Unknown User' }}
                   <BButton size="sm" variant="link" class="text-white ms-1 p-0" @click="removeAssignee(assignee.participant_id, false)">
                     <i class="bi bi-x"></i>
                   </BButton>
@@ -83,7 +91,7 @@
             <BFormInput v-model="userSearchTerm" :placeholder="$t('activities.searchUsers')" class="mb-2" />
             <div class="list-group" style="max-height: 200px; overflow-y: auto;">
               <div
-                v-for="user in filteredUsers"
+                v-for="user in paginatedUsers(false)"
                 :key="user.id"
                 class="list-group-item d-flex justify-content-between align-items-center"
                 :class="{ 'list-group-item-secondary': isAssigneeSelected(user.id, false) }"
@@ -98,6 +106,15 @@
                   <i class="bi bi-plus"></i>
                 </BButton>
               </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <BButton size="sm" variant="outline-secondary" @click="prevPage(false)" :disabled="addCurrentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </BButton>
+              <span>{{ addCurrentPage }} / {{ totalPages(false) }}</span>
+              <BButton size="sm" variant="outline-secondary" @click="nextPage(false)" :disabled="addCurrentPage === totalPages(false)">
+                <i class="bi bi-chevron-right"></i>
+              </BButton>
             </div>
           </div>
         </div>
@@ -124,7 +141,7 @@
               <h6>{{ $t('activities.selectedAssignees') }}</h6>
               <div class="d-flex flex-wrap gap-2">
                 <BBadge v-for="assignee in editAssignees" :key="assignee.participant_id" variant="primary" class="d-flex align-items-center">
-                  {{ assignee.participant.first_name }} {{ assignee.participant.last_name }}
+                  {{ assignee.participant ? `${assignee.participant.first_name} ${assignee.participant.last_name}` : 'Unknown User' }}
                   <BButton size="sm" variant="link" class="text-white ms-1 p-0" @click="removeAssignee(assignee.participant_id, true)">
                     <i class="bi bi-x"></i>
                   </BButton>
@@ -134,7 +151,7 @@
             <BFormInput v-model="userSearchTerm" :placeholder="$t('activities.searchUsers')" class="mb-2" />
             <div class="list-group" style="max-height: 200px; overflow-y: auto;">
               <div
-                v-for="user in filteredUsers"
+                v-for="user in paginatedUsers(true)"
                 :key="user.id"
                 class="list-group-item d-flex justify-content-between align-items-center"
                 :class="{ 'list-group-item-secondary': isAssigneeSelected(user.id, true) }"
@@ -149,6 +166,15 @@
                   <i class="bi bi-plus"></i>
                 </BButton>
               </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <BButton size="sm" variant="outline-secondary" @click="prevPage(true)" :disabled="editCurrentPage === 1">
+                <i class="bi bi-chevron-left"></i>
+              </BButton>
+              <span>{{ editCurrentPage }} / {{ totalPages(true) }}</span>
+              <BButton size="sm" variant="outline-secondary" @click="nextPage(true)" :disabled="editCurrentPage === totalPages(true)">
+                <i class="bi bi-chevron-right"></i>
+              </BButton>
             </div>
           </div>
         </div>
@@ -174,7 +200,7 @@ import { useValidation } from '../composables/useValidation'
 const { t } = useI18n()
 const { validateDateTime } = useValidation()
 
-const { activities: apiActivities, activityTypes: apiActivityTypes, activityAssignees: apiActivityAssignees } = useApi()
+const { activities: apiActivities, activityTypes: apiActivityTypes, activityAssignees: apiActivityAssignees, registrations: apiRegistrations } = useApi()
 
 const activities = ref<Activity[]>([])
 const activityTypes = ref<ActivityType[]>([])
@@ -194,6 +220,8 @@ const showDeleteModal = ref(false)
 const deleteId = ref('')
 const allUsers = ref<Participant[]>([])
 const userSearchTerm = ref('')
+const addCurrentPage = ref(1)
+const editCurrentPage = ref(1)
 
 const activityTypeOptions = computed(() => [
   { value: '', text: t('activities.filterByActivityType') },
@@ -220,6 +248,45 @@ const filteredUsers = computed(() => {
   )
 })
 
+const paginatedUsers = (isEdit: boolean) => {
+  const users = filteredUsers.value
+  const page = isEdit ? editCurrentPage.value : addCurrentPage.value
+  const pageSize = 5
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  return users.slice(start, end)
+}
+
+const totalPages = (isEdit: boolean) => {
+  const users = filteredUsers.value
+  const pageSize = 5
+  return Math.ceil(users.length / pageSize)
+}
+
+const nextPage = (isEdit: boolean) => {
+  if (isEdit) {
+    if (editCurrentPage.value < totalPages(true)) {
+      editCurrentPage.value++
+    }
+  } else {
+    if (addCurrentPage.value < totalPages(false)) {
+      addCurrentPage.value++
+    }
+  }
+}
+
+const prevPage = (isEdit: boolean) => {
+  if (isEdit) {
+    if (editCurrentPage.value > 1) {
+      editCurrentPage.value--
+    }
+  } else {
+    if (addCurrentPage.value > 1) {
+      addCurrentPage.value--
+    }
+  }
+}
+
 const isAddFormValid = computed(() => newActivityTypeId.value && newDate.value && !newDateError.value)
 const isEditFormValid = computed(() => editActivityTypeId.value && editDate.value && !editDateError.value)
 
@@ -240,6 +307,17 @@ const getActivityClass = (activity: Activity): string => {
   } else {
     return ''
   }
+}
+
+const getAssigneesByType = (activity: Activity) => {
+  const assignees = activity.activity_assignees || []
+  const grouped = assignees.reduce((acc, assignee) => {
+    const role = assignee.participant?.participant_role || 'UNKNOWN'
+    if (!acc[role]) acc[role] = []
+    acc[role].push(assignee.participant)
+    return acc
+  }, {} as Record<string, Participant[]>)
+  return grouped
 }
 
 const fetchActivities = async () => {
@@ -267,6 +345,7 @@ const fetchUsers = async () => {
   }
 }
 
+
 const addActivity = async () => {
   if (!newActivityTypeId.value || !newDate.value) return
   loading.value = true
@@ -279,6 +358,7 @@ const addActivity = async () => {
     newActivityTypeId.value = ''
     newDate.value = ''
     newAssignees.value = []
+    addCurrentPage.value = 1
     await fetchActivities()
     showAddModal.value = false
   } catch (error) {
@@ -332,6 +412,7 @@ const updateActivity = async () => {
 
     await fetchActivities()
     showEditModal.value = false
+    editCurrentPage.value = 1
   } catch (error) {
     console.error('Error updating activity:', error)
   }

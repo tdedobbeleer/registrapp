@@ -10,6 +10,7 @@ export interface Activity {
   activity_type_id: string
   date: string
   created_at: string
+  activity_assignees?: ActivityAssignee[]
 }
 
 export interface Participant {

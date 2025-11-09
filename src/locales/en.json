@@ -27,7 +27,10 @@
     "viewRegistrations": "View Registrations"
   },
   "common": {
-    "changed": "Changed on"
+    "changed": "Changed on",
+    "physiotherapist": "Physio:",
+    "volunteer": "Volunteer:",
+    "unknown": "Unknown:"
   },
   "validation": {
     "required": "{field} is required",

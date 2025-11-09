@@ -27,7 +27,10 @@
     "viewRegistrations": "Registraties bekijken"
   },
   "common": {
-    "changed": "Gewijzigd op"
+    "changed": "Gewijzigd op",
+    "physiotherapist": "Kinesist:",
+    "volunteer": "Vrijwilliger:",
+    "unknown": "Onbekend:"
   },
   "validation": {
     "required": "{field} is verplicht",

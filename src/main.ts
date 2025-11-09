@@ -34,9 +34,27 @@ const i18n = createI18n({
     }
   }
 
-  // If redirect callback failed or no returnTo, redirect to public page
+  // If redirect callback failed or no returnTo, check if user is already logged in
   if (!redirectSuccess) {
-    router.push('/public')
+    try {
+      const { getUser } = await import('./auth0')
+      const user = await getUser()
+      if (user) {
+        // User is logged in, redirect to home
+        router.push('/')
+      } else {
+        // User not logged in, redirect to login with current path as redirect
+        const currentPath = window.location.pathname + window.location.search
+        if (currentPath !== '/login' && !currentPath.startsWith('/logout') && !currentPath.startsWith('/public')) {
+          router.push({ path: '/login', query: { redirect: currentPath } })
+        } else {
+          router.push('/public')
+        }
+      }
+    } catch (e) {
+      console.error('Error checking user login status:', e)
+      router.push('/public')
+    }
   }
 
   createApp(App).use(router).use(i18n).mount('#app')
