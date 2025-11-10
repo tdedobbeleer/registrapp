@@ -111,8 +111,8 @@
               <BButton size="sm" variant="outline-secondary" @click="prevPage(false)" :disabled="addCurrentPage === 1">
                 <i class="bi bi-chevron-left"></i>
               </BButton>
-              <span>{{ addCurrentPage }} / {{ totalPages(false) }}</span>
-              <BButton size="sm" variant="outline-secondary" @click="nextPage(false)" :disabled="addCurrentPage === totalPages(false)">
+              <span>{{ addCurrentPage }} / {{ totalPages() }}</span>
+              <BButton size="sm" variant="outline-secondary" @click="nextPage(false)" :disabled="addCurrentPage === totalPages()">
                 <i class="bi bi-chevron-right"></i>
               </BButton>
             </div>
@@ -171,8 +171,8 @@
               <BButton size="sm" variant="outline-secondary" @click="prevPage(true)" :disabled="editCurrentPage === 1">
                 <i class="bi bi-chevron-left"></i>
               </BButton>
-              <span>{{ editCurrentPage }} / {{ totalPages(true) }}</span>
-              <BButton size="sm" variant="outline-secondary" @click="nextPage(true)" :disabled="editCurrentPage === totalPages(true)">
+              <span>{{ editCurrentPage }} / {{ totalPages() }}</span>
+              <BButton size="sm" variant="outline-secondary" @click="nextPage(true)" :disabled="editCurrentPage === totalPages()">
                 <i class="bi bi-chevron-right"></i>
               </BButton>
             </div>
@@ -200,7 +200,7 @@ import { useValidation } from '../composables/useValidation'
 const { t } = useI18n()
 const { validateDateTime } = useValidation()
 
-const { activities: apiActivities, activityTypes: apiActivityTypes, activityAssignees: apiActivityAssignees, registrations: apiRegistrations } = useApi()
+const { activities: apiActivities, activityTypes: apiActivityTypes, activityAssignees: apiActivityAssignees } = useApi()
 
 const activities = ref<Activity[]>([])
 const activityTypes = ref<ActivityType[]>([])
@@ -257,7 +257,7 @@ const paginatedUsers = (isEdit: boolean) => {
   return users.slice(start, end)
 }
 
-const totalPages = (isEdit: boolean) => {
+const totalPages = () => {
   const users = filteredUsers.value
   const pageSize = 5
   return Math.ceil(users.length / pageSize)
@@ -265,11 +265,11 @@ const totalPages = (isEdit: boolean) => {
 
 const nextPage = (isEdit: boolean) => {
   if (isEdit) {
-    if (editCurrentPage.value < totalPages(true)) {
+    if (editCurrentPage.value < totalPages()) {
       editCurrentPage.value++
     }
   } else {
-    if (addCurrentPage.value < totalPages(false)) {
+    if (addCurrentPage.value < totalPages()) {
       addCurrentPage.value++
     }
   }
