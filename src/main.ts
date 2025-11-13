@@ -8,7 +8,7 @@ import router from './router'
 import { createI18n } from 'vue-i18n'
 import nl from './locales/nl.json'
 import en from './locales/en.json'
-import { handleRedirectCallback } from './auth0'
+import { handleRedirectCallback, getUser } from './auth0'
 
 const i18n = createI18n({
   locale: 'nl',
@@ -34,9 +34,24 @@ const i18n = createI18n({
     }
   }
 
-  // If redirect callback failed or no returnTo, redirect to public page
+  // If redirect callback failed or no returnTo, check if user is already logged in
   if (!redirectSuccess) {
-    router.push('/public')
+    try {
+      const user = await getUser()
+      if (user) {
+        router.push('/')
+      } else {
+        const currentPath = window.location.pathname + window.location.search
+        if (currentPath !== '/login' && !currentPath.startsWith('/logout') && !currentPath.startsWith('/public')) {
+          router.push({ path: '/login', query: { redirect: currentPath } })
+        } else {
+          router.push('/public')
+        }
+      }
+    } catch (e) {
+      console.error('Error checking user login status:', e)
+      router.push('/public')
+    }
   }
 
   createApp(App).use(router).use(i18n).mount('#app')

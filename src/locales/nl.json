@@ -27,7 +27,10 @@
     "viewRegistrations": "Registraties bekijken"
   },
   "common": {
-    "changed": "Gewijzigd op"
+    "changed": "Gewijzigd op",
+    "physiotherapist": "Kinesist:",
+    "volunteer": "Vrijwilliger:",
+    "unknown": "Onbekend:"
   },
   "validation": {
     "required": "{field} is verplicht",
@@ -82,6 +85,9 @@
     "addActivity": "Activiteit Toevoegen",
     "activityType": "Activiteitstype",
     "date": "Datum",
+    "assignees": "Toegewezen Personen",
+    "selectedAssignees": "Geselecteerde Toegewezen Personen",
+    "searchUsers": "Zoek gebruikers...",
     "editActivity": "Activiteit Bewerken",
     "confirmDelete": "Verwijdering Bevestigen",
     "deleteMessage": "Wil je de activiteit verwijderen?",
@@ -90,7 +96,10 @@
     "registrations": "registraties",
     "edit": "Bewerken",
     "delete": "Verwijderen",
-    "cancel": "Annuleren"
+    "cancel": "Annuleren",
+    "filter": "Filter",
+    "filteringBy": "Filteren op",
+    "allActivityTypes": "Alle Activiteitstypen"
   },
   "activityTypes": {
     "title": "Activiteitstypen",
@@ -113,6 +122,13 @@
     "firstName": "Voornaam",
     "lastName": "Achternaam",
     "activityTypes": "Activiteitstypen",
+    "role": "Rol",
+    "noRole": "Geen Rol",
+    "physiotherapist": "Kinesist",
+    "volunteer": "Vrijwilliger",
+    "allRoles": "Alle Rollen",
+    "filter": "Filter",
+    "filteringBy": "Filteren op",
     "editParticipant": "Deelnemer Bewerken",
     "confirmDelete": "Verwijdering Bevestigen",
     "deleteMessage": "Wil je de deelnemer verwijderen?",

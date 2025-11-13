@@ -27,7 +27,10 @@
     "viewRegistrations": "View Registrations"
   },
   "common": {
-    "changed": "Changed on"
+    "changed": "Changed on",
+    "physiotherapist": "Physio:",
+    "volunteer": "Volunteer:",
+    "unknown": "Unknown:"
   },
   "validation": {
     "required": "{field} is required",
@@ -82,6 +85,9 @@
     "addActivity": "Add Activity",
     "activityType": "Activity Type",
     "date": "Date",
+    "assignees": "Assignees",
+    "selectedAssignees": "Selected Assignees",
+    "searchUsers": "Search users...",
     "editActivity": "Edit Activity",
     "confirmDelete": "Confirm Delete",
     "deleteMessage": "Do you want to remove the activity?",
@@ -90,7 +96,10 @@
     "registrations": "registrations",
     "edit": "Edit",
     "delete": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "filter": "Filter",
+    "filteringBy": "Filtering by",
+    "allActivityTypes": "All Activity Types"
   },
   "activityTypes": {
     "title": "Activity Types",
@@ -113,6 +122,13 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "activityTypes": "Activity Types",
+    "role": "Role",
+    "noRole": "No Role",
+    "physiotherapist": "Physiotherapist",
+    "volunteer": "Volunteer",
+    "allRoles": "All Roles",
+    "filter": "Filter",
+    "filteringBy": "Filtering by",
     "editParticipant": "Edit Participant",
     "confirmDelete": "Confirm Delete",
     "deleteMessage": "Do you want to remove the participant?",
