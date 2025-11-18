@@ -139,8 +139,10 @@
     "delete": "Verwijderen",
     "duplicateWarningTitle": "Mogelijke Dubbel Gevonden",
     "duplicateWarningMessage": "We hebben deelnemers gevonden met vergelijkbare namen:",
+    "duplicateWarningActivityType": "Sommige van deze deelnemers staan niet in de lijst voor dit activiteitstype. Je kunt de deelnemer zichtbaar maken voor dit activiteitstype door op de knop naast hun naam te klikken.",
     "duplicateWarningConfirm": "Weet je zeker dat je deze deelnemer wilt aanmaken?",
-    "confirmCreate": "Toch Aanmaken"
+    "confirmCreate": "Toch Aanmaken",
+    "addActivityType": "Activiteitstype Toevoegen"
   },
   "notFound": {
     "title": "404 - Pagina Niet Gevonden",

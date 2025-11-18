@@ -139,8 +139,10 @@
     "delete": "Delete",
     "duplicateWarningTitle": "Possible Duplicate Found",
     "duplicateWarningMessage": "We found participants with similar names:",
+    "duplicateWarningActivityType": "Some of these participants are not in the list for this activity type. You can make them visible for this activity type by clicking the button next to their name.",
     "duplicateWarningConfirm": "Are you sure you want to create this participant?",
-    "confirmCreate": "Create Anyway"
+    "confirmCreate": "Create Anyway",
+    "addActivityType": "Add Activity Type"
   },
   "notFound": {
     "title": "404 - Page Not Found",

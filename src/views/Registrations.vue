@@ -65,8 +65,10 @@
       :mode="modalMode"
       :participant="editingParticipant"
       :activity-types="activityTypes"
+      :activity-type-id="activity?.activity_type_id"
       @added="handleParticipantChange"
       @updated="handleParticipantChange"
+      @activity-type-added="handleParticipantChange"
     />
     </div>
   </div>

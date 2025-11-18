@@ -66,11 +66,25 @@
     :cancel-title="$t('activities.cancel')"
   >
     <p>{{ $t('participants.duplicateWarningMessage') }}</p>
-    <ul>
-      <li v-for="participant in similarParticipants" :key="participant.id">
-        {{ participant.first_name }} {{ participant.last_name }}
+    <ul class="list-unstyled">
+      <li v-for="participant in similarParticipants" :key="participant.id" class="d-flex justify-content-between align-items-center mb-2">
+        <span>{{ participant.first_name }} {{ participant.last_name }}</span>
+        <BButton
+          v-if="activityTypeId && !participant.activity_types?.includes(activityTypeId)"
+          size="sm"
+          variant="outline-primary"
+          :disabled="addingActivityType.has(participant.id)"
+          @click="addActivityType(participant)"
+        >
+          <i v-if="addingActivityType.has(participant.id)" class="bi bi-hourglass-split"></i>
+          <i v-else class="bi bi-plus"></i>
+          {{ $t('participants.addActivityType') }}
+        </BButton>
       </li>
     </ul>
+    <p v-if="activityTypeId && similarParticipants.some(p => !p.activity_types?.includes(activityTypeId!))" class="text-info mb-3">
+      <i class="bi bi-info-circle"></i> {{ $t('participants.duplicateWarningActivityType') }}
+    </p>
     <p>{{ $t('participants.duplicateWarningConfirm') }}</p>
   </BModal>
 </template>
@@ -79,7 +93,7 @@
 import { ref, computed, watch } from 'vue'
 import type { Participant, ActivityType } from '../types'
 import { useValidation } from '../composables/useValidation'
-import { findSimilarParticipants } from '../api/participants'
+import { findSimilarParticipants, addActivityTypeToParticipant } from '../api/participants'
 import { useI18n } from 'vue-i18n'
 import { useApi } from '../composables/api'
 
@@ -88,12 +102,14 @@ interface Props {
   mode: 'add' | 'edit'
   participant: Participant | null
   activityTypes?: ActivityType[]
+  activityTypeId?: string
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
   (e: 'added'): void
   (e: 'updated'): void
+  (e: 'activityTypeAdded'): void
 }
 
 const props = defineProps<Props>()
@@ -111,6 +127,7 @@ const similarParticipants = ref<Participant[]>([])
 const showDuplicateWarning = ref(false)
 const checkingDuplicates = ref(false)
 const loading = ref(false)
+const addingActivityType = ref<Set<string>>(new Set())
 
 const firstNameError = validateRequired(firstName, 'First name')
 const lastNameError = validateRequired(lastName, 'Last name')
@@ -203,6 +220,24 @@ const cancelSubmit = () => {
   showDuplicateWarning.value = false
 }
 
+const addActivityType = async (participant: Participant) => {
+  if (!props.activityTypeId || addingActivityType.value.has(participant.id)) return
+
+  addingActivityType.value.add(participant.id)
+  try {
+    await addActivityTypeToParticipant(participant.id, props.activityTypeId)
+    // Update the participant's activity_types
+    participant.activity_types = [...(participant.activity_types || []), props.activityTypeId]
+    // Close the modal and emit event
+    emit('activityTypeAdded')
+    emit('update:modelValue', false)
+  } catch (error) {
+    console.error('Error adding activity type:', error)
+  } finally {
+    addingActivityType.value.delete(participant.id)
+  }
+}
+
 watch(() => props.participant, (newParticipant) => {
   if (newParticipant) {
     firstName.value = newParticipant.first_name
@@ -213,7 +248,7 @@ watch(() => props.participant, (newParticipant) => {
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
-    selectedActivityTypes.value = []
+    selectedActivityTypes.value = props.activityTypeId && props.mode === 'add' ? [props.activityTypeId] : []
   }
 }, { immediate: true })
 
@@ -222,7 +257,7 @@ watch(() => props.mode, () => {
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
-    selectedActivityTypes.value = []
+    selectedActivityTypes.value = props.activityTypeId ? [props.activityTypeId] : []
   }
 })
 </script>

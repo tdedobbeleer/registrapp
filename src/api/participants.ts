@@ -30,7 +30,12 @@ function levenshteinDistance(a: string, b: string): number {
 export const findSimilarParticipants = async (firstName: string, lastName: string): Promise<Participant[]> => {
   const { data, error } = await supabase
     .from('participants')
-    .select('*')
+    .select(`
+      *,
+      participant_activity_types (
+        activity_type_id
+      )
+    `)
     .order('first_name', { ascending: true })
 
   if (error) {
@@ -49,7 +54,10 @@ export const findSimilarParticipants = async (firstName: string, lastName: strin
 
     // Consider similar if similarity is above 0.7 (70%) and distance is small
     if (similarity > 0.7 || distance <= 2) {
-      similarParticipants.push(participant)
+      similarParticipants.push({
+        ...participant,
+        activity_types: (participant.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id)
+      })
     }
   }
 
@@ -106,6 +114,16 @@ export const updateParticipant = async (id: string, firstName: string, lastName:
             console.error('Error inserting new participant activity types:', insertError)
             throw insertError
         }
+    }
+}
+
+export const addActivityTypeToParticipant = async (participantId: string, activityTypeId: string) => {
+    const { error } = await supabase
+        .from('participant_activity_types')
+        .insert([{ participant_id: participantId, activity_type_id: activityTypeId }])
+    if (error) {
+        console.error('Error adding activity type to participant:', error)
+        throw error
     }
 }
 
