@@ -44,10 +44,10 @@ export function useValidation() {
     })
   }
 
-  const validateDateTime = (dateTime: Ref<string>) => {
+  const validateDateTime = (dateTime: Ref<string>, fieldName: string = 'Date and time') => {
     return computed(() => {
       if (!dateTime.value) {
-        return t('validation.required', { field: 'Date and time' })
+        return t('validation.required', { field: fieldName })
       }
       const date = new Date(dateTime.value)
       if (isNaN(date.getTime())) {

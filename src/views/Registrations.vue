@@ -65,8 +65,8 @@
       :mode="modalMode"
       :participant="editingParticipant"
       :activity-types="activityTypes"
-      :loading="loading"
-      @submit="handleModalSubmit"
+      @added="handleParticipantChange"
+      @updated="handleParticipantChange"
     />
     </div>
   </div>
@@ -195,6 +195,7 @@ const fetchActivityTypes = async () => {
 const fetchParticipants = async () => {
   try {
     participants.value = await apiParticipants.fetch(activity.value?.activity_type_id)
+    loading.value = false
   } catch (error) {
     console.error('Error fetching participants:', error)
   }
@@ -338,37 +339,11 @@ const openEditModal = (participant: Participant) => {
   showModal.value = true
 }
 
-const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[] }) => {
-  if (modalMode.value === 'add') {
-    await addParticipant(data.firstName, data.lastName, data.activityTypes)
-  } else if (editingParticipant.value) {
-    await updateParticipant(editingParticipant.value.id, data.firstName, data.lastName, data.activityTypes)
-  }
+const handleParticipantChange = () => {
+  loading.value = true;
+  fetchParticipants()
 }
 
-const addParticipant = async (firstName: string, lastName: string, activityTypes?: string[]) => {
-  loading.value = true
-  try {
-    await apiParticipants.add(firstName, lastName, activityTypes)
-    // No need to fetchParticipants as realtime will handle it
-    showModal.value = false
-  } catch (error) {
-    console.error('Error adding participant:', error)
-  }
-  loading.value = false
-}
-
-const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes?: string[]) => {
-  loading.value = true
-  try {
-    await apiParticipants.update(id, firstName, lastName, activityTypes)
-    // No need to fetchParticipants as realtime will handle it
-    showModal.value = false
-  } catch (error) {
-    console.error('Error updating participant:', error)
-  }
-  loading.value = false
-}
 
 onMounted(async () => {
   await fetchActivity()

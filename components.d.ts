@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActivityModal: typeof import('./src/components/ActivityModal.vue')['default']
     BAlert: typeof import('bootstrap-vue-next/components/BAlert')['BAlert']
     BBadge: typeof import('bootstrap-vue-next/components/BBadge')['BBadge']
     BBreadcrumb: typeof import('bootstrap-vue-next/components/BBreadcrumb')['BBreadcrumb']

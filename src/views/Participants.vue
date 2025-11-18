@@ -40,7 +40,6 @@
         <div class="p-1">
           <strong>{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
           <br />
-          <small class="text-muted">{{ $t('common.changed') }}: {{ formatDate(participant.created_at) }}</small>
           <div v-if="participant.participant_role">
             <small class="text-muted">{{ $t('participants.role') }}: {{$t(`participants.${participant.participant_role.toLowerCase()}`)}}</small>
           </div>
@@ -81,8 +80,8 @@
       :mode="modalMode"
       :participant="editingParticipant"
       :activityTypes="activityTypes"
-      :loading="loading"
-      @submit="handleModalSubmit"
+      @added="handleParticipantChange"
+      @updated="handleParticipantChange"
     />
 
     <!-- Delete Modal -->
@@ -100,7 +99,6 @@ import { useI18n } from 'vue-i18n'
 import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import { useApi } from '../composables/api'
-import { formatDate } from '../composables/useDate'
 
 useI18n()
 const { participants: apiParticipants, activityTypes: apiActivityTypes, registrations: apiRegistrations } = useApi()
@@ -149,12 +147,9 @@ const openEditModal = (participant: Participant) => {
   showModal.value = true
 }
 
-const handleModalSubmit = async (data: { firstName: string; lastName: string; activityTypes?: string[]; participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null }) => {
-  if (modalMode.value === 'add') {
-    await addParticipant(data.firstName, data.lastName, data.activityTypes || [], data.participantRole)
-  } else {
-    await updateParticipant(data.firstName, data.lastName, data.activityTypes || [], data.participantRole)
-  }
+const handleParticipantChange = () => {
+  loading.value = true;
+  fetchParticipants()
 }
 
 
@@ -175,17 +170,6 @@ const fetchActivityTypes = async () => {
   }
 }
 
-const addParticipant = async (firstName: string, lastName: string, activityTypes: string[], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
-  loading.value = true
-  try {
-    await apiParticipants.add(firstName, lastName, activityTypes, participantRole)
-    await fetchParticipants()
-    showModal.value = false
-  } catch (error) {
-    console.error('Error adding participant:', error)
-  }
-  loading.value = false
-}
 
 const openDeleteModal = async (id: string) => {
   deleteId.value = id
@@ -200,17 +184,6 @@ const openDeleteModal = async (id: string) => {
   showDeleteModal.value = true
 }
 
-const updateParticipant = async (firstName: string, lastName: string, activityTypes: string[], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
-  loading.value = true
-  try {
-    await apiParticipants.update(editingId.value, firstName, lastName, activityTypes, participantRole)
-    await fetchParticipants()
-    showModal.value = false
-  } catch (error) {
-    console.error('Error updating participant:', error)
-  }
-  loading.value = false
-}
 
 const deleteParticipant = async () => {
   try {

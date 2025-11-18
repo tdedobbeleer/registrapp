@@ -54,24 +54,24 @@
         </div>
       </div>
     </BForm>
+  </BModal>
 
-    <!-- Duplicate Warning Modal -->
-    <BModal
-      v-model="showDuplicateWarning"
-      :title="$t('participants.duplicateWarningTitle')"
-      @ok="confirmSubmit"
-      @cancel="cancelSubmit"
-      :ok-title="$t('participants.confirmCreate')"
-      :cancel-title="$t('activities.cancel')"
-    >
-      <p>{{ $t('participants.duplicateWarningMessage') }}</p>
-      <ul>
-        <li v-for="participant in similarParticipants" :key="participant.id">
-          {{ participant.first_name }} {{ participant.last_name }}
-        </li>
-      </ul>
-      <p>{{ $t('participants.duplicateWarningConfirm') }}</p>
-    </BModal>
+  <!-- Duplicate Warning Modal -->
+  <BModal
+    v-model="showDuplicateWarning"
+    :title="$t('participants.duplicateWarningTitle')"
+    @ok="confirmSubmit"
+    @cancel="cancelSubmit"
+    :ok-title="$t('participants.confirmCreate')"
+    :cancel-title="$t('activities.cancel')"
+  >
+    <p>{{ $t('participants.duplicateWarningMessage') }}</p>
+    <ul>
+      <li v-for="participant in similarParticipants" :key="participant.id">
+        {{ participant.first_name }} {{ participant.last_name }}
+      </li>
+    </ul>
+    <p>{{ $t('participants.duplicateWarningConfirm') }}</p>
   </BModal>
 </template>
 
@@ -81,18 +81,19 @@ import type { Participant, ActivityType } from '../types'
 import { useValidation } from '../composables/useValidation'
 import { findSimilarParticipants } from '../api/participants'
 import { useI18n } from 'vue-i18n'
+import { useApi } from '../composables/api'
 
 interface Props {
   modelValue: boolean
   mode: 'add' | 'edit'
   participant: Participant | null
   activityTypes?: ActivityType[]
-  loading: boolean
 }
 
 interface Emits {
   (e: 'update:modelValue', value: boolean): void
-  (e: 'submit', data: { firstName: string; lastName: string; activityTypes?: string[]; participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null }): void
+  (e: 'added'): void
+  (e: 'updated'): void
 }
 
 const props = defineProps<Props>()
@@ -100,6 +101,7 @@ const emit = defineEmits<Emits>()
 
 const { validateRequired } = useValidation()
 const { t } = useI18n()
+const { participants: apiParticipants } = useApi()
 
 const firstName = ref('')
 const lastName = ref('')
@@ -108,6 +110,7 @@ const selectedActivityTypes = ref<string[]>([])
 const similarParticipants = ref<Participant[]>([])
 const showDuplicateWarning = ref(false)
 const checkingDuplicates = ref(false)
+const loading = ref(false)
 
 const firstNameError = validateRequired(firstName, 'First name')
 const lastNameError = validateRequired(lastName, 'Last name')
@@ -155,22 +158,45 @@ const handleSubmit = async () => {
   const canProceed = await checkForDuplicates()
   if (!canProceed) return
 
-  emit('submit', {
-    firstName: firstName.value.trim(),
-    lastName: lastName.value.trim(),
-    activityTypes: selectedActivityTypes.value,
-    participantRole: selectedRole.value
-  })
+  loading.value = true
+  try {
+    if (props.mode === 'add') {
+      await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+      emit('added')
+    } else {
+      await apiParticipants.update(props.participant!.id, firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+      emit('updated')
+    }
+    // Reset form and close modal
+    firstName.value = ''
+    lastName.value = ''
+    selectedRole.value = null
+    selectedActivityTypes.value = []
+    emit('update:modelValue', false)
+  } catch (error) {
+    console.error('Error submitting participant:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
-const confirmSubmit = () => {
+const confirmSubmit = async () => {
   showDuplicateWarning.value = false
-  emit('submit', {
-    firstName: firstName.value.trim(),
-    lastName: lastName.value.trim(),
-    activityTypes: selectedActivityTypes.value,
-    participantRole: selectedRole.value
-  })
+  loading.value = true
+  try {
+    await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+    emit('added')
+    // Reset form and close modal
+    firstName.value = ''
+    lastName.value = ''
+    selectedRole.value = null
+    selectedActivityTypes.value = []
+    emit('update:modelValue', false)
+  } catch (error) {
+    console.error('Error adding participant:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const cancelSubmit = () => {
