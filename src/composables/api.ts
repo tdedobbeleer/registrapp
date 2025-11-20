@@ -10,6 +10,7 @@ import {
     fetchActivity,
     addActivity,
     updateActivity,
+    updateActivityComment,
     deleteActivity
 } from '../api/activities'
 
@@ -47,6 +48,7 @@ export const useApi = () => {
             fetchOne: fetchActivity,
             add: addActivity,
             update: updateActivity,
+            updateComment: updateActivityComment,
             delete: deleteActivity
         },
         activityTypes: {

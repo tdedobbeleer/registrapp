@@ -85,7 +85,7 @@
     />
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" :title="$t('participants.confirmDelete')" @ok="deleteParticipant" :ok-title="$t('participants.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
+    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteParticipant" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger">
       <p>{{ $t('participants.deleteMessage') }}</p>
       <p v-if="hasRegistrations" class="text-warning fw-bold">{{ $t('participants.deleteWarning') }}</p>
     </BModal>

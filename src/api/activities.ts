@@ -52,6 +52,19 @@ export const updateActivity = async (id: string, activityTypeId: string, date: s
     }
 }
 
+export const updateActivityComment = async (id: string, comment: string) => {
+    const { data, error } = await supabase
+        .from('activities')
+        .update({ comment })
+        .eq('id', id)
+    if (error) {
+        console.error('Error updating activity comment:', error)
+        throw error
+    } else {
+        return data
+    }
+}
+
 export const deleteActivity = async (id: string) => {
     const { error } = await supabase
         .from('activities')

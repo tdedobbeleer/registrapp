@@ -46,6 +46,7 @@ declare module 'vue' {
     BPagination: typeof import('bootstrap-vue-next/components/BPagination')['BPagination']
     BRow: typeof import('bootstrap-vue-next/components/BContainer')['BRow']
     BSpinner: typeof import('bootstrap-vue-next/components/BSpinner')['BSpinner']
+    CommentEditor: typeof import('./src/components/CommentEditor.vue')['default']
     ParticipantModal: typeof import('./src/components/ParticipantModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

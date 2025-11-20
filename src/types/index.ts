@@ -9,6 +9,7 @@ export interface Activity {
   id: string
   activity_type_id: string
   date: string
+  comment?: string
   created_at: string
   activity_assignees?: ActivityAssignee[]
 }

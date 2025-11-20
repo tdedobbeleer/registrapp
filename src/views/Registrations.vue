@@ -11,7 +11,31 @@
     </div>
     <div v-else>
     <div v-if="activity" class="mb-3">
-      <h4>{{ $t('registrations.activity') }}: {{ getActivityTypeName(activity.activity_type_id) }} - {{ formatDate(activity.date) }}&nbsp;<BBadge variant="success">{{registrationCount}}</BBadge></h4>
+      <h4>{{ $t('registrations.activity') }}: {{ getActivityTypeName(activity.activity_type_id) }} - {{ formatDate(activity.date) }}
+        <BButton
+          variant="outline-secondary"
+          size="sm"
+          @click="showComment = !showComment"
+          class="ms-2 position-relative"
+          :title="$t('registrations.comment')"
+        >
+          <i class="bi bi-chat-text"></i>
+          <BBadge
+            v-if="activity.comment && activity.comment.trim()"
+            variant="success"
+            class="position-absolute top-0 start-100 translate-middle badge-xs rounded-circle p-1"
+          >
+            <span class="visually-hidden">Has comments</span>
+          </BBadge>
+        </BButton>
+        <BBadge variant="success" class="ms-1">{{registrationCount}}</BBadge>
+      </h4>
+      <div v-if="showComment" class="mt-3">
+        <CommentEditor
+          :comment="activity.comment"
+          :onSave="handleActivityCommentSave"
+        />
+      </div>
     </div>
     <div class="mb-3">
       <BInputGroup class="mt-3">
@@ -78,6 +102,7 @@
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
+import CommentEditor from '../components/CommentEditor.vue'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
 import { supabase } from '../supabase'
@@ -102,8 +127,10 @@ const showModal = ref(false)
 const modalMode = ref<'add' | 'edit'>('add')
 const editingParticipant = ref<Participant | null>(null)
 const loading = ref(true)
+const showComment = ref(false)
 let registrationChannel: any = null
 let participantChannel: any = null
+let activityChannel: any = null
 
 const paginatedParticipants = computed(() => {
   const start = (currentPage.value - 1) * perPage
@@ -143,6 +170,7 @@ const registrationCount = computed(() => {
 const isRegistered = (participantId: string) => {
   return registrations.value.some(r => r.participant_id === participantId)
 }
+
 
 const getActivityTypeName = (id: string) => {
   const at = activityTypes.value.find(at => at.id === id)
@@ -231,6 +259,19 @@ const setupRealtimeSubscription = () => {
     .on(
       'postgres_changes',
       {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'registrations',
+        filter: `activity_id=eq.${props.activityId}`
+      },
+      (payload) => {
+        console.log('Realtime registration UPDATE:', payload)
+        handleRealtimeChange(payload)
+      }
+    )
+    .on(
+      'postgres_changes',
+      {
         event: 'DELETE',
         schema: 'public',
         table: 'registrations',
@@ -258,6 +299,23 @@ const setupRealtimeSubscription = () => {
       }
     )
     .subscribe()
+
+  activityChannel = supabase
+    .channel('activity-changes')
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'activities',
+        filter: `id=eq.${props.activityId}`
+      },
+      (payload) => {
+        console.log('Realtime activity change:', payload)
+        handleActivityRealtimeChange(payload)
+      }
+    )
+    .subscribe()
 }
 
 const handleRealtimeChange = (payload: any) => {
@@ -266,6 +324,12 @@ const handleRealtimeChange = (payload: any) => {
   if (eventType === 'INSERT') {
     // Add new registration
     registrations.value.push(newRecord)
+  } else if (eventType === 'UPDATE') {
+    // Update existing registration
+    const index = registrations.value.findIndex(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
+    if (index !== -1) {
+      registrations.value[index] = newRecord
+    }
   } else if (eventType === 'DELETE') {
     // Remove deleted registration
     registrations.value = registrations.value.filter(r => r.participant_id !== oldRecord.participant_id || r.activity_id !== oldRecord.activity_id)
@@ -313,6 +377,15 @@ const handleParticipantRealtimeChange = (payload: any) => {
   }
 }
 
+const handleActivityRealtimeChange = (payload: any) => {
+  const { eventType, new: newRecord } = payload
+
+  if (eventType === 'UPDATE' && activity.value) {
+    // Update the activity with new data
+    activity.value = { ...activity.value, ...newRecord }
+  }
+}
+
 const toggleRegistration = async (participantId: string, event: Event) => {
   const target = event.target as HTMLInputElement
   const isChecked = target.checked
@@ -346,6 +419,18 @@ const handleParticipantChange = () => {
   fetchParticipants()
 }
 
+const handleActivityCommentSave = async (comment: string) => {
+  try {
+    await apiActivities.updateComment(props.activityId, comment)
+    // Update local state
+    if (activity.value) {
+      activity.value.comment = comment
+    }
+  } catch (error) {
+    console.error('Error updating activity comment:', error)
+  }
+}
+
 
 onMounted(async () => {
   await fetchActivity()
@@ -362,6 +447,9 @@ onUnmounted(() => {
   if (participantChannel) {
     supabase.removeChannel(participantChannel)
   }
+  if (activityChannel) {
+    supabase.removeChannel(activityChannel)
+  }
 })
 
 watch(searchTerm, () => {
@@ -374,5 +462,8 @@ watch(sortBy, () => {
 </script>
 
 <style scoped>
-/* Additional styles if needed */
+.badge-xs {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.2rem;
+}
 </style>

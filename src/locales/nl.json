@@ -30,7 +30,13 @@
     "changed": "Gewijzigd op",
     "physiotherapist": "Kinesist:",
     "volunteer": "Vrijwilliger:",
-    "unknown": "Onbekend:"
+    "unknown": "Onbekend:",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "cancel": "Annuleren",
+    "filter": "Filter",
+    "filteringBy": "Filteren op",
+    "confirmDelete": "Verwijdering Bevestigen"
   },
   "validation": {
     "required": "{field} is verplicht",
@@ -72,6 +78,9 @@
   "registrations": {
     "title": "Registraties",
     "activity": "Activiteit",
+    "comment": "Opmerking",
+    "addComment": "Opmerking toevoegen...",
+    "save": "Opslaan",
     "filterPlaceholder": "Filter deelnemers op voor- of achternaam",
     "sortBy": "Sorteren op",
     "firstName": "Voornaam",
@@ -89,16 +98,10 @@
     "selectedAssignees": "Geselecteerde Toegewezen Personen",
     "searchUsers": "Zoek gebruikers...",
     "editActivity": "Activiteit Bewerken",
-    "confirmDelete": "Verwijdering Bevestigen",
     "deleteMessage": "Wil je de activiteit verwijderen?",
     "activityTypeRequired": "Activiteitstype is verplicht",
     "dateRequired": "Datum is verplicht",
     "registrations": "registraties",
-    "edit": "Bewerken",
-    "delete": "Verwijderen",
-    "cancel": "Annuleren",
-    "filter": "Filter",
-    "filteringBy": "Filteren op",
     "allActivityTypes": "Alle Activiteitstypen"
   },
   "activityTypes": {
@@ -108,12 +111,9 @@
     "name": "Naam",
     "description": "Beschrijving",
     "editActivityType": "Activiteitstype Bewerken",
-    "confirmDelete": "Verwijdering Bevestigen",
     "deleteMessage": "Wil je het activiteitstype verwijderen?",
     "nameRequired": "Naam is verplicht",
-    "descriptionRequired": "Beschrijving is verplicht",
-    "edit": "Bewerken",
-    "remove": "Verwijderen"
+    "descriptionRequired": "Beschrijving is verplicht"
   },
   "participants": {
     "title": "Deelnemers",
@@ -127,16 +127,11 @@
     "physiotherapist": "Kinesist",
     "volunteer": "Vrijwilliger",
     "allRoles": "Alle Rollen",
-    "filter": "Filter",
-    "filteringBy": "Filteren op",
     "editParticipant": "Deelnemer Bewerken",
-    "confirmDelete": "Verwijdering Bevestigen",
     "deleteMessage": "Wil je de deelnemer verwijderen?",
     "deleteWarning": "Deze deelnemer is ingeschreven op één of meerdere activiteiten. Indien je deze verwijdert, zal ook de aanwezigheid op de activiteit(en) verdwijnen.",
     "firstNameRequired": "Voornaam is verplicht",
     "lastNameRequired": "Achternaam is verplicht",
-    "edit": "Bewerken",
-    "delete": "Verwijderen",
     "duplicateWarningTitle": "Mogelijke Dubbel Gevonden",
     "duplicateWarningMessage": "We hebben deelnemers gevonden met vergelijkbare namen:",
     "duplicateWarningActivityType": "Sommige van deze deelnemers staan niet in de lijst voor dit activiteitstype. Je kunt de deelnemer zichtbaar maken voor dit activiteitstype door op de knop naast hun naam te klikken.",

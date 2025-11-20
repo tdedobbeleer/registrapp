@@ -50,10 +50,10 @@
             <BButton size="md" :title="$t('activities.registrations')" variant="outline-info" @click="$router.push(`/registrations/${activity.id}`)">
               <i class="bi bi-list-check"></i>
             </BButton>
-            <BButton :title="$t('activities.edit')" size="md" variant="outline-secondary" @click="openEditModal(activity)">
+            <BButton :title="$t('common.edit')" size="md" variant="outline-secondary" @click="openEditModal(activity)">
               <i class="bi bi-pen"></i>
             </BButton>
-            <BButton :title="$t('activities.delete')" size="md" variant="outline-danger" @click="openDeleteModal(activity.id)">
+            <BButton :title="$t('common.delete')" size="md" variant="outline-danger" @click="openDeleteModal(activity.id)">
               <i class="bi bi-trash"></i>
             </BButton>
           </BButtonGroup>
@@ -66,7 +66,7 @@
     <ActivityModal mode="edit" v-model:show="showEditModal" @updated="handleActivityChange" :activity="editingActivity" :activity-types="activityTypes" :all-users="allUsers" />
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" :title="$t('activities.confirmDelete')" @ok="deleteActivity" :ok-title="$t('activities.delete')" :cancel-title="$t('activities.cancel')" ok-variant="danger">
+    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteActivity" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger">
       <p>{{ $t('activities.deleteMessage') }}</p>
     </BModal>
     </div>

@@ -3,8 +3,8 @@
     :model-value="modelValue"
     :title="mode === 'add' ? $t('participants.addParticipant') : $t('participants.editParticipant')"
     @ok="handleSubmit"
-    :ok-title="mode === 'add' ? $t('participants.addParticipant') : $t('participants.edit')"
-    :cancel-title="$t('activities.cancel')"
+    :ok-title="mode === 'add' ? $t('participants.addParticipant') : $t('common.edit')"
+    :cancel-title="$t('common.cancel')"
     :ok-disabled="loading || !formValid"
     @hide="$emit('update:modelValue', false)"
   >
@@ -63,7 +63,7 @@
     @ok="confirmSubmit"
     @cancel="cancelSubmit"
     :ok-title="$t('participants.confirmCreate')"
-    :cancel-title="$t('activities.cancel')"
+    :cancel-title="$t('common.cancel')"
   >
     <p>{{ $t('participants.duplicateWarningMessage') }}</p>
     <ul class="list-unstyled">

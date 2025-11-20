@@ -30,7 +30,13 @@
     "changed": "Changed on",
     "physiotherapist": "Physio:",
     "volunteer": "Volunteer:",
-    "unknown": "Unknown:"
+    "unknown": "Unknown:",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "filter": "Filter",
+    "filteringBy": "Filtering by",
+    "confirmDelete": "Confirm Delete"
   },
   "validation": {
     "required": "{field} is required",
@@ -72,6 +78,9 @@
   "registrations": {
     "title": "Registrations",
     "activity": "Activity",
+    "comment": "Comment",
+    "addComment": "Add comment...",
+    "save": "Save",
     "filterPlaceholder": "Filter participants by first or last name",
     "sortBy": "Sort by",
     "firstName": "First Name",
@@ -89,16 +98,10 @@
     "selectedAssignees": "Selected Assignees",
     "searchUsers": "Search users...",
     "editActivity": "Edit Activity",
-    "confirmDelete": "Confirm Delete",
     "deleteMessage": "Do you want to remove the activity?",
     "activityTypeRequired": "Activity type is required",
     "dateRequired": "Date is required",
     "registrations": "registrations",
-    "edit": "Edit",
-    "delete": "Delete",
-    "cancel": "Cancel",
-    "filter": "Filter",
-    "filteringBy": "Filtering by",
     "allActivityTypes": "All Activity Types"
   },
   "activityTypes": {
@@ -108,12 +111,9 @@
     "name": "Name",
     "description": "Description",
     "editActivityType": "Edit Activity Type",
-    "confirmDelete": "Confirm Delete",
     "deleteMessage": "Do you want to remove the activity type?",
     "nameRequired": "Name is required",
-    "descriptionRequired": "Description is required",
-    "edit": "Edit",
-    "remove": "Remove"
+    "descriptionRequired": "Description is required"
   },
   "participants": {
     "title": "Participants",
@@ -127,16 +127,11 @@
     "physiotherapist": "Physiotherapist",
     "volunteer": "Volunteer",
     "allRoles": "All Roles",
-    "filter": "Filter",
-    "filteringBy": "Filtering by",
     "editParticipant": "Edit Participant",
-    "confirmDelete": "Confirm Delete",
     "deleteMessage": "Do you want to remove the participant?",
     "deleteWarning": "This participant is subscribed for one or multiple activities. Deleting the user, will also delete these participations.",
     "firstNameRequired": "First name is required",
     "lastNameRequired": "Last name is required",
-    "edit": "Edit",
-    "delete": "Delete",
     "duplicateWarningTitle": "Possible Duplicate Found",
     "duplicateWarningMessage": "We found participants with similar names:",
     "duplicateWarningActivityType": "Some of these participants are not in the list for this activity type. You can make them visible for this activity type by clicking the button next to their name.",
