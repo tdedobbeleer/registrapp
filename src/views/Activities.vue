@@ -38,10 +38,10 @@
           <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
           <div v-if="Object.keys(getAssigneesByType(activity)).length > 0" class="mt-1">
             <small class="text-muted">
-              <span v-for="(participants, role) in getAssigneesByType(activity)" :key="role" class="me-2">
-                <strong>{{ role === 'PHYSIOTHERAPIST' ? $t('common.physiotherapist') : role === 'VOLUNTEER' ? $t('common.volunteer') : $t('common.unknown') }}</strong>
+              <div v-for="(participants, role) in getAssigneesByType(activity)" :key="role" class="me-2">
+               <strong>{{ role === 'PHYSIOTHERAPIST' ? $t('common.physiotherapist') : role === 'VOLUNTEER' ? $t('common.volunteer') : $t('common.unknown') }}</strong>
                 {{ participants.map(p => `${p.first_name} ${p.last_name}`).join(', ') }}
-              </span>
+              </div>
             </small>
           </div>
         </div>
