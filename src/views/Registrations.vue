@@ -259,19 +259,6 @@ const setupRealtimeSubscription = () => {
     .on(
       'postgres_changes',
       {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'registrations',
-        filter: `activity_id=eq.${props.activityId}`
-      },
-      (payload) => {
-        console.log('Realtime registration UPDATE:', payload)
-        handleRealtimeChange(payload)
-      }
-    )
-    .on(
-      'postgres_changes',
-      {
         event: 'DELETE',
         schema: 'public',
         table: 'registrations',
@@ -322,17 +309,14 @@ const handleRealtimeChange = (payload: any) => {
   const { eventType, new: newRecord, old: oldRecord } = payload
 
   if (eventType === 'INSERT') {
-    // Add new registration
-    registrations.value.push(newRecord)
-  } else if (eventType === 'UPDATE') {
-    // Update existing registration
-    const index = registrations.value.findIndex(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
-    if (index !== -1) {
-      registrations.value[index] = newRecord
+    // Add new registration if not already present
+    const exists = registrations.value.some(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
+    if (!exists) {
+      registrations.value.push(newRecord)
     }
   } else if (eventType === 'DELETE') {
     // Remove deleted registration
-    registrations.value = registrations.value.filter(r => r.participant_id !== oldRecord.participant_id || r.activity_id !== oldRecord.activity_id)
+    registrations.value = registrations.value.filter(r => !(r.participant_id === oldRecord.participant_id && r.activity_id === oldRecord.activity_id))
   }
 }
 
@@ -386,19 +370,25 @@ const handleActivityRealtimeChange = (payload: any) => {
   }
 }
 
-const toggleRegistration = async (participantId: string, event: Event) => {
+const toggleRegistration = (participantId: string, event: Event) => {
   const target = event.target as HTMLInputElement
   const isChecked = target.checked
-  try {
-    if (isChecked) {
-      await apiRegistrations.add(participantId, props.activityId)
-      // No need to manually update registrations.value as realtime will handle it
-    } else {
-      await apiRegistrations.delete(participantId, props.activityId)
-      // No need to manually update registrations.value as realtime will handle it
-    }
-  } catch (error) {
-    console.error('Error toggling registration:', error)
+  if (isChecked) {
+    apiRegistrations.add(participantId, props.activityId).then((newReg) => {
+      const participant = participants.value.find(p => p.id === participantId)
+      if (participant && newReg) {
+        registrations.value.push(newReg)
+      }
+    }).catch((error) => {
+      console.error('Error adding registration:', error)
+    })
+  }
+  else {
+    apiRegistrations.delete(participantId, props.activityId).then(() => {
+      registrations.value = registrations.value.filter(r => !(r.participant_id === participantId && r.activity_id === props.activityId))
+    }).catch((error) => {
+      console.error('Error removing registration:', error)
+    })
   }
 }
 
