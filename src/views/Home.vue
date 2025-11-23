@@ -78,6 +78,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { BRow, BCol, BCard, BCardTitle, BCardText, BButton } from 'bootstrap-vue-next'
+import { I18nT } from 'vue-i18n'
 import { getUser, hasPermission, PERMISSIONS } from '../auth0'
 
 const user = ref<any>(null)

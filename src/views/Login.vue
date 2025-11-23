@@ -21,6 +21,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { BCard, BCardHeader, BCardImg, BCardBody, BSpinner, BAlert } from 'bootstrap-vue-next'
 import { useRoute } from 'vue-router'
 import { login } from '../auth0'
 

@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { BBreadcrumb, BBreadcrumbItem, BSpinner, BButtonGroup, BFormSelect, BFormInput, BButton, BPagination } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
 import type { ActivityType } from '../types'
 import Papa from 'papaparse'

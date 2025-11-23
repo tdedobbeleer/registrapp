@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-// No script needed
+import { BBreadcrumb, BBreadcrumbItem, BButton } from 'bootstrap-vue-next'
 </script>
 
 <style scoped>

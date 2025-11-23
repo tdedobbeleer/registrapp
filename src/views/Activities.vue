@@ -75,6 +75,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { BBreadcrumb, BBreadcrumbItem, BSpinner, BInputGroup, BDropdown, BDropdownItem, BFormInput, BButton, BButtonGroup, BModal } from 'bootstrap-vue-next'
 import type { Activity, ActivityType, Participant } from '../types'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'

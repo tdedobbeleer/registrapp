@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import { BRow, BCol, BCard, BCardBody, BCardTitle, BCardText, BButton } from 'bootstrap-vue-next'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

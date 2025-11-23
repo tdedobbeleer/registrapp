@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { BApp, BSpinner } from 'bootstrap-vue-next'
+import { BApp, BSpinner, BNavbar, BNavbarBrand, BNavbarToggle, BCollapse, BNavbarNav, BNavItem, BButtonGroup, BDropdown, BDropdownItemButton, BButton } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
 import { getUser, logout as auth0Logout, hasPermission, PERMISSIONS } from './auth0'
 

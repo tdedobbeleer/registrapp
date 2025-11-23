@@ -91,6 +91,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { BModal, BForm, BFormInput, BFormSelect, BFormCheckbox, BButton, BFormInvalidFeedback } from 'bootstrap-vue-next'
 import type { Participant, ActivityType } from '../types'
 import { useValidation } from '../composables/useValidation'
 import { findSimilarParticipants, addActivityTypeToParticipant } from '../api/participants'

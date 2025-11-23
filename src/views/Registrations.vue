@@ -100,6 +100,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+import { BBreadcrumb, BBreadcrumbItem, BSpinner, BButton, BBadge, BInputGroup, BInputGroupText, BFormInput, BDropdown, BDropdownItem, BPagination, BFormCheckbox } from 'bootstrap-vue-next'
 import type { Activity, Participant, Registration, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import CommentEditor from '../components/CommentEditor.vue'

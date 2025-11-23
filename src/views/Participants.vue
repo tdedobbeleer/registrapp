@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { BBreadcrumb, BBreadcrumbItem, BButton, BInputGroup, BDropdown, BDropdownItem, BFormInput, BInputGroupText, BPagination, BModal, BButtonGroup, BSpinner } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
 import type { Participant, ActivityType } from '../types'
 import ParticipantModal from '../components/ParticipantModal.vue'

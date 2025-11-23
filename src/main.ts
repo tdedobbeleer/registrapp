@@ -11,8 +11,10 @@ import en from './locales/en.json'
 import { handleRedirectCallback, getUser } from './auth0'
 
 const i18n = createI18n({
+  legacy: false,
   locale: 'nl',
   fallbackLocale: 'en',
+  globalInjection: true,
   messages: {
     nl,
     en

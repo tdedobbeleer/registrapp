@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { login } from '../auth0'
-import { BCard, BCardHeader, BCardBody, BButton } from 'bootstrap-vue-next'
+import { BCard, BCardHeader, BCardImg, BCardBody, BButton } from 'bootstrap-vue-next'
 
 const handleLogin = async () => {
   await login('/')
