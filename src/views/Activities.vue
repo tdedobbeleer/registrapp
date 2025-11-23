@@ -140,7 +140,9 @@ const fetchActivities = async () => {
     activities.value = await apiActivities.fetch()
     loading.value = false
   } catch (error) {
-    console.error('Error fetching activities:', error)
+    console.error("Error fetching activities:", error)
+  } finally {
+    loading.value = false
   }
 }
 

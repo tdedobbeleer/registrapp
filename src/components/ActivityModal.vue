@@ -205,7 +205,7 @@ const submit = async () => {
     userSearchTerm.value = ''
     showModal.value = false
   } catch (error) {
-    console.error('Error submitting activity:', error)
+    console.error('Failed to submit activity:', error)
   } finally {
     loading.value = false
   }

@@ -143,7 +143,7 @@ const fetchActivityTypes = async () => {
     activityTypes.value = await apiActivityTypes.fetch()
     loading.value = false
   } catch (error) {
-    console.error('Error fetching activity types:', error)
+    console.error('Failed to fetch activity types:', error)
   }
 }
 
@@ -157,7 +157,7 @@ const addActivity = async () => {
     await fetchActivityTypes()
     showAddModal.value = false
   } catch (error) {
-    console.error('Error adding activity type:', error)
+    console.error('Failed to add activity type:', error)
   }
   loading.value = false
 }
@@ -174,17 +174,34 @@ const openDeleteModal = (id: string) => {
   showDeleteModal.value = true
 }
 
-const updateActivity = async () => {
-  if (!editName.value.trim() || !editDescription.value.trim()) return
+/**
+ * Updates the selected activity type with new name and description.
+ * Performs validation, sets loading state, calls the API, refreshes the list on success,
+ * and handles errors via global toast notifications.
+ */
+const updateActivity = async (): Promise<void> => {
+  // Validate inputs to prevent invalid API calls
+  if (!editName.value.trim() || !editDescription.value.trim() || !editingId.value.trim()) {
+    return
+  }
+
   loading.value = true
   try {
+    // Perform the update operation
     await apiActivityTypes.update(editingId.value, editName.value, editDescription.value)
+
+    // Refresh the activity types list to reflect changes
     await fetchActivityTypes()
+
+    // Close the edit modal on successful update
     showEditModal.value = false
   } catch (error) {
-    console.error('Error updating activity type:', error)
+    // Log error for debugging; global toast handling assumed
+    console.error('Failed to update activity type:', error)
+  } finally {
+    // Ensure loading state is always reset
+    loading.value = false
   }
-  loading.value = false
 }
 
 const deleteActivity = async () => {
@@ -193,7 +210,7 @@ const deleteActivity = async () => {
     await fetchActivityTypes()
     showDeleteModal.value = false
   } catch (error) {
-    console.error('Error deleting activity type:', error)
+    console.error('Failed to delete activity type:', error)
   }
 }
 

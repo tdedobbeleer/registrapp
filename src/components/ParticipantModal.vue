@@ -191,7 +191,7 @@ const handleSubmit = async () => {
     selectedActivityTypes.value = []
     emit('update:modelValue', false)
   } catch (error) {
-    console.error('Error submitting participant:', error)
+    console.error('Failed to handle participant submission:', error)
   } finally {
     loading.value = false
   }
@@ -210,7 +210,7 @@ const confirmSubmit = async () => {
     selectedActivityTypes.value = []
     emit('update:modelValue', false)
   } catch (error) {
-    console.error('Error adding participant:', error)
+    console.error('Failed to confirm participant submission:', error)
   } finally {
     loading.value = false
   }
@@ -232,7 +232,7 @@ const addActivityType = async (participant: Participant) => {
     emit('activityTypeAdded')
     emit('update:modelValue', false)
   } catch (error) {
-    console.error('Error adding activity type:', error)
+    console.error('Failed to add activity type to participant:', error)
   } finally {
     addingActivityType.value.delete(participant.id)
   }

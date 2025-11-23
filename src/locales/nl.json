@@ -182,6 +182,10 @@
     "slowNetwork": {
       "title": "Langzame Netwerkverbinding",
       "body": "Het verzoek duurt langer dan verwacht. Controleer uw netwerkverbinding."
+    },
+    "error": {
+      "title": "Fout",
+      "body": "Er is een fout opgetreden. Refresh de pagina en probeer opnieuw."
     }
   }
 }

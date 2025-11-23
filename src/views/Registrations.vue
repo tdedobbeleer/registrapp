@@ -379,15 +379,11 @@ const toggleRegistration = (participantId: string, event: Event) => {
       if (participant && newReg) {
         registrations.value.push(newReg)
       }
-    }).catch((error) => {
-      console.error('Error adding registration:', error)
     })
   }
   else {
     apiRegistrations.delete(participantId, props.activityId).then(() => {
       registrations.value = registrations.value.filter(r => !(r.participant_id === participantId && r.activity_id === props.activityId))
-    }).catch((error) => {
-      console.error('Error removing registration:', error)
     })
   }
 }

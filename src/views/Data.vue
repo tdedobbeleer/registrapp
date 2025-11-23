@@ -51,11 +51,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { supabase } from '../supabase'
 import type { ActivityType } from '../types'
 import Papa from 'papaparse'
+import { useApi } from '../composables/api'
 
 const { t } = useI18n()
+const { activityTypes: apiActivityTypes, participants: apiParticipants, data: apiData } = useApi()
 
 interface TableItem {
   first_name: string
@@ -130,36 +131,15 @@ const paginatedData = computed(() => {
 })
 
 const fetchActivityTypes = async () => {
-  const { data, error } = await supabase
-    .from('activity_types')
-    .select('*')
-  if (error) {
-    console.error('Error fetching activity types:', error)
-  } else {
-    activityTypes.value = data || []
-  }
+  activityTypes.value = await apiActivityTypes.fetch()
 }
 
 const fetchParticipants = async () => {
-  const { data, error } = await supabase
-    .from('participants')
-    .select('*')
-  if (error) {
-    console.error('Error fetching participants:', error)
-  } else {
-    participants.value = data || []
-  }
+  participants.value = await apiParticipants.fetchAll()
 }
 
 const fetchData = async () => {
-  const { data, error } = await supabase
-    .from('registrations')
-    .select('*, activities(*, activity_types(*)), participants(*)')
-  if (error) {
-    console.error('Error fetching data:', error)
-  } else {
-    rawData.value = data || []
-  }
+  rawData.value = await apiData.fetch()
   loading.value = false
 }
 

@@ -182,6 +182,10 @@
     "slowNetwork": {
       "title": "Slow Network",
       "body": "The request is taking longer than expected. Check your network connection."
+    },
+    "error": {
+      "title": "Error",
+      "body": "An error occurred. Please try again. Refresh the page if the error persists."
     }
   }
 }

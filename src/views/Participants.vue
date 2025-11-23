@@ -158,7 +158,7 @@ const fetchParticipants = async () => {
     participants.value = await apiParticipants.fetch()
     loading.value = false
   } catch (error) {
-    console.error('Error fetching participants:', error)
+    console.error('Failed to fetch participants:', error)
   }
 }
 
@@ -166,7 +166,7 @@ const fetchActivityTypes = async () => {
   try {
     activityTypes.value = await apiActivityTypes.fetch()
   } catch (error) {
-    console.error('Error fetching activity types:', error)
+    console.error('Failed to fetch activity types:', error)
   }
 }
 
@@ -178,7 +178,7 @@ const openDeleteModal = async (id: string) => {
     const registrations = await apiRegistrations.fetchByParticipant(id)
     hasRegistrations.value = registrations.length > 0
   } catch (error) {
-    console.error('Error checking registrations:', error)
+    console.error('Failed to check registrations for participant:', error)
     hasRegistrations.value = false
   }
   showDeleteModal.value = true
@@ -191,7 +191,7 @@ const deleteParticipant = async () => {
     await fetchParticipants()
     showDeleteModal.value = false
   } catch (error) {
-    console.error('Error deleting participant:', error)
+    console.error('Failed to delete participant:', error)
   }
 }
 
