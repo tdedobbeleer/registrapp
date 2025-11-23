@@ -55,7 +55,7 @@ export const useApi = () => {
 
   const withToast = <T>(promise: Promise<T>): Promise<T> => {
     const timer = setTimeout(() => {
-      toast.show({
+      toast.create({
         title: t('toast.slowNetwork.title'),
         body: t('toast.slowNetwork.body'),
         variant: 'warning',
@@ -65,7 +65,7 @@ export const useApi = () => {
     return promise.finally(() => clearTimeout(timer)).catch((error) => {
       if (!isErrorToastActive.value) {
         isErrorToastActive.value = true
-        toast.show({
+        toast.create({
           title: t('toast.error.title'),
           body: t('toast.error.body'),
           variant: 'danger',
