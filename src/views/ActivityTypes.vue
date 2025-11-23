@@ -40,7 +40,7 @@
           <BButton
             size="md"
             variant="outline-secondary"
-            :title="$t('activityTypes.edit')"
+            :title="$t('common.edit')"
             @click="openEditModal(activityType)"
           >
             <i class="bi bi-pen"></i>
@@ -48,7 +48,7 @@
           <BButton
             size="md"
             variant="outline-danger"
-            :title="$t('activityTypes.remove')"
+            :title="$t('common.delete')"
             @click="openDeleteModal(activityType.id)"
           >
             <i class="bi bi-trash"></i>
@@ -75,7 +75,7 @@
     </BModal>
 
     <!-- Edit Modal -->
-    <BModal v-model="showEditModal" :title="$t('activityTypes.editActivityType')" @ok.prevent="updateActivity" :ok-title="$t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isEditFormValid">
+    <BModal v-model="showEditModal" :title="$t('common.edit')" @ok.prevent="updateActivity" :ok-title="$t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isEditFormValid">
       <BForm @submit.prevent="updateActivity">
         <div class="mb-3">
           <label for="editName" class="form-label">{{ $t('activityTypes.name') }}</label>

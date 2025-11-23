@@ -1,7 +1,7 @@
 <template>
   <BModal
     :model-value="modelValue"
-    :title="mode === 'add' ? $t('participants.addParticipant') : $t('participants.editParticipant')"
+    :title="mode === 'add' ? $t('participants.addParticipant') : $t('common.edit')"
     @ok="handleSubmit"
     :ok-title="mode === 'add' ? $t('participants.addParticipant') : $t('common.edit')"
     :cancel-title="$t('common.cancel')"

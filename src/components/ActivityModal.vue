@@ -1,5 +1,5 @@
 <template>
-  <BModal v-model="showModal" :title="mode === 'add' ? $t('activities.addActivity') : $t('activities.editActivity')" @ok="submit" :ok-title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="!isFormValid || loading" size="lg">
+  <BModal v-model="showModal" :title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" @ok="submit" :ok-title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="!isFormValid || loading" size="lg">
     <BForm @submit.prevent="submit">
       <div class="mb-3">
         <label for="activityType" class="form-label">{{ $t('activities.activityType') }}</label>
@@ -18,7 +18,7 @@
             <h6>{{ $t('activities.selectedAssignees') }}</h6>
             <div class="d-flex flex-wrap gap-2">
               <BBadge v-for="assignee in assignees" :key="assignee.participant_id" variant="primary" class="d-flex align-items-center">
-                {{ assignee.participant ? `${assignee.participant.first_name} ${assignee.participant.last_name}` : 'Unknown User' }}
+                {{ assignee.participant ? `${assignee.participant.first_name} ${assignee.participant.last_name}` : $t('common.unknownUser') }}
                 <BButton size="sm" variant="link" class="text-white ms-1 p-0" @click="removeAssignee(assignee.participant_id)">
                   <i class="bi bi-x"></i>
                 </BButton>

@@ -23,7 +23,7 @@
           <i class="bi bi-calendar-plus"></i>
         </BButton>
       </BInputGroup>
-      <small class="text-muted">{{ $t('activities.filteringBy') }}: {{ filterActivityTypeId === '' ? $t('activities.allActivityTypes') : getActivityTypeName(filterActivityTypeId) }}</small>
+      <small class="text-muted">{{ $t('common.filteringBy') }}: {{ filterActivityTypeId === '' ? $t('activities.allActivityTypes') : getActivityTypeName(filterActivityTypeId) }}</small>
     </div>
     <div class="list-group">
       <div

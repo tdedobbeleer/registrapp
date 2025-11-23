@@ -31,6 +31,7 @@
     "physiotherapist": "Kinesist:",
     "volunteer": "Vrijwilliger:",
     "unknown": "Onbekend:",
+    "unknownUser": "Onbekende Gebruiker",
     "edit": "Bewerken",
     "delete": "Verwijderen",
     "cancel": "Annuleren",
@@ -176,5 +177,11 @@
     "accessTitle": "Ongeautoriseerde Toegang",
     "accessDescription": "Je hebt de juiste machtigingen nodig om deze inhoud te bekijken. Neem contact op met je beheerder als je denkt dat dit een fout is.",
     "goHomeButton": "Ga naar Home"
+  },
+  "toast": {
+    "slowNetwork": {
+      "title": "Langzame Netwerkverbinding",
+      "body": "Het verzoek duurt langer dan verwacht. Controleer uw netwerkverbinding."
+    }
   }
 }

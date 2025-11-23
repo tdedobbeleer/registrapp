@@ -31,6 +31,7 @@
     "physiotherapist": "Physio:",
     "volunteer": "Volunteer:",
     "unknown": "Unknown:",
+    "unknownUser": "Unknown User",
     "edit": "Edit",
     "delete": "Delete",
     "cancel": "Cancel",
@@ -176,5 +177,11 @@
     "accessTitle": "Unauthorized Access",
     "accessDescription": "You need the appropriate permissions to view this content. Please contact your administrator if you believe this is an error.",
     "goHomeButton": "Go Home"
+  },
+  "toast": {
+    "slowNetwork": {
+      "title": "Slow Network",
+      "body": "The request is taking longer than expected. Check your network connection."
+    }
   }
 }

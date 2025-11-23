@@ -28,7 +28,7 @@
           <i class="bi bi-person-fill-add"></i>
         </BButton>
       </BInputGroup>
-      <small class="text-muted">{{ $t('participants.filteringBy') }}: {{ filterRole === '' ? $t('participants.allRoles') : $t(`participants.${filterRole.toLowerCase()}`) }}</small>
+      <small class="text-muted">{{ $t('common.filteringBy') }}: {{ filterRole === '' ? $t('participants.allRoles') : $t(`participants.${filterRole.toLowerCase()}`) }}</small>
 
     </div>
     <div class="list-group">
@@ -48,14 +48,14 @@
           <BButtonGroup>
             <BButton
               size="md"
-              :title="$t('participants.edit')"
+              :title="$t('common.edit')"
               variant="outline-secondary"
               @click="openEditModal(participant)"
             >
               <i class="bi bi-pen"></i>
             </BButton>
             <BButton
-              :title="$t('participants.delete')"
+              :title="$t('common.delete')"
               size="md"
               variant="outline-danger"
               @click="openDeleteModal(participant.id)"
