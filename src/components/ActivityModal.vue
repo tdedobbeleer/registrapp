@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { BModal, BForm, BFormSelect, BFormInput, BBadge, BButton } from 'bootstrap-vue-next'
+import { BModal, BForm, BFormSelect, BFormInput, BBadge, BButton, BFormInvalidFeedback } from 'bootstrap-vue-next'
 import type { Activity, ActivityType, ActivityAssignee, Participant } from '../types'
 import { useI18n } from 'vue-i18n'
 import { useValidation } from '../composables/useValidation'
