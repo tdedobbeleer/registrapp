@@ -18,6 +18,8 @@ export default defineConfig({
           vendor: ['vue', 'vue-router', 'vue-i18n'],
           supabase: ['@supabase/supabase-js'],
           ui: ['bootstrap-vue-next', 'bootstrap'],
+          auth: ['@auth0/auth0-spa-js'],
+          utils: ['papaparse'],
         },
       },
     },

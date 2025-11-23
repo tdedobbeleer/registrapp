@@ -3,14 +3,16 @@ import Login from '../views/Login.vue'
 import Logout from '../views/Logout.vue'
 import Home from '../views/Home.vue'
 import AuthenticationError from '../views/AuthenticationError.vue'
-import ActivityTypes from '../views/ActivityTypes.vue'
-import Activities from '../views/Activities.vue'
-import Participants from '../views/Participants.vue'
-import Registrations from '../views/Registrations.vue'
-import Data from '../views/Data.vue'
 import NotFound from '../views/NotFound.vue'
 import Unauthorized from '../views/Unauthorized.vue'
 import { getUser, hasPermission, PERMISSIONS } from '../auth0'
+
+// Lazy-loaded components for better performance
+const ActivityTypes = () => import('../views/ActivityTypes.vue')
+const Activities = () => import('../views/Activities.vue')
+const Participants = () => import('../views/Participants.vue')
+const Registrations = () => import('../views/Registrations.vue')
+const Data = () => import('../views/Data.vue')
 
 const routes = [
   {
