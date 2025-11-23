@@ -9,6 +9,7 @@ import { createI18n } from 'vue-i18n'
 import nl from './locales/nl.json'
 import en from './locales/en.json'
 import { handleRedirectCallback, getUser } from './auth0'
+import { setRealtimeAuth } from './supabase'
 
 const i18n = createI18n({
   legacy: false,
@@ -26,6 +27,7 @@ const i18n = createI18n({
   try {
     const result = await handleRedirectCallback()
     if (result.appState?.returnTo) {
+      await setRealtimeAuth()
       router.push(result.appState.returnTo)
       redirectSuccess = true
     }
@@ -41,6 +43,7 @@ const i18n = createI18n({
     try {
       const user = await getUser()
       if (user) {
+        await setRealtimeAuth()
         router.push('/')
       } else {
         const currentPath = window.location.pathname + window.location.search

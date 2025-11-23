@@ -22,8 +22,5 @@ export const setRealtimeAuth = async () => {
     }
 }
 
-// Initial set
-setRealtimeAuth()
-
 // Export function to refresh realtime auth when token is refreshed
 export const refreshRealtimeAuth = setRealtimeAuth
