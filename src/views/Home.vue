@@ -11,8 +11,7 @@
     <div class="flow-chart">
       <!-- Activity Types Card (conditionally shown) -->
       <div v-if="showActivityTypes" class="flow-step">
-        <BCard class="flow-card">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1614667288602-9ac6e37318a7?w=300&h=150&fit=crop" :alt="$t('home.activityTypesAlt')" class="card-img-top">
+        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1614667288602-9ac6e37318a7?w=300&h=150&fit=crop'" :img-alt="$t('home.activityTypesAlt')" lazy>
           <BCardTitle>{{ $t('nav.activityTypes') }}</BCardTitle>
           <BCardText>{{ $t('home.activityTypesDescription') }}</BCardText>
           <template #footer>
@@ -24,8 +23,7 @@
 
       <!-- Activities Card -->
       <div class="flow-step">
-        <BCard class="flow-card">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1585757318177-0570a997dc3a?w=300&h=150&fit=crop" :alt="$t('home.activitiesAlt')" class="card-img-top">
+        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1585757318177-0570a997dc3a?w=300&h=150&fit=crop'" :img-alt="$t('home.activitiesAlt')" lazy>
           <BCardTitle>{{ $t('nav.activities') }}</BCardTitle>
           <BCardText>
             <I18nT keypath="home.activitiesDescription">
@@ -44,8 +42,7 @@
 
       <!-- Registrations Card -->
       <div class="flow-step">
-        <BCard class="flow-card">
-          <img loading="lazy" src="https://images.unsplash.com/vector-1741203969096-deda346274e8?w=300&h=150&fit=crop" :alt="$t('home.registrationsAlt')" class="card-img-top">
+        <BCard class="flow-card" :img-src="'https://images.unsplash.com/vector-1741203969096-deda346274e8?w=300&h=150&fit=crop'" :img-alt="$t('home.registrationsAlt')" lazy>
           <BCardTitle>{{ $t('nav.registrations') }}</BCardTitle>
           <BCardText>
             <I18nT keypath="home.registrationsDescription">
@@ -63,8 +60,7 @@
 
       <!-- Participants Card -->
       <div class="flow-step">
-        <BCard class="flow-card">
-          <img loading="lazy" src="https://images.unsplash.com/photo-1548705085-101177834f47?w=300&h=150&fit=crop" :alt="$t('home.participantsAlt')" class="card-img-top">
+        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1548705085-101177834f47?w=300&h=150&fit=crop'" :img-alt="$t('home.participantsAlt')" lazy>
           <BCardTitle>{{ $t('nav.participants') }}</BCardTitle>
           <BCardText>{{ $t('home.participantsDescription') }}</BCardText>
           <template #footer>

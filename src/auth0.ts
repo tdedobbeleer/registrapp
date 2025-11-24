@@ -21,6 +21,8 @@ export const getAuth0Client = async (): Promise<Auth0Client> => {
         auth0Client = await createAuth0Client({
             domain: config.domain,
             clientId: config.clientId,
+            cacheLocation: 'localstorage',
+            useRefreshTokens: true,
             authorizationParams: {
                 redirect_uri: config.redirectUri,
                 audience: config.audience
