@@ -43,8 +43,6 @@ export const login = async (redirectPath?: string): Promise<void> => {
 
 export const logout = async (): Promise<void> => {
     const client = await getAuth0Client()
-    // Clear cached user from sessionStorage
-    sessionStorage.removeItem('auth0_user')
     await client.logout({
         logoutParams: {
             returnTo: `${window.location.origin}/logout`
@@ -53,25 +51,17 @@ export const logout = async (): Promise<void> => {
 }
 
 export const getUser = async () => {
-    // First try to get user from sessionStorage for performance
-    const storedUser = sessionStorage.getItem('auth0_user')
-    if (storedUser) {
-        try {
-            return JSON.parse(storedUser)
-        } catch (e) {
-            // If parsing fails, remove invalid data
-            sessionStorage.removeItem('auth0_user')
-        }
+    try {
+        // Validate session by attempting to get a token
+        await getTokenSilently()
+    } catch (e) {
+        // If token retrieval fails, session is expired
+        return null
     }
 
-    // Fallback to Auth0 client
+    // Get user from Auth0 client
     const client = await getAuth0Client()
-    const user = await client.getUser()
-    // Cache the user in sessionStorage for future calls
-    if (user) {
-        sessionStorage.setItem('auth0_user', JSON.stringify(user))
-    }
-    return user
+    return await client.getUser()
 }
 
 export const getAccessTokenClaims = async () => {
@@ -91,11 +81,6 @@ export const getTokenSilently = async (): Promise<string> => {
 export const handleRedirectCallback = async (): Promise<{ appState?: { returnTo?: string } }> => {
     const client = await getAuth0Client()
     const result = await client.handleRedirectCallback()
-    // After successful callback, store user in sessionStorage for performance
-    const user = await client.getUser()
-    if (user) {
-        sessionStorage.setItem('auth0_user', JSON.stringify(user))
-    }
     return result
 }
 

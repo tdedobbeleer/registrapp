@@ -12,6 +12,9 @@
           />
         </div>
         <p class="text-muted mb-3">{{ $t('login.redirecting') }}</p>
+        <BAlert v-if="route.query.expired" variant="warning" class="mb-3">
+          {{ $t('login.sessionExpired') }}
+        </BAlert>
         <BAlert v-if="error" variant="danger">
           {{ error }}
         </BAlert>

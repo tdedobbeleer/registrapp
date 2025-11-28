@@ -88,15 +88,21 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const user = await getUser()
-  if (to.meta.requiresAuth && !user) {
-    next({ path: '/login', query: { redirect: to.path } })
-  } else if (to.path === '/activity_types' && !(await hasPermission(PERMISSIONS.CRUD_ACTIVITY_TYPES))) {
-    next({ path: '/unauthorized' })
-  } else if (to.path === '/data' && !(await hasPermission(PERMISSIONS.READ_DATA))) {
-    next({ path: '/unauthorized' })
-  } else {
-    next()
+  try {
+    const user = await getUser()
+    if (to.meta.requiresAuth && !user) {
+      next({ path: '/login', query: { redirect: to.path, expired: 'true' } })
+    } else if (to.path === '/activity_types' && !(await hasPermission(PERMISSIONS.CRUD_ACTIVITY_TYPES))) {
+      next({ path: '/unauthorized' })
+    } else if (to.path === '/data' && !(await hasPermission(PERMISSIONS.READ_DATA))) {
+      next({ path: '/unauthorized' })
+    } else {
+      next()
+    }
+  } catch (e) {
+    console.error('Authentication check failed:', e)
+    // If authentication check fails, redirect to login
+    next({ path: '/login', query: { redirect: to.path, expired: 'true' } })
   }
 })
 

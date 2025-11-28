@@ -28,8 +28,8 @@
   },
   "common": {
     "changed": "Changed on",
-    "physiotherapist": "Physio:",
-    "volunteer": "Volunteer:",
+    "physiotherapist": "Physio('s):",
+    "volunteer": "Volunteer(s):",
     "unknown": "Unknown:",
     "unknownUser": "Unknown User",
     "edit": "Edit",
@@ -59,6 +59,7 @@
     "forgotPassword": "Forgot Password?",
     "backToLogin": "Back to Login",
     "redirecting": "Redirecting to Auth0...",
+    "sessionExpired": "Your session has expired. Please log in again.",
     "error": {
       "generic": "An error occurred during login"
     }

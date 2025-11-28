@@ -28,8 +28,8 @@
   },
   "common": {
     "changed": "Gewijzigd op",
-    "physiotherapist": "Kinesist:",
-    "volunteer": "Vrijwilliger:",
+    "physiotherapist": "Kinesist(en):",
+    "volunteer": "Vrijwilliger(s):",
     "unknown": "Onbekend:",
     "unknownUser": "Onbekende Gebruiker",
     "edit": "Bewerken",
@@ -59,6 +59,7 @@
     "forgotPassword": "Wachtwoord vergeten?",
     "backToLogin": "Terug naar Inloggen",
     "redirecting": "Doorverwijzen naar Auth0...",
+    "sessionExpired": "Uw sessie is verlopen. Log opnieuw in.",
     "error": {
       "generic": "Er is een fout opgetreden tijdens het inloggen"
     }
