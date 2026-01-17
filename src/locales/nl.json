@@ -159,7 +159,10 @@
     "registered": "Geregistreerd",
     "firstName": "Voornaam",
     "lastName": "Achternaam",
-    "registrations": "Registraties"
+    "registrations": "Registraties",
+    "participantData": "Alle Data per Deelnemer",
+    "activityTypeData": "Aantal per Activiteitstype",
+    "dateRange": "Datumbereik"
   },
   "language": {
     "switchToEn": "English",

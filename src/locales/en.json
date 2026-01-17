@@ -159,7 +159,10 @@
     "registered": "Registered",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "registrations": "Registrations"
+    "registrations": "Registrations",
+    "participantData": "All Data per Participant",
+    "activityTypeData": "Count per Activity Type",
+    "dateRange": "Date Range"
   },
   "language": {
     "switchToEn": "English",
