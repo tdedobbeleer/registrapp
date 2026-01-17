@@ -51,3 +51,16 @@ export const fetchRegistrationsByParticipant = async (participantId: string): Pr
         return data || []
     }
 }
+
+export const getActivityTypeStats = async (startDate?: string, endDate?: string) => {
+    const params: any = {}
+    if (startDate) params.start_date = startDate
+    if (endDate) params.end_date = endDate
+    const { data, error } = await supabase.rpc('get_activity_type_stats', params)
+    if (error) {
+        console.error('Error fetching activity type stats:', error)
+        throw error
+    } else {
+        return data || []
+    }
+}

@@ -25,7 +25,8 @@ import {
     fetchRegistrations,
     addRegistration,
     deleteRegistration,
-    fetchRegistrationsByParticipant
+    fetchRegistrationsByParticipant,
+    getActivityTypeStats
 } from '../api/registrations'
 
 import {
@@ -106,7 +107,8 @@ export const useApi = () => {
             fetch: (activityId: string) => withToast(fetchRegistrations(activityId)),
             add: (participantId: string, activityId: string) => withToast(addRegistration(participantId, activityId)),
             delete: (participantId: string, activityId: string) => withToast(deleteRegistration(participantId, activityId)),
-            fetchByParticipant: (participantId: string) => withToast(fetchRegistrationsByParticipant(participantId))
+            fetchByParticipant: (participantId: string) => withToast(fetchRegistrationsByParticipant(participantId)),
+            getActivityTypeStats: (startDate?: string, endDate?: string) => withToast(getActivityTypeStats(startDate, endDate))
         },
         activityAssignees: {
             fetch: (activityId: string) => withToast(fetchActivityAssignees(activityId)),

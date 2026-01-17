@@ -162,7 +162,12 @@
     "registrations": "Registraties",
     "participantData": "Alle Data per Deelnemer",
     "activityTypeData": "Aantal per Activiteitstype",
-    "dateRange": "Datumbereik"
+    "activityTypeStats": "Statistieken",
+    "dateRange": "Datumbereik",
+    "average": "Gemiddelde",
+    "median": "Mediaan",
+    "min": "Minimum",
+    "max": "Maximum"
   },
   "language": {
     "switchToEn": "English",

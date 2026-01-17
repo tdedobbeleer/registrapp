@@ -8,6 +8,7 @@
       <BListGroup>
         <BListGroupItem :active="selectedView === 'participantData'" @click="selectedView = 'participantData'">{{ $t('data.participantData') }}</BListGroupItem>
         <BListGroupItem :active="selectedView === 'activityTypeData'" @click="selectedView = 'activityTypeData'">{{ $t('data.activityTypeData') }}</BListGroupItem>
+        <BListGroupItem :active="selectedView === 'activityTypeStats'" @click="selectedView = 'activityTypeStats'">{{ $t('data.activityTypeStats') }}</BListGroupItem>
       </BListGroup>
     </div>
     <div class="row">
@@ -15,6 +16,7 @@
         <BListGroup>
           <BListGroupItem :active="selectedView === 'participantData'" @click="selectedView = 'participantData'">{{ $t('data.participantData') }}</BListGroupItem>
           <BListGroupItem :active="selectedView === 'activityTypeData'" @click="selectedView = 'activityTypeData'">{{ $t('data.activityTypeData') }}</BListGroupItem>
+          <BListGroupItem :active="selectedView === 'activityTypeStats'" @click="selectedView = 'activityTypeStats'">{{ $t('data.activityTypeStats') }}</BListGroupItem>
         </BListGroup>
       </div>
       <div class="col-md-9">
@@ -24,6 +26,9 @@
         </div>
         <div v-if="selectedView === 'activityTypeData'">
           <ActivityTypeData />
+        </div>
+        <div v-if="selectedView === 'activityTypeStats'">
+          <ActivityTypeStats />
         </div>
       </div>
     </div>
@@ -35,6 +40,7 @@ import { ref } from 'vue'
 import { BBreadcrumb, BBreadcrumbItem, BListGroup, BListGroupItem } from 'bootstrap-vue-next'
 import ParticipantData from '../components/ParticipantData.vue'
 import ActivityTypeData from '../components/ActivityTypeData.vue'
+import ActivityTypeStats from '../components/ActivityTypeStats.vue'
 
 const selectedView = ref('participantData')
 </script>
