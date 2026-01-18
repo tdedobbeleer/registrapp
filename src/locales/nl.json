@@ -161,7 +161,7 @@
     "lastName": "Achternaam",
     "registrations": "Registraties",
     "participantData": "Alle Data per Deelnemer",
-    "activityTypeData": "Aantal per Activiteitstype",
+    "activityTypeData": "Aantal registraties per Deelnemer",
     "activityTypeStats": "Statistieken",
     "dateRange": "Datumbereik",
     "average": "Gemiddelde",

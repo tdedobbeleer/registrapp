@@ -73,7 +73,6 @@ const currentPage = ref(1)
 const perPage = ref(10)
 
 const activityTypeOptions = computed(() => [
-  { value: '', text: t('data.filterByActivityType') },
   ...activityTypes.value.map(at => ({ value: at.id, text: at.name }))
 ])
 
@@ -141,7 +140,7 @@ const fetchData = async () => {
 }
 
 const resetFilters = () => {
-  selectedActivityType.value = ''
+  selectedActivityType.value = activityTypes.value[0]?.id || ''
   startDate.value = ''
   endDate.value = ''
   currentPage.value = 1
@@ -172,6 +171,7 @@ const exportCsv = () => {
 
 onMounted(async () => {
   await fetchActivityTypes()
+  selectedActivityType.value = activityTypes.value[0]?.id || ''
   await fetchParticipants()
   await fetchData()
 })

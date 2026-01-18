@@ -161,7 +161,7 @@
     "lastName": "Last Name",
     "registrations": "Registrations",
     "participantData": "All Data per Participant",
-    "activityTypeData": "Count per Activity Type",
+    "activityTypeData": "Number of Registrations per participant",
     "activityTypeStats": "Activity Type Stats",
     "dateRange": "Date Range",
     "average": "Average",
