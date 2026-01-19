@@ -167,7 +167,9 @@
     "average": "Gemiddelde",
     "median": "Mediaan",
     "min": "Minimum",
-    "max": "Maximum"
+    "max": "Maximum",
+    "attendanceTrend": "Aanwezigheidstrend",
+    "noAttendanceData": "Geen aanwezigheidsgegevens beschikbaar"
   },
   "language": {
     "switchToEn": "English",

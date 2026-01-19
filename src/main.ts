@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import 'bootswatch/dist/minty/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+import 'vue-data-ui/style.css'
 //import './style.css'
 import App from './App.vue'
 import router from './router'
@@ -10,6 +11,7 @@ import nl from './locales/nl.json'
 import en from './locales/en.json'
 import { handleRedirectCallback, getUser } from './auth0'
 import { setRealtimeAuth } from './supabase'
+import { VueUiStackline } from "vue-data-ui/vue-ui-stackline";
 
 const i18n = createI18n({
   legacy: false,
@@ -59,5 +61,5 @@ const i18n = createI18n({
     }
   }
 
-  createApp(App).use(router).use(i18n).mount('#app')
+  createApp(App).component("VueUiStackline", VueUiStackline).use(router).use(i18n).mount('#app')
 })()

@@ -49,6 +49,14 @@ const fetchData = async () => {
   return data || []
 }
 
+const fetchAttendanceByDate = async () => {
+  const { data, error } = await supabase
+    .from('registrations')
+    .select('*, activities(*, activity_types(*))')
+  if (error) throw error
+  return data || []
+}
+
 export const useApi = () => {
   const toast = useToast()
   const { t } = useI18n()
@@ -117,7 +125,8 @@ export const useApi = () => {
             fetchUsers: () => withToast(fetchUsers())
         },
         data: {
-            fetch: () => withToast(fetchData())
+            fetch: () => withToast(fetchData()),
+            fetchAttendanceByDate: () => withToast(fetchAttendanceByDate())
         }
     }
 }

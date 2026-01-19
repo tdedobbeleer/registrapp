@@ -167,7 +167,9 @@
     "average": "Average",
     "median": "Median",
     "min": "Minimum",
-    "max": "Maximum"
+    "max": "Maximum",
+    "attendanceTrend": "Attendance Trend",
+    "noAttendanceData": "No attendance data available"
   },
   "language": {
     "switchToEn": "English",
