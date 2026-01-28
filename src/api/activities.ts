@@ -28,6 +28,20 @@ export const fetchActivity = async (id: string): Promise<Activity> => {
     }
 }
 
+export const updateActivityComment = async (id: string, comment: string) => {
+    const { data, error } = await supabase
+        .from('activities')
+        .update({ comment })
+        .eq('id', id)
+    if (error) {
+        console.error('Error updating activity comment:', error)
+        throw error
+    } else {
+        return data
+    }
+}
+
+
 export const addActivity = async (activityTypeId: string, date: string) => {
     const { data, error } = await supabase
         .from('activities')
@@ -52,18 +66,6 @@ export const updateActivity = async (id: string, activityTypeId: string, date: s
     }
 }
 
-export const updateActivityComment = async (id: string, comment: string) => {
-    const { data, error } = await supabase
-        .from('activities')
-        .update({ comment })
-        .eq('id', id)
-    if (error) {
-        console.error('Error updating activity comment:', error)
-        throw error
-    } else {
-        return data
-    }
-}
 
 export const deleteActivity = async (id: string) => {
     const { error } = await supabase
@@ -74,4 +76,35 @@ export const deleteActivity = async (id: string) => {
         console.error('Error deleting activity:', error)
         throw error
     }
+}
+
+export const findEmptyOldActivities = async (): Promise<Activity[]> => {
+    const oneMonthAgo = new Date()
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+
+    const { data, error } = await supabase
+        .from('activities')
+        .select('*, activity_types(*)')
+        .lt('date', oneMonthAgo.toISOString().split('T')[0]) // date only
+        .order('date', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching old activities:', error)
+        throw error
+    }
+
+    // Filter those with no registrations
+    const activitiesWithRegs = await Promise.all((data || []).map(async (act) => {
+        const { count, error: regError } = await supabase
+            .from('registrations')
+            .select('*', { count: 'exact', head: true })
+            .eq('activity_id', act.id)
+        if (regError) {
+            console.error('Error counting registrations:', regError)
+            return { ...act, regCount: 0 }
+        }
+        return { ...act, regCount: count || 0 }
+    }))
+
+    return activitiesWithRegs.filter(act => act.regCount === 0)
 }

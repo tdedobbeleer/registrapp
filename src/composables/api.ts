@@ -36,6 +36,15 @@ import {
   fetchUsers
 } from '../api/activityAssignees'
 
+import { findDuplicateParticipants } from '../api/participants'
+import { findEmptyOldActivities } from '../api/activities'
+import {
+  getTotalActivitiesThisYear,
+  getTotalParticipantsLastWeek,
+  getTotalParticipants,
+  getTotalRegistrationsThisYear
+} from '../api/registrations'
+
 import { supabase } from '../supabase'
 import { useToast } from 'bootstrap-vue-next'
 import { useI18n } from 'vue-i18n'
@@ -49,13 +58,6 @@ const fetchData = async () => {
   return data || []
 }
 
-const fetchAttendanceByDate = async () => {
-  const { data, error } = await supabase
-    .from('registrations')
-    .select('*, activities(*, activity_types(*))')
-  if (error) throw error
-  return data || []
-}
 
 export const useApi = () => {
   const toast = useToast()
@@ -91,8 +93,8 @@ export const useApi = () => {
   return {
         withToast,
         participants: {
-            add: (firstName: string, lastName: string, activityTypes?: string[], participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null) => withToast(addParticipant(firstName, lastName, activityTypes, participantRole)),
-            update: (id: string, firstName: string, lastName: string, activityTypes?: string[], participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null) => withToast(updateParticipant(id, firstName, lastName, activityTypes, participantRole)),
+            add: (firstName: string, lastName: string, activityTypes?: string[], participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null, influx?: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null) => withToast(addParticipant(firstName, lastName, activityTypes, participantRole, influx)),
+            update: (id: string, firstName: string, lastName: string, activityTypes?: string[], participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null, influx?: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null) => withToast(updateParticipant(id, firstName, lastName, activityTypes, participantRole, influx)),
             delete: (id: string) => withToast(deleteParticipant(id)),
             fetch: (activityTypeId?: string) => withToast(fetchParticipants(activityTypeId)),
             fetchAll: () => withToast(fetchParticipants())
@@ -125,8 +127,15 @@ export const useApi = () => {
             fetchUsers: () => withToast(fetchUsers())
         },
         data: {
-            fetch: () => withToast(fetchData()),
-            fetchAttendanceByDate: () => withToast(fetchAttendanceByDate())
+            fetch: () => withToast(fetchData())
+        },
+        dashboard: {
+            findDuplicateParticipants: () => withToast(findDuplicateParticipants()),
+            findEmptyOldActivities: () => withToast(findEmptyOldActivities()),
+            getTotalActivitiesThisYear: () => withToast(getTotalActivitiesThisYear()),
+            getTotalParticipantsLastWeek: () => withToast(getTotalParticipantsLastWeek()),
+            getTotalParticipants: () => withToast(getTotalParticipants()),
+            getTotalRegistrationsThisYear: () => withToast(getTotalRegistrationsThisYear())
         }
     }
 }
