@@ -64,3 +64,55 @@ export const getActivityTypeStats = async (startDate?: string, endDate?: string)
         return data || []
     }
 }
+
+export const getTotalActivitiesThisYear = async (): Promise<number> => {
+    const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]
+    const { count, error } = await supabase
+        .from('activities')
+        .select('*', { count: 'exact', head: true })
+        .gte('date', startOfYear)
+    if (error) {
+        console.error('Error counting activities this year:', error)
+        throw error
+    }
+    return count || 0
+}
+
+export const getTotalParticipantsLastWeek = async (): Promise<number> => {
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+    const { data, error } = await supabase
+        .from('registrations')
+        .select('participant_id')
+        .gte('created_at', oneWeekAgo.toISOString())
+    if (error) {
+        console.error('Error fetching participants last week:', error)
+        throw error
+    }
+    const unique = new Set(data?.map(r => r.participant_id) || [])
+    return unique.size
+}
+
+export const getTotalParticipants = async (): Promise<number> => {
+    const { count, error } = await supabase
+        .from('participants')
+        .select('*', { count: 'exact', head: true })
+    if (error) {
+        console.error('Error counting participants:', error)
+        throw error
+    }
+    return count || 0
+}
+
+export const getTotalRegistrationsThisYear = async (): Promise<number> => {
+    const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]
+    const { count, error } = await supabase
+        .from('registrations')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', startOfYear)
+    if (error) {
+        console.error('Error counting registrations this year:', error)
+        throw error
+    }
+    return count || 0
+}

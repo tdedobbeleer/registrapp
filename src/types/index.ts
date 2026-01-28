@@ -20,6 +20,7 @@ export interface Participant {
   last_name: string
   activity_types: string[]
   participant_role: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null
+  influx: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null
   created_at: string
 }
 

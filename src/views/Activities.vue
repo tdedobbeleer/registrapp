@@ -4,7 +4,7 @@
       <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
       <BBreadcrumbItem active>{{ $t('activities.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>{{ $t('activities.title') }}</h1>
+    <h1 class="text-center">{{ $t('activities.title') }}</h1>
     <div v-if="loading" class="text-center">
       <BSpinner />
     </div>
@@ -18,7 +18,7 @@
           <BDropdownItem @click="filterActivityTypeId = ''">{{ $t('activities.allActivityTypes') }}</BDropdownItem>
           <BDropdownItem v-for="at in activityTypes" :key="at.id" @click="filterActivityTypeId = at.id">{{ at.name }}</BDropdownItem>
         </BDropdown>
-        <BFormInput type="datetime-local" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
+        <BFormInput type="date" v-model="filterDate" :placeholder="$t('activities.filterByDate')" class="w-auto" />
         <BButton variant="primary" @click="showAddModal = true">
           <i class="bi bi-calendar-plus"></i>
         </BButton>
@@ -34,6 +34,7 @@
       >
         <div style="cursor: pointer;" @click="$router.push(`/registrations/${activity.id}`)" :title="$t('activities.registrations')">
           <strong>{{ getActivityTypeName(activity.activity_type_id) }}</strong>
+          <BBadge variant="info" class="ms-2">{{ regCounts[activity.id] || 0 }}</BBadge>
           <br />
           <p><i class="bi bi-calendar-event"></i> {{ formatDate(activity.date) }}</p>
           <div v-if="Object.keys(getAssigneesByType(activity)).length > 0" class="mt-1">
@@ -75,13 +76,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { BBreadcrumb, BBreadcrumbItem, BSpinner, BInputGroup, BDropdown, BDropdownItem, BFormInput, BButton, BButtonGroup, BModal } from 'bootstrap-vue-next'
+import { useRoute } from 'vue-router'
+import { BBreadcrumb, BBreadcrumbItem, BSpinner, BInputGroup, BDropdown, BDropdownItem, BFormInput, BButton, BButtonGroup, BModal, BBadge } from 'bootstrap-vue-next'
 import type { Activity, ActivityType, Participant } from '../types'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
 import ActivityModal from '../components/ActivityModal.vue'
 
 const { activities: apiActivities, activityTypes: apiActivityTypes, activityAssignees: apiActivityAssignees, registrations: apiRegistrations } = useApi()
+const route = useRoute()
 
 const activities = ref<Activity[]>([])
 const activityTypes = ref<ActivityType[]>([])
@@ -94,6 +97,7 @@ const showDeleteModal = ref(false)
 const deleteId = ref('')
 const allUsers = ref<Participant[]>([])
 const editingActivity = ref<Activity>()
+const regCounts = ref<Record<string, number>>({})
 
 const filteredActivities = computed(() => {
   let filtered = activities.value
@@ -139,6 +143,12 @@ const getAssigneesByType = (activity: Activity) => {
 const fetchActivities = async () => {
   try {
     activities.value = await apiActivities.fetch()
+    // Fetch registration counts
+    const counts = await Promise.all(activities.value.map(async (act) => {
+      const regs = await apiRegistrations.fetch(act.id)
+      return { id: act.id, count: regs.length }
+    }))
+    regCounts.value = Object.fromEntries(counts.map(c => [c.id, c.count]))
     loading.value = false
   } catch (error) {
     console.error("Error fetching activities:", error)
@@ -199,6 +209,9 @@ onMounted(() => {
   fetchActivities()
   fetchActivityTypes()
   fetchUsers()
+  if (route.query.date) {
+    filterDate.value = route.query.date as string
+  }
 })
 </script>
 

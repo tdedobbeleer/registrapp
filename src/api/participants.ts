@@ -64,10 +64,10 @@ export const findSimilarParticipants = async (firstName: string, lastName: strin
   return similarParticipants
 }
 
-export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
+export const addParticipant = async (firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null, influx: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null = null) => {
     const { data: participantData, error: participantError } = await supabase
         .from('participants')
-        .insert([{ first_name: firstName, last_name: lastName, participant_role: participantRole }])
+        .insert([{ first_name: firstName, last_name: lastName, participant_role: participantRole, influx: influx }])
         .select()
         .single()
     if (participantError) {
@@ -87,10 +87,10 @@ export const addParticipant = async (firstName: string, lastName: string, activi
     }
 }
 
-export const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null) => {
+export const updateParticipant = async (id: string, firstName: string, lastName: string, activityTypes: string[] = [], participantRole: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null = null, influx: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null = null) => {
     const { error: updateError } = await supabase
         .from('participants')
-        .update({ first_name: firstName, last_name: lastName, participant_role: participantRole })
+        .update({ first_name: firstName, last_name: lastName, participant_role: participantRole, influx: influx })
         .eq('id', id)
     if (updateError) {
         console.error('Error updating participant:', updateError)
@@ -146,6 +146,30 @@ export const deleteParticipant = async (id: string) => {
         console.error('Error deleting participant:', error)
         throw error
     }
+}
+
+export const findDuplicateParticipants = async (): Promise<{ first_name: string, last_name: string, count: number }[]> => {
+  const { data, error } = await supabase
+    .from('participants')
+    .select('first_name, last_name')
+
+  if (error) {
+    console.error('Error fetching participants for duplicates:', error)
+    throw error
+  }
+
+  const duplicates: { [key: string]: number } = {}
+  data?.forEach(p => {
+    const key = `${p.first_name.toLowerCase()}_${p.last_name.toLowerCase()}`
+    duplicates[key] = (duplicates[key] || 0) + 1
+  })
+
+  return Object.entries(duplicates)
+    .filter(([_, count]) => count > 1)
+    .map(([key, count]) => {
+      const [first, last] = key.split('_')
+      return { first_name: first!, last_name: last!, count }
+    })
 }
 
 export const fetchParticipants = async (activityTypeId?: string): Promise<Participant[]> => {

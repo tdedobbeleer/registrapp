@@ -39,6 +39,14 @@
           :options="roleOptions"
         />
       </div>
+      <div class="mb-3">
+        <label for="influx" class="form-label">{{ $t('participants.influx') }}</label>
+        <BFormSelect
+          id="influx"
+          v-model="selectedInflux"
+          :options="influxOptions"
+        />
+      </div>
       <div v-if="props.activityTypes" class="mb-3">
         <label class="form-label">{{ $t('participants.activityTypes') }}</label>
         <div class="activity-types-container">
@@ -123,6 +131,7 @@ const { participants: apiParticipants } = useApi()
 const firstName = ref('')
 const lastName = ref('')
 const selectedRole = ref<'PHYSIOTHERAPIST' | 'VOLUNTEER' | null>(null)
+const selectedInflux = ref<'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null>(null)
 const selectedActivityTypes = ref<string[]>([])
 const similarParticipants = ref<Participant[]>([])
 const showDuplicateWarning = ref(false)
@@ -139,6 +148,15 @@ const roleOptions = computed(() => [
   { value: null, text: t('participants.noRole') },
   { value: 'PHYSIOTHERAPIST', text: t('participants.physiotherapist') },
   { value: 'VOLUNTEER', text: t('participants.volunteer') }
+])
+
+const influxOptions = computed(() => [
+  { value: null, text: t('participants.unknown') },
+  { value: 'WGC', text: t('participants.wgc') },
+  { value: 'BOV', text: t('participants.bov') },
+  { value: 'PHYSIO', text: t('participants.physio') },
+  { value: 'OTHER', text: t('participants.other') },
+  { value: 'UNKNOWN', text: t('participants.unknown') }
 ])
 
 const toggleActivityType = (activityTypeId: string) => {
@@ -179,16 +197,17 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     if (props.mode === 'add') {
-      await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+      await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value, selectedInflux.value)
       emit('added')
     } else {
-      await apiParticipants.update(props.participant!.id, firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+      await apiParticipants.update(props.participant!.id, firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value, selectedInflux.value)
       emit('updated')
     }
     // Reset form and close modal
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
+    selectedInflux.value = null
     selectedActivityTypes.value = []
     emit('update:modelValue', false)
   } catch (error) {
@@ -202,12 +221,13 @@ const confirmSubmit = async () => {
   showDuplicateWarning.value = false
   loading.value = true
   try {
-    await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value)
+    await apiParticipants.add(firstName.value.trim(), lastName.value.trim(), selectedActivityTypes.value, selectedRole.value, selectedInflux.value)
     emit('added')
     // Reset form and close modal
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
+    selectedInflux.value = null
     selectedActivityTypes.value = []
     emit('update:modelValue', false)
   } catch (error) {
@@ -244,11 +264,13 @@ watch(() => props.participant, (newParticipant) => {
     firstName.value = newParticipant.first_name
     lastName.value = newParticipant.last_name
     selectedRole.value = newParticipant.participant_role
+    selectedInflux.value = newParticipant.influx
     selectedActivityTypes.value = newParticipant.activity_types || []
   } else {
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
+    selectedInflux.value = null
     selectedActivityTypes.value = props.activityTypeId && props.mode === 'add' ? [props.activityTypeId] : []
   }
 }, { immediate: true })
@@ -258,6 +280,7 @@ watch(() => props.mode, () => {
     firstName.value = ''
     lastName.value = ''
     selectedRole.value = null
+    selectedInflux.value = null
     selectedActivityTypes.value = props.activityTypeId ? [props.activityTypeId] : []
   }
 })

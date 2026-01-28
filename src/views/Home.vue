@@ -1,121 +1,108 @@
 <template>
   <div class="container mt-3">
-    <BRow>
-      <BCol cols="12" class="text-center mb-2">
-        <h1>{{ $t('home.welcome') }}</h1>
-        <p class="lead">{{ $t('home.description') }}</p>
-      </BCol>
-    </BRow>
+    <h1 class="text-center">{{ $t('dashboard.title') }}</h1>
 
-    <!-- Flow Chart Layout -->
-    <div class="flow-chart">
-      <!-- Activity Types Card (conditionally shown) -->
-      <div v-if="showActivityTypes" class="flow-step">
-        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1614667288602-9ac6e37318a7?w=300&h=150&fit=crop'" :img-alt="$t('home.activityTypesAlt')" lazy>
-          <BCardTitle>{{ $t('nav.activityTypes') }}</BCardTitle>
-          <BCardText>{{ $t('home.activityTypesDescription') }}</BCardText>
-          <template #footer>
-            <BButton variant="primary" :to="'/activity_types'">{{ $t('home.viewActivityTypes') }}</BButton>
-          </template>
-        </BCard>
-        <h1 class="bi bi-arrow-down-square"></h1>
-      </div>
-
-      <!-- Activities Card -->
-      <div class="flow-step">
-        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1585757318177-0570a997dc3a?w=300&h=150&fit=crop'" :img-alt="$t('home.activitiesAlt')" lazy>
-          <BCardTitle>{{ $t('nav.activities') }}</BCardTitle>
-          <BCardText>
-            <I18nT keypath="home.activitiesDescription">
-              <!-- enter various i18n slots -->
-              <template #addIcon>
-                <BButton disabled size="sm"><i class="bi bi-calendar-plus"></i></BButton>
-              </template>
-            </I18nT>
+    <!-- Warnings Section -->
+    <div class="mb-4">
+      <h2>{{ $t('dashboard.warnings') }}</h2>
+      <BRow>
+        <BCol md="6">
+          <BCard class="h-100 border-danger">
+            <BCardTitle>{{ $t('dashboard.duplicateParticipants') }}</BCardTitle>
+            <BCardText>
+              <ul v-if="duplicates.length > 0" class="list-unstyled">
+                <li v-for="dup in duplicates" :key="dup.first_name + dup.last_name">
+                  <i class="bi bi-exclamation-triangle text-warning"></i>
+                  {{ dup.first_name }} {{ dup.last_name }} ({{ dup.count }} {{ $t('dashboard.times') }})
+                </li>
+              </ul>
+              <p v-else>{{ $t('dashboard.noDuplicatesFound') }}</p>
             </BCardText>
-          <template #footer>
-            <BButton variant="primary" :to="'/activities'">{{ $t('home.viewActivities') }}</BButton>
-          </template>
-        </BCard>
-        <h1 class="bi bi-arrow-down-square"></h1>
-      </div>
+          </BCard>
+        </BCol>
+        <BCol md="6">
+          <BCard class="h-100 border-warning">
+            <BCardTitle>{{ $t('dashboard.emptyOldActivities') }}</BCardTitle>
+            <BCardText>
+              <ul v-if="emptyActivities.length > 0" class="list-unstyled">
+                <li v-for="act in emptyActivities" :key="act.id">
+                  <a :href="`/activities?date=${new Date(act.date).toISOString().split('T')[0]}`" target="_blank" class="text-decoration-none">
+                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                    {{ act.activity_types?.name }} {{ $t('dashboard.on') }} {{ new Date(act.date).toLocaleDateString() }}
+                  </a>
+                </li>
+              </ul>
+              <p v-else>{{ $t('dashboard.noEmptyOldActivitiesFound') }}</p>
+            </BCardText>
+          </BCard>
+        </BCol>
+      </BRow>
+    </div>
 
-      <!-- Registrations Card -->
-      <div class="flow-step">
-        <BCard class="flow-card" :img-src="'https://images.unsplash.com/vector-1741203969096-deda346274e8?w=300&h=150&fit=crop'" :img-alt="$t('home.registrationsAlt')" lazy>
-          <BCardTitle>{{ $t('nav.registrations') }}</BCardTitle>
-          <BCardText>
-            <I18nT keypath="home.registrationsDescription">
-              <template #registrationsIcon>
-                <BButton variant="outline-info" disabled size="sm"><i class="bi bi-list-check"></i></BButton>
-              </template>
-            </I18nT>
-          </BCardText>
-          <template #footer>
-            <BButton variant="primary" :to="'/activities'">{{ $t('home.viewRegistrations') }}</BButton>
-          </template>
-        </BCard>
-        <h1 class="bi bi-arrow-down-square"></h1>
-      </div>
-
-      <!-- Participants Card -->
-      <div class="flow-step">
-        <BCard class="flow-card" :img-src="'https://images.unsplash.com/photo-1548705085-101177834f47?w=300&h=150&fit=crop'" :img-alt="$t('home.participantsAlt')" lazy>
-          <BCardTitle>{{ $t('nav.participants') }}</BCardTitle>
-          <BCardText>{{ $t('home.participantsDescription') }}</BCardText>
-          <template #footer>
-            <BButton variant="primary" :to="'/participants'">{{ $t('home.viewParticipants') }}</BButton>
-          </template>
-        </BCard>
-      </div>
+    <!-- Gauges Section -->
+    <div>
+      <h2>{{ $t('dashboard.gauges') }}</h2>
+      <BRow>
+        <BCol md="3" sm="6" class="mb-3">
+          <BCard class="text-center h-100" bg-variant="primary" text-variant="white">
+            <BCardBody>
+              <div class="h1">{{ totalActivitiesThisYear }}</div>
+              <p>{{ $t('dashboard.totalActivitiesThisYear') }}</p>
+            </BCardBody>
+          </BCard>
+        </BCol>
+        <BCol md="3" sm="6" class="mb-3">
+          <BCard class="text-center h-100" bg-variant="success" text-variant="white">
+            <BCardBody>
+              <div class="h1">{{ totalRegistrationsThisYear }}</div>
+              <p>{{ $t('dashboard.totalRegistrationsThisYear') }}</p>
+            </BCardBody>
+          </BCard>
+        </BCol>
+        <BCol md="3" sm="6" class="mb-3">
+          <BCard class="text-center h-100" bg-variant="info" text-variant="white">
+            <BCardBody>
+              <div class="h1">{{ totalParticipantsLastWeek }}</div>
+              <p>{{ $t('dashboard.totalParticipantsLastWeek') }}</p>
+            </BCardBody>
+          </BCard>
+        </BCol>
+        <BCol md="3" sm="6" class="mb-3">
+          <BCard class="text-center h-100" bg-variant="warning" text-variant="dark">
+            <BCardBody>
+              <div class="h1">{{ totalParticipants }}</div>
+              <p>{{ $t('dashboard.totalParticipants') }}</p>
+            </BCardBody>
+          </BCard>
+        </BCol>
+      </BRow>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { BRow, BCol, BCard, BCardTitle, BCardText, BButton } from 'bootstrap-vue-next'
-import { I18nT } from 'vue-i18n'
-import { getUser, hasPermission, PERMISSIONS } from '../auth0'
+import { BRow, BCol, BCard, BCardTitle, BCardText, BCardBody } from 'bootstrap-vue-next'
+import { useApi } from '../composables/api'
 
-const user = ref<any>(null)
-const showActivityTypes = ref(false)
+const { dashboard } = useApi()
+
+const duplicates = ref<{ first_name: string, last_name: string, count: number }[]>([])
+const emptyActivities = ref<any[]>([])
+const totalActivitiesThisYear = ref(0)
+const totalParticipantsLastWeek = ref(0)
+const totalParticipants = ref(0)
+const totalRegistrationsThisYear = ref(0)
 
 onMounted(async () => {
-  user.value = await getUser()
-  showActivityTypes.value = await hasPermission(PERMISSIONS.CRUD_ACTIVITY_TYPES)
+  duplicates.value = await dashboard.findDuplicateParticipants()
+  emptyActivities.value = await dashboard.findEmptyOldActivities()
+  totalActivitiesThisYear.value = await dashboard.getTotalActivitiesThisYear()
+  totalParticipantsLastWeek.value = await dashboard.getTotalParticipantsLastWeek()
+  totalParticipants.value = await dashboard.getTotalParticipants()
+  totalRegistrationsThisYear.value = await dashboard.getTotalRegistrationsThisYear()
 })
 </script>
 
 <style scoped>
-.flow-chart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  margin-top: 10px;
-}
-
-.flow-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.flow-card {
-  width: 100%;
-  max-width: 400px;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 576px) {
-  .flow-card {
-    max-width: 350px;
-  }
-
-  .arrow-icon {
-    font-size: 2.5rem;
-  }
-}
 </style>
