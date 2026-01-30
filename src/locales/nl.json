@@ -139,7 +139,13 @@
     "duplicateWarningActivityType": "Sommige van deze deelnemers staan niet in de lijst voor dit activiteitstype. Je kunt de deelnemer zichtbaar maken voor dit activiteitstype door op de knop naast hun naam te klikken.",
     "duplicateWarningConfirm": "Weet je zeker dat je deze deelnemer wilt aanmaken?",
     "confirmCreate": "Toch Aanmaken",
-    "addActivityType": "Activiteitstype Toevoegen"
+    "addActivityType": "Activiteitstype Toevoegen",
+    "influx": "Instroom",
+    "wgc": "Pantiënt van Wijkgezondheidscentrum",
+    "bov": "Bewegen op verwijzing",
+    "physio": "Verwezen door kinesist(e)",
+    "other": "Anders",
+    "unknown": "Onbekend"
   },
   "notFound": {
     "title": "404 - Pagina Niet Gevonden",
@@ -167,7 +173,24 @@
     "average": "Gemiddelde",
     "median": "Mediaan",
     "min": "Minimum",
-    "max": "Maximum"
+    "max": "Maximum",
+    "attendanceTrend": "Aanwezigheidstrend",
+    "noAttendanceData": "Geen aanwezigheidsgegevens beschikbaar"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "warnings": "Waarschuwingen",
+    "duplicateParticipants": "Dubbele Deelnemers",
+    "emptyOldActivities": "Activiteiten zonder deelnemers",
+    "noDuplicatesFound": "Geen duplicaten gevonden.",
+    "noEmptyOldActivitiesFound": "Geen lege oude activiteiten gevonden.",
+    "times": "keer",
+    "on": "op",
+    "gauges": "Statistieken",
+    "totalActivitiesThisYear": "Totaal Activiteiten Dit Jaar",
+    "totalParticipantsLastWeek": "Deelnemers Geregistreerd Vorige Week",
+    "totalParticipants": "Totaal Deelnemers",
+    "totalRegistrationsThisYear": "Registraties Dit Jaar"
   },
   "language": {
     "switchToEn": "English",

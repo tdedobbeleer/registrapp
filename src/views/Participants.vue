@@ -4,7 +4,7 @@
       <BBreadcrumbItem to="/">{{ $t('nav.home') }}</BBreadcrumbItem>
       <BBreadcrumbItem active>{{ $t('participants.title') }}</BBreadcrumbItem>
     </BBreadcrumb>
-    <h1>{{ $t('participants.title') }}</h1>
+    <h1 class="text-center">{{ $t('participants.title') }}</h1>
     <div v-if="loading" class="text-center">
       <BSpinner />
     </div>

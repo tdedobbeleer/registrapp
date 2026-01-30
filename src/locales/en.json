@@ -139,7 +139,13 @@
     "duplicateWarningActivityType": "Some of these participants are not in the list for this activity type. You can make them visible for this activity type by clicking the button next to their name.",
     "duplicateWarningConfirm": "Are you sure you want to create this participant?",
     "confirmCreate": "Create Anyway",
-    "addActivityType": "Add Activity Type"
+    "addActivityType": "Add Activity Type",
+    "influx": "Influx",
+    "wgc": "Patient from Neighborhood Health Center",
+    "bov": "Exercise on Referral",
+    "physio": "Referred by Physiotherapist",
+    "other": "Other",
+    "unknown": "Unknown"
   },
   "notFound": {
     "title": "404 - Page Not Found",
@@ -167,7 +173,24 @@
     "average": "Average",
     "median": "Median",
     "min": "Minimum",
-    "max": "Maximum"
+    "max": "Maximum",
+    "attendanceTrend": "Attendance Trend",
+    "noAttendanceData": "No attendance data available"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "warnings": "Warnings",
+    "duplicateParticipants": "Duplicate Participants",
+    "emptyOldActivities": "Activities with no participants",
+    "noDuplicatesFound": "No duplicates found.",
+    "noEmptyOldActivitiesFound": "No empty old activities found.",
+    "times": "times",
+    "on": "on",
+    "gauges": "Statistics",
+    "totalActivitiesThisYear": "Total Activities This Year",
+    "totalParticipantsLastWeek": "Participants Registered Last Week",
+    "totalParticipants": "Total Participants",
+    "totalRegistrationsThisYear": "Registrations This Year"
   },
   "language": {
     "switchToEn": "English",
