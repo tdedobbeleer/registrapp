@@ -1,14 +1,20 @@
 import { supabase } from '../supabase'
 import type { Participant, ParticipantActivityType } from '../types'
 
-// This function fetches detailed participant data for merging - includes activity type names and registration counts
+// This function fetches detailed participant data for merging - includes activity type names, registration counts, and influx data in one call
 export const fetchParticipantsForMergeByIds = async (ids: string[]): Promise<Participant[]> => {
     if (ids.length === 0) return []
     
+    // Fetch all participants with their activity types and activity type names
     const { data, error } = await supabase
         .from('participants')
         .select(`
-            *,
+            id,
+            first_name,
+            last_name,
+            influx,
+            participant_role,
+            created_at,
             participant_activity_types (
                 activity_type_id,
                 activity_types (
@@ -25,32 +31,29 @@ export const fetchParticipantsForMergeByIds = async (ids: string[]): Promise<Par
         throw error
     }
     
-    const participants = (data || []).map(p => ({
-        ...p,
-        activity_types: (p.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id),
-        activity_type_names: (p.participant_activity_types as any[] || []).map(pat => pat.activity_types?.name).filter(Boolean)
-    }))
+    // Fetch registration counts for all participants in one query
+    const { data: regData, error: regError } = await supabase
+        .from('registrations')
+        .select('participant_id')
+        .in('participant_id', ids)
     
-    // Fetch registration counts for each participant
-    const registrationCounts: Record<string, number> = {}
-    for (const participant of participants) {
-        const { count, error: countError } = await supabase
-            .from('registrations')
-            .select('*', { count: 'exact', head: true })
-            .eq('participant_id', participant.id)
-        
-        if (countError) {
-            console.error('Error fetching registration count:', countError)
-            registrationCounts[participant.id] = 0
-        } else {
-            registrationCounts[participant.id] = count || 0
-        }
+    if (regError) {
+        console.error('Error fetching registration counts:', regError)
+        throw regError
     }
     
-    // Add registration count to each participant
-    return participants.map(p => ({
+    // Build a map of participant_id -> registration count
+    const regCountMap: Record<string, number> = {}
+    regData?.forEach(reg => {
+        regCountMap[reg.participant_id] = (regCountMap[reg.participant_id] || 0) + 1
+    })
+    
+    // Process data in memory
+    return (data || []).map(p => ({
         ...p,
-        registrationCount: registrationCounts[p.id] || 0
+        activity_types: (p.participant_activity_types as any[] || []).map(pat => pat.activity_type_id),
+        activity_type_names: (p.participant_activity_types as any[] || []).map(pat => pat.activity_types?.name).filter(Boolean),
+        registrationCount: regCountMap[p.id] || 0
     }))
 }
 
@@ -181,116 +184,144 @@ export const addActivityTypeToParticipant = async (participantId: string, activi
 }
 
 export const mergeParticipants = async (primaryId: string, secondaryIds: string[]) => {
-    // Get existing activity types for primary participant
-    const { data: primaryActivityTypes, error: primaryAtError } = await supabase
-        .from('participant_activity_types')
-        .select('activity_type_id')
-        .eq('participant_id', primaryId)
-    
+    if (secondaryIds.length === 0) return
+
+    // Fetch all data in parallel - single queries instead of loops
+    const [
+        { data: primaryData, error: primaryError },
+        { data: allSecondaryData, error: secondaryError },
+        { data: allPrimaryActivityTypes, error: primaryAtError },
+        { data: allSecondaryActivityTypes, error: secondaryAtError },
+        { data: allRegistrations, error: regError }
+    ] = await Promise.all([
+        // Get primary participant data
+        supabase
+            .from('participants')
+            .select('influx, participant_role')
+            .eq('id', primaryId)
+            .single(),
+        // Get all secondary participants data at once
+        supabase
+            .from('participants')
+            .select('id, influx, participant_role')
+            .in('id', secondaryIds),
+        // Get primary activity types
+        supabase
+            .from('participant_activity_types')
+            .select('activity_type_id')
+            .eq('participant_id', primaryId),
+        // Get all secondary activity types at once
+        supabase
+            .from('participant_activity_types')
+            .select('participant_id, activity_type_id')
+            .in('participant_id', secondaryIds),
+        // Get all secondary registrations at once
+        supabase
+            .from('registrations')
+            .select('participant_id, activity_id')
+            .in('participant_id', secondaryIds)
+    ])
+
+    if (primaryError || !primaryData) {
+        console.error('Error fetching primary participant data:', primaryError)
+        throw primaryError
+    }
+
+    // Check for errors
+    if (secondaryError) {
+        console.error('Error fetching secondary participants:', secondaryError)
+        throw secondaryError
+    }
     if (primaryAtError) {
         console.error('Error fetching primary activity types:', primaryAtError)
         throw primaryAtError
     }
-    
-    const primaryActivityTypeIds = new Set((primaryActivityTypes || []).map(at => at.activity_type_id))
-    
-    // Get primary participant data for influx and role
-    const { data: primaryData, error: primaryDataError } = await supabase
-        .from('participants')
-        .select('influx, participant_role')
-        .eq('id', primaryId)
-        .single()
-    
-    if (primaryDataError) {
-        console.error('Error fetching primary participant data:', primaryDataError)
-        throw primaryDataError
+    if (secondaryAtError) {
+        console.error('Error fetching secondary activity types:', secondaryAtError)
+        throw secondaryAtError
     }
+    if (regError) {
+        console.error('Error fetching registrations:', regError)
+        throw regError
+    }
+
+    // Build sets and maps for efficient lookups
+    const primaryActivityTypeIds = new Set((allPrimaryActivityTypes || []).map(at => at.activity_type_id))
+    const secondaryParticipants = allSecondaryData || []
     
-    let primaryInflux = primaryData?.influx
-    let primaryRole = primaryData?.participant_role
-    
-    // Copy activity types, registrations, influx, and role from secondary participants to primary participant
-    for (const secondaryId of secondaryIds) {
-        // Get secondary participant data
-        const { data: secondaryData, error: secondaryDataError } = await supabase
-            .from('participants')
-            .select('influx, participant_role')
-            .eq('id', secondaryId)
-            .single()
-        
-        if (!secondaryDataError && secondaryData) {
-            // Copy influx if primary doesn't have it (is null, empty, or UNKNOWN) and secondary has a valid value
-            const shouldCopyInflux = !primaryInflux || primaryInflux === 'UNKNOWN'
-            if (shouldCopyInflux && secondaryData.influx && secondaryData.influx !== 'UNKNOWN') {
-                primaryInflux = secondaryData.influx
-            }
-            // Copy role if primary doesn't have it and secondary does
-            if (!primaryRole && secondaryData.participant_role) {
-                primaryRole = secondaryData.participant_role
-            }
+    // Calculate merged influx and role from all secondary participants
+    let primaryInflux = primaryData.influx
+    let primaryRole = primaryData.participant_role
+
+    for (const secondary of secondaryParticipants) {
+        // Copy influx if primary doesn't have it (is null, empty, or UNKNOWN) and secondary has a valid value
+        const shouldCopyInflux = !primaryInflux || primaryInflux === 'UNKNOWN'
+        if (shouldCopyInflux && secondary.influx && secondary.influx !== 'UNKNOWN') {
+            primaryInflux = secondary.influx
         }
+        // Copy role if primary doesn't have it and secondary does
+        if (!primaryRole && secondary.participant_role) {
+            primaryRole = secondary.participant_role
+        }
+    }
+
+    // Get activity types to copy (that primary doesn't already have)
+    const activityTypesToCopy = (allSecondaryActivityTypes || []).filter(
+        at => !primaryActivityTypeIds.has(at.activity_type_id)
+    )
+
+    // Insert new activity types (batch insert if possible, otherwise sequential)
+    if (activityTypesToCopy.length > 0) {
+        const activityTypeInserts = activityTypesToCopy.map(at => ({
+            participant_id: primaryId,
+            activity_type_id: at.activity_type_id
+        }))
         
-        // Get activity types for the secondary participant
-        const { data: secondaryActivityTypes, error: atError } = await supabase
+        const { error: insertAtError } = await supabase
             .from('participant_activity_types')
-            .select('activity_type_id')
-            .eq('participant_id', secondaryId)
+            .insert(activityTypeInserts)
         
-        if (atError) {
-            console.error('Error fetching activity types for secondary participant:', atError)
-        } else if (secondaryActivityTypes && secondaryActivityTypes.length > 0) {
-            // Copy each activity type that the primary doesn't already have
-            for (const at of secondaryActivityTypes) {
-                if (!primaryActivityTypeIds.has(at.activity_type_id)) {
-                    const { error: insertError } = await supabase
-                        .from('participant_activity_types')
-                        .insert({ participant_id: primaryId, activity_type_id: at.activity_type_id })
-                    
-                    if (insertError) {
-                        console.error('Error copying activity type:', insertError)
-                    } else {
-                        primaryActivityTypeIds.add(at.activity_type_id)
-                    }
-                }
-            }
-        }
-        
-        // Get all registrations for the secondary participant
-        const { data: regs, error: regError } = await supabase
-            .from('registrations')
-            .select('*')
-            .eq('participant_id', secondaryId)
-        
-        if (regError) {
-            console.error('Error fetching registrations for secondary participant:', regError)
-            continue
-        }
-        
-        if (regs && regs.length > 0) {
-            // Copy each registration to the primary participant if it doesn't exist
-            for (const reg of regs) {
-                // Check if registration already exists for primary participant
-                const { data: existing } = await supabase
-                    .from('registrations')
-                    .select('*')
-                    .eq('participant_id', primaryId)
-                    .eq('activity_id', reg.activity_id)
-                    .single()
-                
-                if (!existing) {
-                    // Insert the registration for the primary participant
-                    const { error: insertError } = await supabase
-                        .from('registrations')
-                        .insert({ participant_id: primaryId, activity_id: reg.activity_id })
-                    
-                    if (insertError) {
-                        console.error('Error copying registration:', insertError)
-                    }
-                }
-            }
+        if (insertAtError) {
+            console.error('Error copying activity types:', insertAtError)
+            throw insertAtError
         }
     }
-    
+
+    // Get existing registrations for primary participant to check for duplicates
+    const { data: existingPrimaryRegs, error: existingRegsError } = await supabase
+        .from('registrations')
+        .select('activity_id')
+        .eq('participant_id', primaryId)
+
+    if (existingRegsError) {
+        console.error('Error fetching existing registrations:', existingRegsError)
+        throw existingRegsError
+    }
+
+    const existingPrimaryActivityIds = new Set((existingPrimaryRegs || []).map(reg => reg.activity_id))
+
+    // Get registrations to copy (that don't already exist for primary)
+    const registrationsToCopy = (allRegistrations || []).filter(
+        reg => !existingPrimaryActivityIds.has(reg.activity_id)
+    )
+
+    // Insert new registrations (batch insert if possible)
+    if (registrationsToCopy.length > 0) {
+        const registrationInserts = registrationsToCopy.map(reg => ({
+            participant_id: primaryId,
+            activity_id: reg.activity_id
+        }))
+        
+        const { error: insertRegError } = await supabase
+            .from('registrations')
+            .insert(registrationInserts)
+        
+        if (insertRegError) {
+            console.error('Error copying registrations:', insertRegError)
+            throw insertRegError
+        }
+    }
+
     // Update primary participant with merged influx and role
     const { error: updateError } = await supabase
         .from('participants')
@@ -301,10 +332,16 @@ export const mergeParticipants = async (primaryId: string, secondaryIds: string[
         console.error('Error updating primary participant:', updateError)
         throw updateError
     }
+
+    // Delete the secondary participants (batch delete)
+    const { error: deleteError } = await supabase
+        .from('participants')
+        .delete()
+        .in('id', secondaryIds)
     
-    // Delete the secondary participants
-    for (const secondaryId of secondaryIds) {
-        await deleteParticipant(secondaryId)
+    if (deleteError) {
+        console.error('Error deleting secondary participants:', deleteError)
+        throw deleteError
     }
 }
 
@@ -391,7 +428,7 @@ export const findSimilarParticipantNames = async (): Promise<{ name: string, nam
       const maxLength = Math.max(p1FullName.length, p2FullName.length)
       const similarity = 1 - (distance / maxLength)
 
-      // Consider similar if similarity is above 0.7 (70%) and distance is small, but not exact match
+      // Consider similar if similarity is above 0.7 (70%) and distance is small
       if (similarity > 0.7 || distance <= 2) {
         group.push({ name: `${p2.first_name} ${p2.last_name}`, id: p2.id })
         processed.add(p2.id)

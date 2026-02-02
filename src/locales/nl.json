@@ -27,7 +27,7 @@
     "viewRegistrations": "Registraties bekijken"
   },
   "common": {
-    "changed": "Gewijzigd op",
+    "created": "Aangemaakt op",
     "physiotherapist": "Kinesist(en):",
     "volunteer": "Vrijwilliger(s):",
     "unknown": "Onbekend:",
@@ -181,7 +181,7 @@
     "title": "Dashboard",
     "warnings": "Waarschuwingen",
     "duplicateParticipants": "Dubbele Deelnemers",
-    "similarParticipants": "Mogelijke Vergelijkbare Deelnemers",
+    "similarParticipants": "Vergelijkbare Deelnemers",
     "emptyOldActivities": "Activiteiten zonder deelnemers",
     "noDuplicatesFound": "Geen duplicaten gevonden.",
     "noSimilarParticipantsFound": "Geen vergelijkbare deelnemers gevonden.",

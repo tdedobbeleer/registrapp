@@ -27,7 +27,7 @@
     "viewRegistrations": "View Registrations"
   },
   "common": {
-    "changed": "Changed on",
+    "created": "Created on",
     "physiotherapist": "Physio('s):",
     "volunteer": "Volunteer(s):",
     "unknown": "Unknown:",
@@ -181,7 +181,7 @@
     "title": "Dashboard",
     "warnings": "Warnings",
     "duplicateParticipants": "Duplicate Participants",
-    "similarParticipants": "Possible Similar Participants",
+    "similarParticipants": "Similar Participants",
     "emptyOldActivities": "Activities with no participants",
     "noDuplicatesFound": "No duplicates found.",
     "noSimilarParticipantsFound": "No similar participants found.",

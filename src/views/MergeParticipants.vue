@@ -29,20 +29,22 @@
                   <div>
                     <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
                     <br />
+                    <small v-if="participant.created_at" class="text-muted fst-italic">
+                      {{ $t('common.created') }}: {{ new Date(participant.created_at).toLocaleDateString() }}
+                    </small>
+                    <br />
                     <small class="text-muted">
                       {{ participant.registrationCount || 0 }} {{ $t('data.registrations') }}
                     </small>
                     <br />
                     <small v-if="participant.influx" class="text-muted">
-                      {{ $t('participants.influx') }}: {{ $t('participants.' + participant.influx.toLowerCase()) }}
+                      {{ $t('participants.influx') }}: {{ $t('participants.' + participant.influx.toLowerCase()) }}<br />
                     </small>
-                    <br />
                     <small v-if="participant.participant_role" class="text-muted">
-                      {{ $t('participants.role') }}: {{ $t('participants.' + (participant.participant_role === 'PHYSIOTHERAPIST' ? 'physiotherapist' : 'volunteer')) }}
+                      {{ $t('participants.role') }}: {{ $t('participants.' + (participant.participant_role === 'PHYSIOTHERAPIST' ? 'physiotherapist' : 'volunteer')) }}<br />
                     </small>
-                    <br />
                     <small v-if="participant.activity_type_names?.length" class="text-muted activity-types">
-                      {{ $t('mergeParticipants.registeredFor') }}: {{ participant.activity_type_names.join(', ') }}
+                      {{ $t('mergeParticipants.registeredFor') }}: {{ participant.activity_type_names.join(', ') }}<br />
                     </small>
                   </div>
                   <i v-if="primaryParticipant?.id === participant.id" class="bi bi-check-circle-fill text-success h4"></i>
@@ -68,20 +70,22 @@
                   <div>
                     <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
                     <br />
+                    <small v-if="participant.created_at" class="text-muted fst-italic">
+                      {{ $t('common.created') }}: {{ new Date(participant.created_at).toLocaleDateString() }}
+                    </small>
+                    <br />
                     <small class="text-muted">
                       {{ participant.registrationCount || 0 }} {{ $t('data.registrations') }}
                     </small>
                     <br />
                     <small v-if="participant.influx" class="text-muted">
-                      {{ $t('participants.influx') }}: {{ $t('participants.' + participant.influx.toLowerCase()) }}
+                      {{ $t('participants.influx') }}: {{ $t('participants.' + participant.influx.toLowerCase()) }}<br />
                     </small>
-                    <br />
                     <small v-if="participant.participant_role" class="text-muted">
-                      {{ $t('participants.role') }}: {{ $t('participants.' + (participant.participant_role === 'PHYSIOTHERAPIST' ? 'physiotherapist' : 'volunteer')) }}
+                      {{ $t('participants.role') }}: {{ $t('participants.' + (participant.participant_role === 'PHYSIOTHERAPIST' ? 'physiotherapist' : 'volunteer')) }}<br />
                     </small>
-                    <br />
                     <small v-if="participant.activity_type_names?.length" class="text-muted activity-types">
-                      {{ $t('mergeParticipants.registeredFor') }}: {{ participant.activity_type_names.join(', ') }}
+                      {{ $t('mergeParticipants.registeredFor') }}: {{ participant.activity_type_names.join(', ') }}<br />
                     </small>
                   </div>
                   <div v-if="selectedToMerge.includes(participant.id)" class="d-flex align-items-center gap-2">
@@ -94,7 +98,7 @@
         </BCol>
       </BRow>
       
-      <div class="text-center mt-4">
+      <div class="text-center mt-4 mb-4">
         <BButton
           variant="primary"
           size="lg"
