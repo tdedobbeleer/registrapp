@@ -2,7 +2,9 @@ import {
     addParticipant,
     updateParticipant,
     deleteParticipant,
-    fetchParticipants
+    fetchParticipants,
+    fetchParticipantsForMergeByIds,
+    mergeParticipants
 } from '../api/participants'
 
 import {
@@ -36,7 +38,7 @@ import {
   fetchUsers
 } from '../api/activityAssignees'
 
-import { findDuplicateParticipants } from '../api/participants'
+import { findDuplicateParticipants, findSimilarParticipantNames } from '../api/participants'
 import { findEmptyOldActivities } from '../api/activities'
 import {
   getTotalActivitiesThisYear,
@@ -97,7 +99,9 @@ export const useApi = () => {
             update: (id: string, firstName: string, lastName: string, activityTypes?: string[], participantRole?: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null, influx?: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null) => withToast(updateParticipant(id, firstName, lastName, activityTypes, participantRole, influx)),
             delete: (id: string) => withToast(deleteParticipant(id)),
             fetch: (activityTypeId?: string) => withToast(fetchParticipants(activityTypeId)),
-            fetchAll: () => withToast(fetchParticipants())
+            fetchAll: () => withToast(fetchParticipants()),
+            fetchForMergeByIds: (ids: string[]) => withToast(fetchParticipantsForMergeByIds(ids)),
+            merge: (primaryId: string, secondaryIds: string[]) => withToast(mergeParticipants(primaryId, secondaryIds))
         },
         activities: {
             fetch: () => withToast(fetchActivities()),
@@ -131,6 +135,7 @@ export const useApi = () => {
         },
         dashboard: {
             findDuplicateParticipants: () => withToast(findDuplicateParticipants()),
+            findSimilarParticipantNames: () => withToast(findSimilarParticipantNames()),
             findEmptyOldActivities: () => withToast(findEmptyOldActivities()),
             getTotalActivitiesThisYear: () => withToast(getTotalActivitiesThisYear()),
             getTotalParticipantsLastWeek: () => withToast(getTotalParticipantsLastWeek()),

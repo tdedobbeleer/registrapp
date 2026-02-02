@@ -1,6 +1,59 @@
 import { supabase } from '../supabase'
 import type { Participant, ParticipantActivityType } from '../types'
 
+// This function fetches detailed participant data for merging - includes activity type names and registration counts
+export const fetchParticipantsForMergeByIds = async (ids: string[]): Promise<Participant[]> => {
+    if (ids.length === 0) return []
+    
+    const { data, error } = await supabase
+        .from('participants')
+        .select(`
+            *,
+            participant_activity_types (
+                activity_type_id,
+                activity_types (
+                    id,
+                    name
+                )
+            )
+        `)
+        .in('id', ids)
+        .order('first_name', { ascending: true })
+    
+    if (error) {
+        console.error('Error fetching participants for merge:', error)
+        throw error
+    }
+    
+    const participants = (data || []).map(p => ({
+        ...p,
+        activity_types: (p.participant_activity_types as ParticipantActivityType[] || []).map(pat => pat.activity_type_id),
+        activity_type_names: (p.participant_activity_types as any[] || []).map(pat => pat.activity_types?.name).filter(Boolean)
+    }))
+    
+    // Fetch registration counts for each participant
+    const registrationCounts: Record<string, number> = {}
+    for (const participant of participants) {
+        const { count, error: countError } = await supabase
+            .from('registrations')
+            .select('*', { count: 'exact', head: true })
+            .eq('participant_id', participant.id)
+        
+        if (countError) {
+            console.error('Error fetching registration count:', countError)
+            registrationCounts[participant.id] = 0
+        } else {
+            registrationCounts[participant.id] = count || 0
+        }
+    }
+    
+    // Add registration count to each participant
+    return participants.map(p => ({
+        ...p,
+        registrationCount: registrationCounts[p.id] || 0
+    }))
+}
+
 // Levenshtein distance function
 function levenshteinDistance(a: string, b: string): number {
   const matrix = Array.from({ length: b.length + 1 }, () => new Array(a.length + 1).fill(0))
@@ -127,6 +180,134 @@ export const addActivityTypeToParticipant = async (participantId: string, activi
     }
 }
 
+export const mergeParticipants = async (primaryId: string, secondaryIds: string[]) => {
+    // Get existing activity types for primary participant
+    const { data: primaryActivityTypes, error: primaryAtError } = await supabase
+        .from('participant_activity_types')
+        .select('activity_type_id')
+        .eq('participant_id', primaryId)
+    
+    if (primaryAtError) {
+        console.error('Error fetching primary activity types:', primaryAtError)
+        throw primaryAtError
+    }
+    
+    const primaryActivityTypeIds = new Set((primaryActivityTypes || []).map(at => at.activity_type_id))
+    
+    // Get primary participant data for influx and role
+    const { data: primaryData, error: primaryDataError } = await supabase
+        .from('participants')
+        .select('influx, participant_role')
+        .eq('id', primaryId)
+        .single()
+    
+    if (primaryDataError) {
+        console.error('Error fetching primary participant data:', primaryDataError)
+        throw primaryDataError
+    }
+    
+    let primaryInflux = primaryData?.influx
+    let primaryRole = primaryData?.participant_role
+    
+    // Copy activity types, registrations, influx, and role from secondary participants to primary participant
+    for (const secondaryId of secondaryIds) {
+        // Get secondary participant data
+        const { data: secondaryData, error: secondaryDataError } = await supabase
+            .from('participants')
+            .select('influx, participant_role')
+            .eq('id', secondaryId)
+            .single()
+        
+        if (!secondaryDataError && secondaryData) {
+            // Copy influx if primary doesn't have it (is null, empty, or UNKNOWN) and secondary has a valid value
+            const shouldCopyInflux = !primaryInflux || primaryInflux === 'UNKNOWN'
+            if (shouldCopyInflux && secondaryData.influx && secondaryData.influx !== 'UNKNOWN') {
+                primaryInflux = secondaryData.influx
+            }
+            // Copy role if primary doesn't have it and secondary does
+            if (!primaryRole && secondaryData.participant_role) {
+                primaryRole = secondaryData.participant_role
+            }
+        }
+        
+        // Get activity types for the secondary participant
+        const { data: secondaryActivityTypes, error: atError } = await supabase
+            .from('participant_activity_types')
+            .select('activity_type_id')
+            .eq('participant_id', secondaryId)
+        
+        if (atError) {
+            console.error('Error fetching activity types for secondary participant:', atError)
+        } else if (secondaryActivityTypes && secondaryActivityTypes.length > 0) {
+            // Copy each activity type that the primary doesn't already have
+            for (const at of secondaryActivityTypes) {
+                if (!primaryActivityTypeIds.has(at.activity_type_id)) {
+                    const { error: insertError } = await supabase
+                        .from('participant_activity_types')
+                        .insert({ participant_id: primaryId, activity_type_id: at.activity_type_id })
+                    
+                    if (insertError) {
+                        console.error('Error copying activity type:', insertError)
+                    } else {
+                        primaryActivityTypeIds.add(at.activity_type_id)
+                    }
+                }
+            }
+        }
+        
+        // Get all registrations for the secondary participant
+        const { data: regs, error: regError } = await supabase
+            .from('registrations')
+            .select('*')
+            .eq('participant_id', secondaryId)
+        
+        if (regError) {
+            console.error('Error fetching registrations for secondary participant:', regError)
+            continue
+        }
+        
+        if (regs && regs.length > 0) {
+            // Copy each registration to the primary participant if it doesn't exist
+            for (const reg of regs) {
+                // Check if registration already exists for primary participant
+                const { data: existing } = await supabase
+                    .from('registrations')
+                    .select('*')
+                    .eq('participant_id', primaryId)
+                    .eq('activity_id', reg.activity_id)
+                    .single()
+                
+                if (!existing) {
+                    // Insert the registration for the primary participant
+                    const { error: insertError } = await supabase
+                        .from('registrations')
+                        .insert({ participant_id: primaryId, activity_id: reg.activity_id })
+                    
+                    if (insertError) {
+                        console.error('Error copying registration:', insertError)
+                    }
+                }
+            }
+        }
+    }
+    
+    // Update primary participant with merged influx and role
+    const { error: updateError } = await supabase
+        .from('participants')
+        .update({ influx: primaryInflux, participant_role: primaryRole })
+        .eq('id', primaryId)
+    
+    if (updateError) {
+        console.error('Error updating primary participant:', updateError)
+        throw updateError
+    }
+    
+    // Delete the secondary participants
+    for (const secondaryId of secondaryIds) {
+        await deleteParticipant(secondaryId)
+    }
+}
+
 export const deleteParticipant = async (id: string) => {
     // First delete from junction table
     const { error: patError } = await supabase
@@ -148,28 +329,88 @@ export const deleteParticipant = async (id: string) => {
     }
 }
 
-export const findDuplicateParticipants = async (): Promise<{ first_name: string, last_name: string, count: number }[]> => {
+export const findDuplicateParticipants = async (): Promise<{ first_name: string, last_name: string, count: number, ids: string[] }[]> => {
   const { data, error } = await supabase
     .from('participants')
-    .select('first_name, last_name')
+    .select('id, first_name, last_name')
 
   if (error) {
     console.error('Error fetching participants for duplicates:', error)
     throw error
   }
 
-  const duplicates: { [key: string]: number } = {}
+  const duplicates: { [key: string]: { count: number, ids: string[], first_name: string, last_name: string } } = {}
   data?.forEach(p => {
     const key = `${p.first_name.toLowerCase()}_${p.last_name.toLowerCase()}`
-    duplicates[key] = (duplicates[key] || 0) + 1
+    if (!duplicates[key]) {
+      duplicates[key] = { count: 0, ids: [], first_name: p.first_name, last_name: p.last_name }
+    }
+    duplicates[key].count += 1
+    duplicates[key].ids.push(p.id)
   })
 
   return Object.entries(duplicates)
-    .filter(([_, count]) => count > 1)
-    .map(([key, count]) => {
-      const [first, last] = key.split('_')
-      return { first_name: first!, last_name: last!, count }
-    })
+    .filter(([_, data]) => data.count > 1)
+    .map(([, data]) => ({
+      first_name: data.first_name,
+      last_name: data.last_name,
+      count: data.count,
+      ids: data.ids
+    }))
+}
+
+// Find participants with similar names (using Levenshtein distance) that are not exact duplicates
+export const findSimilarParticipantNames = async (): Promise<{ name: string, names: string[], ids: string[] }[]> => {
+  const { data, error } = await supabase
+    .from('participants')
+    .select('id, first_name, last_name')
+    .order('first_name', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching participants for similarity check:', error)
+    throw error
+  }
+
+  const participants = data || []
+  const processed = new Set<string>()
+  const similarGroups: { name: string, names: string[], ids: string[] }[] = []
+
+  for (let i = 0; i < participants.length; i++) {
+    const p1 = participants[i]!
+    if (processed.has(p1.id)) continue
+
+    const group: { name: string, id: string }[] = [{ name: `${p1.first_name} ${p1.last_name}`, id: p1.id }]
+    const p1FullName = `${p1.first_name} ${p1.last_name}`.toLowerCase()
+
+    for (let j = i + 1; j < participants.length; j++) {
+      const p2 = participants[j]!
+      if (processed.has(p2.id)) continue
+
+      const p2FullName = `${p2.first_name} ${p2.last_name}`.toLowerCase()
+      const distance = levenshteinDistance(p1FullName, p2FullName)
+      const maxLength = Math.max(p1FullName.length, p2FullName.length)
+      const similarity = 1 - (distance / maxLength)
+
+      // Consider similar if similarity is above 0.7 (70%) and distance is small, but not exact match
+      if (similarity > 0.7 || distance <= 2) {
+        group.push({ name: `${p2.first_name} ${p2.last_name}`, id: p2.id })
+        processed.add(p2.id)
+      }
+    }
+
+    if (group.length > 1) {
+      processed.add(p1.id)
+      // Sort by first_name for consistent display
+      group.sort((a, b) => a.name.localeCompare(b.name))
+      const names = group.map(g => g.name)
+      const ids = group.map(g => g.id)
+      // Use the first name as the main reference
+      const mainName = group[0]?.name || 'Unknown'
+      similarGroups.push({ name: mainName, names, ids })
+    }
+  }
+
+  return similarGroups
 }
 
 export const fetchParticipants = async (activityTypeId?: string): Promise<Participant[]> => {
