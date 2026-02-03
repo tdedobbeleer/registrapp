@@ -13,6 +13,8 @@ const Activities = () => import('../views/Activities.vue')
 const Participants = () => import('../views/Participants.vue')
 const Registrations = () => import('../views/Registrations.vue')
 const Data = () => import('../views/Data.vue')
+const MergeParticipants = () => import('../views/MergeParticipants.vue')
+const Help = () => import('../views/Help.vue')
 
 const routes = [
   {
@@ -73,6 +75,18 @@ const routes = [
     path: '/data',
     name: 'Data',
     component: Data,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/merge-participants',
+    name: 'MergeParticipants',
+    component: MergeParticipants,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    component: Help,
     meta: { requiresAuth: true }
   },
   {

@@ -19,9 +19,11 @@ export interface Participant {
   first_name: string
   last_name: string
   activity_types: string[]
+  activity_type_names?: string[]
   participant_role: 'PHYSIOTHERAPIST' | 'VOLUNTEER' | null
   influx: 'WGC' | 'BOV' | 'PHYSIO' | 'OTHER' | 'UNKNOWN' | null
   created_at: string
+  registrationCount?: number
 }
 
 export interface ParticipantActivityType {

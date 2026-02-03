@@ -6,22 +6,40 @@
     <div class="mb-4">
       <h2>{{ $t('dashboard.warnings') }}</h2>
       <BRow>
-        <BCol md="6">
+        <BCol md="4" class="mb-3 mb-md-0">
           <BCard class="h-100 border-danger">
-            <BCardTitle>{{ $t('dashboard.duplicateParticipants') }}</BCardTitle>
+            <BCardTitle>{{ $t('dashboard.duplicateParticipants') }}&nbsp;<i class="bi bi-union"></i></BCardTitle>
             <BCardText>
               <ul v-if="duplicates.length > 0" class="list-unstyled">
                 <li v-for="dup in duplicates" :key="dup.first_name + dup.last_name">
-                  <i class="bi bi-exclamation-triangle text-warning"></i>
-                  {{ dup.first_name }} {{ dup.last_name }} ({{ dup.count }} {{ $t('dashboard.times') }})
+                  <router-link :to="{ path: '/merge-participants', query: { ids: dup.ids.join(',') } }" class="text-decoration-none">
+                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                    {{ dup.first_name }} {{ dup.last_name }} ({{ dup.count }} {{ $t('dashboard.times') }})
+                  </router-link>
                 </li>
               </ul>
               <p v-else>{{ $t('dashboard.noDuplicatesFound') }}</p>
             </BCardText>
           </BCard>
         </BCol>
-        <BCol md="6">
+        <BCol md="4" class="mb-3 mb-md-0">
           <BCard class="h-100 border-warning">
+            <BCardTitle>{{ $t('dashboard.similarParticipants') }}&nbsp;<i class="bi bi-intersect"></i></BCardTitle>
+            <BCardText>
+              <ul v-if="similarParticipants.length > 0" class="list-unstyled">
+                <li v-for="sim in similarParticipants" :key="sim.name">
+                  <router-link :to="{ path: '/merge-participants', query: { ids: sim.ids.join(',') } }" class="text-decoration-none">
+                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                    {{ sim.names.join(', ') }}
+                  </router-link>
+                </li>
+              </ul>
+              <p v-else>{{ $t('dashboard.noSimilarParticipantsFound') }}</p>
+            </BCardText>
+          </BCard>
+        </BCol>
+        <BCol md="4">
+          <BCard class="h-100 border-secondary">
             <BCardTitle>{{ $t('dashboard.emptyOldActivities') }}</BCardTitle>
             <BCardText>
               <ul v-if="emptyActivities.length > 0" class="list-unstyled">
@@ -81,21 +99,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { BRow, BCol, BCard, BCardTitle, BCardText, BCardBody } from 'bootstrap-vue-next'
 import { useApi } from '../composables/api'
 
 const { dashboard } = useApi()
 
-const duplicates = ref<{ first_name: string, last_name: string, count: number }[]>([])
+const duplicates = ref<{ first_name: string, last_name: string, count: number, ids: string[] }[]>([])
+const rawSimilarParticipants = ref<{ name: string, names: string[], ids: string[] }[]>([])
 const emptyActivities = ref<any[]>([])
 const totalActivitiesThisYear = ref(0)
 const totalParticipantsLastWeek = ref(0)
 const totalParticipants = ref(0)
 const totalRegistrationsThisYear = ref(0)
 
+// Filter out exact duplicates from similar participants
+const similarParticipants = computed(() => {
+  // Build a set of exact duplicate name keys (firstName_lastName in lowercase)
+  const duplicateKeys = new Set(
+    duplicates.value.map(d => `${d.first_name.toLowerCase()}_${d.last_name.toLowerCase()}`)
+  )
+  
+  // Filter out groups where all names in the group are exact duplicates
+  return rawSimilarParticipants.value.filter(group => {
+    // Check if all names in this group match an exact duplicate
+    const allNamesExactMatch = group.names.every(name => {
+      const [firstName, lastName] = name.split(' ')
+      return firstName && lastName && duplicateKeys.has(`${firstName.toLowerCase()}_${lastName.toLowerCase()}`)
+    })
+    return !allNamesExactMatch
+  })
+})
+
 onMounted(async () => {
   duplicates.value = await dashboard.findDuplicateParticipants()
+  rawSimilarParticipants.value = await dashboard.findSimilarParticipantNames()
   emptyActivities.value = await dashboard.findEmptyOldActivities()
   totalActivitiesThisYear.value = await dashboard.getTotalActivitiesThisYear()
   totalParticipantsLastWeek.value = await dashboard.getTotalParticipantsLastWeek()

@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "help": "Hulp",
     "activities": "Activiteiten",
     "activityTypes": "Activiteitstypen",
     "participants": "Deelnemers",
@@ -11,7 +12,6 @@
     "logout": "Uitloggen"
   },
   "home": {
-    "welcome": "Welkom bij RegistrApp",
     "description": "Beheer uw activiteiten, deelnemers en registraties met gemak.",
     "activitiesAlt": "Kalender met geplande activiteiten",
     "activitiesDescription": "Maak een activiteit aan door te klikken op {addIcon}. Je kan meerdere activiteiten maken van hetzelfde activiteitstype op verschillende data. Gemakkelijk! Een voorbeeld van zo'n activiteit is bijvoorbeeld RevAqua op 11/11/25.",
@@ -27,7 +27,7 @@
     "viewRegistrations": "Registraties bekijken"
   },
   "common": {
-    "changed": "Gewijzigd op",
+    "created": "Aangemaakt op",
     "physiotherapist": "Kinesist(en):",
     "volunteer": "Vrijwilliger(s):",
     "unknown": "Onbekend:",
@@ -181,8 +181,10 @@
     "title": "Dashboard",
     "warnings": "Waarschuwingen",
     "duplicateParticipants": "Dubbele Deelnemers",
+    "similarParticipants": "Vergelijkbare Deelnemers",
     "emptyOldActivities": "Activiteiten zonder deelnemers",
     "noDuplicatesFound": "Geen duplicaten gevonden.",
+    "noSimilarParticipantsFound": "Geen vergelijkbare deelnemers gevonden.",
     "noEmptyOldActivitiesFound": "Geen lege oude activiteiten gevonden.",
     "times": "keer",
     "on": "op",
@@ -219,5 +221,19 @@
       "title": "Fout",
       "body": "Er is een fout opgetreden. Refresh de pagina en probeer opnieuw."
     }
+  },
+  "mergeParticipants": {
+    "title": "Deelnemers Samenvoegen",
+    "selectPrimary": "Selecteer Primaire Deelnemer",
+    "selectPrimaryDescription": "Klik op de deelnemer die de primaire deelnemer moet zijn na het samenvoegen.",
+    "selectToMerge": "Selecteer Deelnemers om Samen te Voegen",
+    "selectToMergeDescription": "Klik op deelnemers om ze samen te voegen met de primaire deelnemer.",
+    "mergeButton": "Deelnemers Samenvoegen",
+    "mergeSuccess": "Succesvol {count} deelnemer(s) samengevoegd met {primary}",
+    "mergeError": "Er is een fout opgetreden bij het samenvoegen van deelnemers. Probeer opnieuw.",
+    "registeredFor": "Geregistreerd voor",
+    "confirmTitle": "Samenvoegen Bevestigen",
+    "confirmMessage": "Alleen de primaire deelnemer ({primary}) blijft over. {count} deelnemer(s) zal worden verwijderd. Deze actie kan niet ongedaan worden gemaakt.",
+    "confirmOk": "Samenvoegen"
   }
 }

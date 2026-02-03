@@ -29,6 +29,7 @@
           <BNavItem v-if="showActivityTypes" to="/activity_types">{{ $t('nav.activityTypes') }}</BNavItem>
           <BNavItem to="/participants">{{ $t('nav.participants') }}</BNavItem>
           <BNavItem v-if="showData" to="/data">{{ $t('nav.data') }}</BNavItem>
+          <BNavItem to="/help"><i class="bi bi-question-circle"></i>&nbsp;<span>{{ $t('nav.help') }}</span></BNavItem>
         </BNavbarNav>
         <BNavbarNav class="ms-auto">
           <BButtonGroup>

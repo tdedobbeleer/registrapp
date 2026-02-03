@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "help": "Help",
     "activities": "Activities",
     "activityTypes": "Activity Types",
     "participants": "Participants",
@@ -11,7 +12,6 @@
     "logout": "Logout"
   },
   "home": {
-    "welcome": "Welcome to RegistrApp",
     "description": "Manage your activities, participants, and registrations with ease.",
     "activitiesAlt": "Calendar showing scheduled activities",
     "activitiesDescription": "Create an activity by clicking on {addIcon}. You can create multiple activities using the same activity type on different dates. Easy! An example of such an activity is RevAqua on 11/11/25.",
@@ -27,7 +27,7 @@
     "viewRegistrations": "View Registrations"
   },
   "common": {
-    "changed": "Changed on",
+    "created": "Created on",
     "physiotherapist": "Physio('s):",
     "volunteer": "Volunteer(s):",
     "unknown": "Unknown:",
@@ -181,8 +181,10 @@
     "title": "Dashboard",
     "warnings": "Warnings",
     "duplicateParticipants": "Duplicate Participants",
+    "similarParticipants": "Similar Participants",
     "emptyOldActivities": "Activities with no participants",
     "noDuplicatesFound": "No duplicates found.",
+    "noSimilarParticipantsFound": "No similar participants found.",
     "noEmptyOldActivitiesFound": "No empty old activities found.",
     "times": "times",
     "on": "on",
@@ -219,5 +221,19 @@
       "title": "Error",
       "body": "An error occurred. Please try again. Refresh the page if the error persists."
     }
+  },
+  "mergeParticipants": {
+    "title": "Merge Participants",
+    "selectPrimary": "Select Primary Participant",
+    "selectPrimaryDescription": "Click on the participant who should be the primary participant after the merge.",
+    "selectToMerge": "Select Participants to Merge",
+    "selectToMergeDescription": "Click on participants to merge them into the primary participant.",
+    "mergeButton": "Merge Participants",
+    "mergeSuccess": "Successfully merged {count} participant(s) into {primary}",
+    "mergeError": "An error occurred while merging participants. Please try again.",
+    "registeredFor": "Registered for",
+    "confirmTitle": "Confirm Merge",
+    "confirmMessage": "Only The primary participant ({primary}) will remain. {count} participant(s) will be deleted. This action cannot be undone.",
+    "confirmOk": "Merge"
   }
 }
