@@ -180,13 +180,18 @@ const submit = async () => {
     } else {
       await apiActivities.update(props.activity!.id, activityTypeId.value, date.value)
       const currentAssignees = await apiActivityAssignees.fetch(props.activity!.id)
+      const currentRegistrations = await apiRegistrations.fetch(props.activity!.id)
       const currentIds = currentAssignees.map(a => a.participant_id)
       const newIds = assignees.value.map(a => a.participant_id)
 
       for (const assignee of currentAssignees) {
         if (!newIds.includes(assignee.participant_id)) {
           await apiActivityAssignees.delete(assignee.participant_id, props.activity!.id)
-          await apiRegistrations.delete(assignee.participant_id, props.activity!.id)
+          // Only delete registration if it exists
+          const hasRegistration = currentRegistrations.some(r => r.participant_id === assignee.participant_id)
+          if (hasRegistration) {
+            await apiRegistrations.delete(assignee.participant_id, props.activity!.id)
+          }
         }
       }
 
