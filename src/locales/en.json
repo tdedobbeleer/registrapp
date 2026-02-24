@@ -143,7 +143,7 @@
     "influx": "Influx",
     "wgc": "Patient from Neighborhood Health Center",
     "bov": "Exercise on Referral",
-    "physio": "Referred by Physiotherapist",
+    "physio": "Referred by Physiotherapist (external)",
     "other": "Other",
     "unknown": "Unknown"
   },
