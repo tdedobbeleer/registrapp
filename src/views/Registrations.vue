@@ -53,6 +53,7 @@
         <BDropdownItem @click="sortBy = 'first_name'">{{ $t('registrations.firstName') }}</BDropdownItem>
         <BDropdownItem @click="sortBy = 'last_name'">{{ $t('registrations.lastName') }}</BDropdownItem>
         <BDropdownItem @click="sortBy = 'registered'">{{ $t('registrations.registered') }}</BDropdownItem>
+        <BDropdownItem @click="sortBy = 'registration_count'">{{ $t('registrations.frequency') }}</BDropdownItem>
       </BDropdown>
       <BButton variant="primary" @click="openAddModal">
         <i class="bi bi-person-fill-add"></i> {{ $t('participants.addParticipant') }}
@@ -66,6 +67,9 @@
       >
         <div>
           <strong @click="openEditModal(participant)" style="cursor: pointer;">{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
+          <span v-if="sortBy === 'registration_count' && getRegistrationCount(participant.id) > 0" class="badge bg-primary ms-2">
+            {{ getRegistrationCount(participant.id) }}
+          </span>
         </div>
         <BFormCheckbox
           switch
@@ -101,12 +105,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { BBreadcrumb, BBreadcrumbItem, BSpinner, BButton, BBadge, BInputGroup, BInputGroupText, BFormInput, BDropdown, BDropdownItem, BPagination, BFormCheckbox } from 'bootstrap-vue-next'
-import type { Activity, Participant, Registration, ActivityType } from '../types'
+import type { Activity, Participant, ActivityType } from '../types'
+import type { Registration } from '../types'
+import type { RegistrationWithCount } from '../api/registrations'
 import ParticipantModal from '../components/ParticipantModal.vue'
 import CommentEditor from '../components/CommentEditor.vue'
 import { useApi } from '../composables/api'
 import { formatDate } from '../composables/useDate'
 import { supabase } from '../supabase'
+import { fetchRegistrationsWithCount } from '../api/registrations'
 
 interface Props {
   activityId: string
@@ -120,6 +127,8 @@ const activity = ref<Activity | null>(null)
 const activityTypes = ref<ActivityType[]>([])
 const participants = ref<Participant[]>([])
 const registrations = ref<Registration[]>([])
+const registrationCounts = ref<RegistrationWithCount[] | undefined>(undefined)
+const countsLoading = ref(false)
 const currentPage = ref(1)
 const perPage = 10
 const searchTerm = ref('')
@@ -159,6 +168,11 @@ const filteredParticipants = computed(() => {
       const bReg = isRegistered(b.id) ? 1 : 0
       if (aReg !== bReg) return bReg - aReg // registered first
       return a.last_name.toLowerCase().localeCompare(b.last_name.toLowerCase()) // then by last name
+    } else if (sortBy.value === 'registration_count') {
+      const aCount = getRegistrationCount(a.id)
+      const bCount = getRegistrationCount(b.id)
+      if (aCount !== bCount) return bCount - aCount // higher count first
+      return a.last_name.toLowerCase().localeCompare(b.last_name.toLowerCase()) // then by last name
     }
     return 0
   })
@@ -169,8 +183,34 @@ const registrationCount = computed(() => {
 })
 
 const isRegistered = (participantId: string) => {
-  return registrations.value.some(r => r.participant_id === participantId)
+  return registrations.value.some((r: Registration) => r.participant_id === participantId)
 }
+
+const getRegistrationCount = (participantId: string) => {
+  if (sortBy.value === 'registration_count') {
+    // Lazy load registration counts if not loaded yet
+    if (!registrationCounts.value && !countsLoading.value && activity.value) {
+      countsLoading.value = true
+      // Start loading the data (fire and forget)
+      fetchRegistrationsWithCount(activity.value.activity_type_id)
+        .then(data => {
+          registrationCounts.value = data
+        })
+        .catch(error => {
+          console.error('Error loading registration counts:', error)
+        })
+        .finally(() => {
+          countsLoading.value = false
+        })
+    }
+    if (registrationCounts.value && registrationCounts.value.length > 0) {
+      const reg = registrationCounts.value.find(r => r.participant_id === participantId)
+      return reg?.participant_registration_count || 0
+    }
+  }
+  return 0
+}
+
 
 
 const getActivityTypeName = (id: string) => {
@@ -313,7 +353,7 @@ const handleRealtimeChange = (payload: any) => {
     // Add new registration if not already present
     const exists = registrations.value.some(r => r.participant_id === newRecord.participant_id && r.activity_id === newRecord.activity_id)
     if (!exists) {
-      registrations.value.push(newRecord)
+      registrations.value.push(newRecord as RegistrationWithCount)
     }
   } else if (eventType === 'DELETE') {
     // Remove deleted registration

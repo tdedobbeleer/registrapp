@@ -137,6 +137,7 @@ const showAll = ref(false)
 
 // Changelog data
 const changelogItems = ref([
+  { date: '2026-03-03', key: 'changelog.frequencySort' },
   { date: '2026-03-03', key: 'changelog.change1' },
 ])
 

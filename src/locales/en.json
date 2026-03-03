@@ -87,7 +87,8 @@
     "sortBy": "Sort by",
     "firstName": "First Name",
     "lastName": "Last Name",
-    "registered": "Registered"
+    "registered": "Registered",
+    "frequency": "Frequency"
   },
   "activities": {
     "title": "Activities",
@@ -199,7 +200,8 @@
     "noChangelog": "No updates yet."
   },
   "changelog": {
-    "change1": "Modal windows can no longer be closed by clicking outside"
+    "frequencySort": "Participants can now be sorted by frequency of registration in the registrations screen.",
+    "change1": "Popup windows can no longer be closed by clicking outside."
   },
   "language": {
     "switchToEn": "English",

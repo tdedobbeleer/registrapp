@@ -1,17 +1,37 @@
 import { supabase } from '../supabase'
 import type { Registration } from '../types'
 
+export interface RegistrationWithCount extends Registration {
+    participant_registration_count?: number
+}
+
 export const fetchRegistrations = async (activityId: string): Promise<Registration[]> => {
     const { data, error } = await supabase
         .from('registrations')
         .select('*, participants(*)')
         .eq('activity_id', activityId)
+    
     if (error) {
         console.error('Error fetching registrations:', error)
         throw error
-    } else {
-        return data || []
     }
+    
+    return data || []
+}
+
+export const fetchRegistrationsWithCount = async (activity_type_id: string): Promise<RegistrationWithCount[]> => {
+    // Get registrations from the view that includes registration counts per activity type
+    const { data, error } = await supabase
+        .from('registrations_by_activity_type')
+        .select('*')
+        .eq('activity_type_id', activity_type_id)
+    
+    if (error) {
+        console.error('Error fetching registrations with count:', error)
+        throw error
+    }
+    
+    return data || []
 }
 
 export const addRegistration = async (participantId: string, activityId: string): Promise<Registration | undefined> => {

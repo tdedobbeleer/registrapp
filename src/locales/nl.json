@@ -87,7 +87,8 @@
     "sortBy": "Sorteren op",
     "firstName": "Voornaam",
     "lastName": "Achternaam",
-    "registered": "Geregistreerd"
+    "registered": "Geregistreerd",
+    "frequency": "Frequentie"
   },
   "activities": {
     "title": "Activiteiten",
@@ -199,7 +200,8 @@
     "noChangelog": "Nog geen updates."
   },
   "changelog": {
-    "change1": "Modaalvensters kunnen niet meer worden gesloten door ergens anders te klikken"
+    "frequencySort": "Deelnemers kunnen nu gesorteerd worden op registratiefrequentie in het registratiescherm.",
+    "change1": "Pop-up vensters kunnen niet meer worden gesloten door ergens anders te klikken."
   },
   "language": {
     "switchToEn": "English",
