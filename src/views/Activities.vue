@@ -67,7 +67,7 @@
     <ActivityModal mode="edit" v-model:show="showEditModal" @updated="handleActivityChange" :activity="editingActivity" :activity-types="activityTypes" :all-users="allUsers" />
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteActivity" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger">
+    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteActivity" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger" no-close-on-backdrop>
       <p>{{ $t('activities.deleteMessage') }}</p>
     </BModal>
     </div>

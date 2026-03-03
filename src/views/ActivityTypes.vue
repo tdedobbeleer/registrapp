@@ -59,7 +59,7 @@
     </div>
 
     <!-- Add Modal -->
-    <BModal v-model="showAddModal" :title="$t('activityTypes.addActivityType')" @ok="addActivity" :ok-title="$t('activityTypes.addActivityType')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isAddFormValid">
+    <BModal v-model="showAddModal" :title="$t('activityTypes.addActivityType')" @ok="addActivity" :ok-title="$t('activityTypes.addActivityType')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isAddFormValid" no-close-on-backdrop>
       <BForm @submit.prevent="addActivity">
         <div class="mb-3">
           <label for="addName" class="form-label">{{ $t('activityTypes.name') }}</label>
@@ -75,7 +75,7 @@
     </BModal>
 
     <!-- Edit Modal -->
-    <BModal v-model="showEditModal" :title="$t('common.edit')" @ok.prevent="updateActivity" :ok-title="$t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isEditFormValid">
+    <BModal v-model="showEditModal" :title="$t('common.edit')" @ok.prevent="updateActivity" :ok-title="$t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="loading || !isEditFormValid" no-close-on-backdrop>
       <BForm @submit.prevent="updateActivity">
         <div class="mb-3">
           <label for="editName" class="form-label">{{ $t('activityTypes.name') }}</label>
@@ -91,7 +91,7 @@
     </BModal>
 
     <!-- Delete Modal -->
-    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteActivity" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger">
+    <BModal v-model="showDeleteModal" :title="$t('common.confirmDelete')" @ok="deleteActivity" :ok-title="$t('common.delete')" :cancel-title="$t('common.cancel')" ok-variant="danger" no-close-on-backdrop>
       <p>{{ $t('activityTypes.deleteMessage') }}</p>
     </BModal>
     </div>

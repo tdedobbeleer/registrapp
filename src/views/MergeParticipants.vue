@@ -111,7 +111,7 @@
       </div>
 
       <!-- Confirmation Modal -->
-      <BModal v-model="showConfirmModal" :title="$t('mergeParticipants.confirmTitle')" :ok-title="$t('mergeParticipants.confirmOk')" :cancel-title="$t('common.cancel')" @ok="confirmMerge">
+      <BModal v-model="showConfirmModal" :title="$t('mergeParticipants.confirmTitle')" :ok-title="$t('mergeParticipants.confirmOk')" :cancel-title="$t('common.cancel')" @ok="confirmMerge" no-close-on-backdrop>
         <p>{{ $t('mergeParticipants.confirmMessage', { 
           primary: primaryParticipant ? `${primaryParticipant.first_name} ${primaryParticipant.last_name}` : '',
           count: selectedToMerge.length

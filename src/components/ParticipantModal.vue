@@ -7,6 +7,7 @@
     :cancel-title="$t('common.cancel')"
     :ok-disabled="loading || !formValid"
     @hide="$emit('update:modelValue', false)"
+    no-close-on-backdrop
   >
     <BForm @submit.prevent="handleSubmit">
       <div class="mb-3">
@@ -72,6 +73,7 @@
     @cancel="cancelSubmit"
     :ok-title="$t('participants.confirmCreate')"
     :cancel-title="$t('common.cancel')"
+    no-close-on-backdrop
   >
     <p>{{ $t('participants.duplicateWarningMessage') }}</p>
     <ul class="list-unstyled">
