@@ -53,7 +53,7 @@
         <BDropdownItem @click="sortBy = 'first_name'">{{ $t('registrations.firstName') }}</BDropdownItem>
         <BDropdownItem @click="sortBy = 'last_name'">{{ $t('registrations.lastName') }}</BDropdownItem>
         <BDropdownItem @click="sortBy = 'registered'">{{ $t('registrations.registered') }}</BDropdownItem>
-        <BDropdownItem @click="sortBy = 'registration_count'">{{ $t('registrations.frequency') }}</BDropdownItem>
+        <BDropdownItem v-if="registrationCounts.length > 0" @click="sortBy = 'registration_count'">{{ $t('registrations.frequency') }}</BDropdownItem>
       </BDropdown>
       <BButton variant="primary" @click="openAddModal">
         <i class="bi bi-person-fill-add"></i> {{ $t('participants.addParticipant') }}
@@ -67,9 +67,6 @@
       >
         <div>
           <strong @click="openEditModal(participant)" style="cursor: pointer;">{{ participant.first_name }} <span class="text-uppercase">{{ participant.last_name }}</span></strong>
-          <span v-if="sortBy === 'registration_count' && getRegistrationCount(participant.id) > 0" class="badge bg-primary ms-2">
-            {{ getRegistrationCount(participant.id) }}
-          </span>
         </div>
         <BFormCheckbox
           switch
@@ -127,8 +124,7 @@ const activity = ref<Activity | null>(null)
 const activityTypes = ref<ActivityType[]>([])
 const participants = ref<Participant[]>([])
 const registrations = ref<Registration[]>([])
-const registrationCounts = ref<RegistrationWithCount[] | undefined>(undefined)
-const countsLoading = ref(false)
+const registrationCounts = ref<RegistrationWithCount[]>([])
 const currentPage = ref(1)
 const perPage = 10
 const searchTerm = ref('')
@@ -187,26 +183,9 @@ const isRegistered = (participantId: string) => {
 }
 
 const getRegistrationCount = (participantId: string) => {
-  if (sortBy.value === 'registration_count') {
-    // Lazy load registration counts if not loaded yet
-    if (!registrationCounts.value && !countsLoading.value && activity.value) {
-      countsLoading.value = true
-      // Start loading the data (fire and forget)
-      fetchRegistrationsWithCount(activity.value.activity_type_id)
-        .then(data => {
-          registrationCounts.value = data
-        })
-        .catch(error => {
-          console.error('Error loading registration counts:', error)
-        })
-        .finally(() => {
-          countsLoading.value = false
-        })
-    }
-    if (registrationCounts.value && registrationCounts.value.length > 0) {
-      const reg = registrationCounts.value.find(r => r.participant_id === participantId)
-      return reg?.participant_registration_count || 0
-    }
+  if (sortBy.value === 'registration_count' && registrationCounts.value.length > 0) {
+    const reg = registrationCounts.value.find(r => r.participant_id === participantId)
+    return reg?.registration_count || 0
   }
   return 0
 }
@@ -275,6 +254,14 @@ const fetchParticipants = async () => {
 const fetchRegistrations = async () => {
   try {
     registrations.value = await apiRegistrations.fetch(props.activityId)
+    // Also fetch registration counts for frequency sorting (fire and forget)
+    if (activity.value) {
+      fetchRegistrationsWithCount(activity.value.activity_type_id).then(counts => {
+        registrationCounts.value = counts
+      }).catch(error => {
+        console.error('Error fetching registration counts:', error)
+      })
+    }
     loading.value = false
   } catch (error) {
     console.error('Error fetching registrations:', error)

@@ -2,7 +2,7 @@ import { supabase } from '../supabase'
 import type { Registration } from '../types'
 
 export interface RegistrationWithCount extends Registration {
-    participant_registration_count?: number
+    registration_count?: number
 }
 
 export const fetchRegistrations = async (activityId: string): Promise<Registration[]> => {
