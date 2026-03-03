@@ -192,7 +192,14 @@
     "totalActivitiesThisYear": "Totaal Activiteiten Dit Jaar",
     "totalParticipantsLastWeek": "Deelnemers Geregistreerd Vorige Week",
     "totalParticipants": "Totaal Deelnemers",
-    "totalRegistrationsThisYear": "Registraties Dit Jaar"
+    "totalRegistrationsThisYear": "Registraties Dit Jaar",
+    "changelog": "Changelog",
+    "showMore": "Toon meer",
+    "showLess": "Toon minder",
+    "noChangelog": "Nog geen updates."
+  },
+  "changelog": {
+    "change1": "Modaalvensters kunnen niet meer worden gesloten door ergens anders te klikken"
   },
   "language": {
     "switchToEn": "English",

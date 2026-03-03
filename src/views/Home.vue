@@ -2,6 +2,27 @@
   <div class="container mt-3">
     <h1 class="text-center">{{ $t('dashboard.title') }}</h1>
 
+    <!-- Changelog Section -->
+    <div class="mb-4">
+      <h2>{{ $t('dashboard.changelog') }}</h2>
+      <BCard>
+        <BCardBody>
+          <ul v-if="changelogItems.length > 0" class="list-unstyled mb-0">
+            <li v-for="(item, index) in displayedChangelog" :key="index" class="mb-2">
+              <i class="bi bi-rocket-takeoff text-primary"></i>
+              <span class="ms-2">{{ item.date }}</span>
+              <span class="ms-2">{{ $t(item.key) }}</span>
+            </li>
+          </ul>
+          <p v-else class="mb-0 text-muted">{{ $t('dashboard.noChangelog') }}</p>
+          <div v-if="changelogItems.length > 5" class="mt-3">
+            <BButton variant="link" @click="showAll = !showAll">
+              {{ showAll ? $t('dashboard.showLess') : $t('dashboard.showMore') }}
+            </BButton>
+          </div>
+        </BCardBody>
+      </BCard>
+    </div>
     <!-- Warnings Section -->
     <div class="mb-4">
       <h2>{{ $t('dashboard.warnings') }}</h2>
@@ -100,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { BRow, BCol, BCard, BCardTitle, BCardText, BCardBody } from 'bootstrap-vue-next'
+import { BRow, BCol, BCard, BCardTitle, BCardText, BCardBody, BButton } from 'bootstrap-vue-next'
 import { useApi } from '../composables/api'
 
 const { dashboard } = useApi()
@@ -112,6 +133,16 @@ const totalActivitiesThisYear = ref(0)
 const totalParticipantsLastWeek = ref(0)
 const totalParticipants = ref(0)
 const totalRegistrationsThisYear = ref(0)
+const showAll = ref(false)
+
+// Changelog data
+const changelogItems = ref([
+  { date: '2026-03-03', key: 'changelog.change1' },
+])
+
+const displayedChangelog = computed(() => {
+  return showAll.value ? changelogItems.value : changelogItems.value.slice(0, 5)
+})
 
 // Filter out exact duplicates from similar participants
 const similarParticipants = computed(() => {

@@ -1,5 +1,14 @@
 <template>
-  <BModal v-model="showModal" :title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" @ok="submit" :ok-title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" :cancel-title="$t('common.cancel')" :ok-disabled="!isFormValid || loading" size="lg" no-close-on-backdrop>
+  <BModal 
+    v-model="showModal" 
+    :title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" 
+    @ok="submit" 
+    :ok-title="mode === 'add' ? $t('activities.addActivity') : $t('common.edit')" 
+    :cancel-title="$t('common.cancel')" 
+    :ok-disabled="!isFormValid || loading" 
+    size="lg"
+    :no-close-on-backdrop="true"
+  >
     <BForm @submit.prevent="submit">
       <div class="mb-3">
         <label for="activityType" class="form-label">{{ $t('activities.activityType') }}</label>

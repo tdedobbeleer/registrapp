@@ -192,7 +192,14 @@
     "totalActivitiesThisYear": "Total Activities This Year",
     "totalParticipantsLastWeek": "Participants Registered Last Week",
     "totalParticipants": "Total Participants",
-    "totalRegistrationsThisYear": "Registrations This Year"
+    "totalRegistrationsThisYear": "Registrations This Year",
+    "changelog": "Changelog",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "noChangelog": "No updates yet."
+  },
+  "changelog": {
+    "change1": "Modal windows can no longer be closed by clicking outside"
   },
   "language": {
     "switchToEn": "English",
